@@ -1,5 +1,3 @@
-aaa
+bg = require('./_bg.coffee')
 
-aaaa
-
-aaaaaaaaaaaa
+fnc02()

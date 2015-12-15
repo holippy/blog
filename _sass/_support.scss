@@ -1,0 +1,53 @@
+/*========================
+
+clearfix
+
+========================*/
+
+@mixin clearfix() {
+  & {
+    *zoom: 1;
+  }
+  &:before,
+  &:after {
+    content: "";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+
+/*========================
+
+text align
+
+========================*/
+
+.ta-c{
+  text-align: center !important;
+}
+
+.ta-r{
+  text-align: right !important;
+}
+
+.ta-l{
+  text-align: left !important;
+}
+
+/*========================
+
+margin
+
+========================*/
+
+@for $i from 0 through 20 {
+  .mgb#{$i * 5} {
+    margin-bottom: #{$i * 5}px !important;
+  }
+  .mgt#{$i * 5} {
+    margin-top: #{$i * 5}px !important;
+  }
+}

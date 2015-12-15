@@ -4,28 +4,56 @@ sass = require 'gulp-sass'
 jade = require 'gulp-jade'
 plumber = require 'gulp-plumber'
 minifyCss = require 'gulp-minify-css'
+concat = require 'gulp-concat'
 sourcemaps = require 'gulp-sourcemaps'
+bower = require 'main-bower-files'
+connect = require 'gulp-connect'
+browserify = require 'browserify'
+rename = require 'gulp-rename'
+uglify = require 'gulp-uglify'
+filter = require 'gulp-filter'
+source = require 'vinyl-source-stream'
 
 ###
 gulp.js用
 ###
 
-gulp.task 'coffee-gulp', ()->
+gulp.task 'gulpJS', ()->
 
 		gulp.src('_coffee-gulp/*.coffee')
 		.pipe coffee()
 		.pipe gulp.dest('./')
 
 ###
+browserify
+###
+
+# gulp.task 'browserify', ()->
+# 		gulp.src('_js/*.js')
+# 		.pipe plumber()
+# 		.pipe browserify(
+# 			insertGlobals : true,
+# 			debug : !gulp.env.production
+# 		)
+# 		.pipe gulp.dest('dist/assets/js')
+
+###
 coffee
 ###
 
 gulp.task 'coffee', ()->
-		gulp.src('_coffee/*.coffee')
-		.pipe plumber()
-		.pipe coffee()
-		.pipe gulp.dest('dist/assets/js')
-
+	browserify
+		entries: ['_coffee/app.coffee']
+		extensions: ['.coffee', '.js']
+	.transform 'coffeeify'
+	# .transform 'deamdify'
+	# .transform 'debowerify'
+	# .transform 'uglifyify'
+	.bundle()
+	# Pass desired file name to browserify with vinyl
+	.pipe source 'app.js'
+	# Start piping stream to tasks!
+	.pipe gulp.dest 'dist/assets/js/'
 
 ###
 sass
@@ -50,15 +78,48 @@ gulp.task 'jade', ()->
 		.pipe jade pretty: true
 		.pipe gulp.dest 'dist'
 
+###
+bowerのライブラリを結合
+###
+
+gulp.task 'bowerJS', ->
+	jsFilter = filter '**/*.js'
+	gulp
+	.src bower()
+	.pipe jsFilter
+	.pipe uglify(
+		preserveComments: 'some'
+	)
+	.pipe concat 'lib.js'
+	.pipe gulp.dest 'dist/assets/js/'
+
+###
+connect
+###
+
+gulp.task 'connect', ->
+	connect.server
+		root: 'dist',
+		port: 8080,
+		livereload: true
+
+###
+html リロード
+###
+
+gulp.task 'reload', ->
+	gulp.src 'dist/**/*.html'
+	.pipe connect.reload()
 
 ###
 watchタスク　
 ###
 
 gulp.task 'watch', ()->
-	gulp.watch '_coffee-gulp/*.coffee', ['coffee-gulp']
+	gulp.watch '_coffee-gulp/*.coffee', ['gulpJS']
 	gulp.watch '_coffee/*.coffee', ['coffee']
 	gulp.watch '_sass/**/*.scss', ['sass']
 	gulp.watch '_jade/**/*.jade', ['jade']
+	gulp.watch 'dist/**/*.html', ['reload']
 
-gulp.task 'default', ['watch', 'coffee-gulp', 'coffee', 'sass', 'jade']
+gulp.task 'default', ['connect', 'watch', 'coffee', 'sass', 'jade']
