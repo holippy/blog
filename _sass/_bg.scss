@@ -1,0 +1,19 @@
+
+@include keyframe(fadeout) {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+
+
+.svg1{
+  position: absolute;
+  @include animation(2s, 2s, fadeout)
+}
+
+

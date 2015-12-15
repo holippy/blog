@@ -52,9 +52,9 @@
 
   gulp.task('coffee', function() {
     return browserify({
-      entries: ['_coffee/app.coffee'],
+      entries: ['_coffee/app.coffee', '_coffee/_bg.coffee'],
       extensions: ['.coffee', '.js']
-    }).transform('coffeeify').bundle().pipe(source('app.js')).pipe(gulp.dest('dist/assets/js/'));
+    }).transform('coffeeify').bundle().pipe(plumber()).pipe(source('app.js')).pipe(gulp.dest('dist/assets/js/'));
   });
 
 

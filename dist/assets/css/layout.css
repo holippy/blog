@@ -1,2 +1,255 @@
-a,abbr,acronym,address,applet,article,aside,audio,b,big,blockquote,body,canvas,caption,center,cite,code,dd,del,details,dfn,div,dl,dt,em,embed,fieldset,figcaption,figure,footer,form,h1,h2,h3,h4,h5,h6,header,hgroup,html,i,iframe,img,ins,kbd,label,legend,li,mark,menu,nav,object,ol,output,p,pre,q,ruby,s,samp,section,small,span,strike,strong,sub,summary,sup,table,tbody,td,tfoot,th,thead,time,tr,tt,u,ul,var,video{margin:0;padding:0;border:0;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:after,blockquote:before,q:after,q:before{content:'';content:none}table{border-collapse:collapse;border-spacing:0}.ta-c{text-align:center!important}.ta-r{text-align:right!important}.ta-l{text-align:left!important}.mgb0{margin-bottom:0!important}.mgt0{margin-top:0!important}.mgb5{margin-bottom:5px!important}.mgt5{margin-top:5px!important}.mgb10{margin-bottom:10px!important}.mgt10{margin-top:10px!important}.mgb15{margin-bottom:15px!important}.mgt15{margin-top:15px!important}.mgb20{margin-bottom:20px!important}.mgt20{margin-top:20px!important}.mgb25{margin-bottom:25px!important}.mgt25{margin-top:25px!important}.mgb30{margin-bottom:30px!important}.mgt30{margin-top:30px!important}.mgb35{margin-bottom:35px!important}.mgt35{margin-top:35px!important}.mgb40{margin-bottom:40px!important}.mgt40{margin-top:40px!important}.mgb45{margin-bottom:45px!important}.mgt45{margin-top:45px!important}.mgb50{margin-bottom:50px!important}.mgt50{margin-top:50px!important}.mgb55{margin-bottom:55px!important}.mgt55{margin-top:55px!important}.mgb60{margin-bottom:60px!important}.mgt60{margin-top:60px!important}.mgb65{margin-bottom:65px!important}.mgt65{margin-top:65px!important}.mgb70{margin-bottom:70px!important}.mgt70{margin-top:70px!important}.mgb75{margin-bottom:75px!important}.mgt75{margin-top:75px!important}.mgb80{margin-bottom:80px!important}.mgt80{margin-top:80px!important}.mgb85{margin-bottom:85px!important}.mgt85{margin-top:85px!important}.mgb90{margin-bottom:90px!important}.mgt90{margin-top:90px!important}.mgb95{margin-bottom:95px!important}.mgt95{margin-top:95px!important}.mgb100{margin-bottom:100px!important}.mgt100{margin-top:100px!important}
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline; }
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+/*========================
+
+clearfix
+
+========================*/
+/*========================
+
+keyframe
+
+========================*/
+/*========================
+
+animation
+
+========================*/
+/*========================
+
+text align
+
+========================*/
+.ta-c {
+  text-align: center !important; }
+
+.ta-r {
+  text-align: right !important; }
+
+.ta-l {
+  text-align: left !important; }
+
+/*========================
+
+margin
+
+========================*/
+.mgb0 {
+  margin-bottom: 0px !important; }
+
+.mgt0 {
+  margin-top: 0px !important; }
+
+.mgb5 {
+  margin-bottom: 5px !important; }
+
+.mgt5 {
+  margin-top: 5px !important; }
+
+.mgb10 {
+  margin-bottom: 10px !important; }
+
+.mgt10 {
+  margin-top: 10px !important; }
+
+.mgb15 {
+  margin-bottom: 15px !important; }
+
+.mgt15 {
+  margin-top: 15px !important; }
+
+.mgb20 {
+  margin-bottom: 20px !important; }
+
+.mgt20 {
+  margin-top: 20px !important; }
+
+.mgb25 {
+  margin-bottom: 25px !important; }
+
+.mgt25 {
+  margin-top: 25px !important; }
+
+.mgb30 {
+  margin-bottom: 30px !important; }
+
+.mgt30 {
+  margin-top: 30px !important; }
+
+.mgb35 {
+  margin-bottom: 35px !important; }
+
+.mgt35 {
+  margin-top: 35px !important; }
+
+.mgb40 {
+  margin-bottom: 40px !important; }
+
+.mgt40 {
+  margin-top: 40px !important; }
+
+.mgb45 {
+  margin-bottom: 45px !important; }
+
+.mgt45 {
+  margin-top: 45px !important; }
+
+.mgb50 {
+  margin-bottom: 50px !important; }
+
+.mgt50 {
+  margin-top: 50px !important; }
+
+.mgb55 {
+  margin-bottom: 55px !important; }
+
+.mgt55 {
+  margin-top: 55px !important; }
+
+.mgb60 {
+  margin-bottom: 60px !important; }
+
+.mgt60 {
+  margin-top: 60px !important; }
+
+.mgb65 {
+  margin-bottom: 65px !important; }
+
+.mgt65 {
+  margin-top: 65px !important; }
+
+.mgb70 {
+  margin-bottom: 70px !important; }
+
+.mgt70 {
+  margin-top: 70px !important; }
+
+.mgb75 {
+  margin-bottom: 75px !important; }
+
+.mgt75 {
+  margin-top: 75px !important; }
+
+.mgb80 {
+  margin-bottom: 80px !important; }
+
+.mgt80 {
+  margin-top: 80px !important; }
+
+.mgb85 {
+  margin-bottom: 85px !important; }
+
+.mgt85 {
+  margin-top: 85px !important; }
+
+.mgb90 {
+  margin-bottom: 90px !important; }
+
+.mgt90 {
+  margin-top: 90px !important; }
+
+.mgb95 {
+  margin-bottom: 95px !important; }
+
+.mgt95 {
+  margin-top: 95px !important; }
+
+.mgb100 {
+  margin-bottom: 100px !important; }
+
+.mgt100 {
+  margin-top: 100px !important; }
+
+@-webkit-keyframes fadeout {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 1; } }
+
+@-moz-keyframes fadeout {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 1; } }
+
+@-o-keyframes fadeout {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 1; } }
+
+@keyframes fadeout {
+  0% {
+    opacity: 0; }
+  100% {
+    opacity: 1; } }
+
+.svg1 {
+  position: absolute;
+  -webkit-animation-delay: 2s;
+  -webkit-animation-duration: 2s;
+  -webkit-animation-name: fadeout;
+  -webkit-animation-fill-mode: forwards;
+  /* this prevents the animation from restarting! */
+  -moz-animation-delay: 2s;
+  -moz-animation-duration: 2s;
+  -moz-animation-name: fadeout;
+  -moz-animation-fill-mode: forwards;
+  /* this prevents the animation from restarting! */
+  -o-animation-delay: 2s;
+  -o-animation-duration: 2s;
+  -o-animation-name: fadeout;
+  -o-animation-fill-mode: forwards;
+  /* this prevents the animation from restarting! */
+  animation-delay: 2s;
+  animation-duration: 2s;
+  animation-name: fadeout;
+  animation-fill-mode: forwards;
+  /* this prevents the animation from restarting! */ }
+
 /*# sourceMappingURL=map/layout.css.map */

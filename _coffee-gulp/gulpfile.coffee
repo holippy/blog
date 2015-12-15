@@ -43,16 +43,16 @@ coffee
 
 gulp.task 'coffee', ()->
 	browserify
-		entries: ['_coffee/app.coffee']
+		entries: [
+			'_coffee/app.coffee'
+			'_coffee/_bg.coffee'
+		]
 		extensions: ['.coffee', '.js']
+
 	.transform 'coffeeify'
-	# .transform 'deamdify'
-	# .transform 'debowerify'
-	# .transform 'uglifyify'
 	.bundle()
-	# Pass desired file name to browserify with vinyl
+	.pipe plumber()
 	.pipe source 'app.js'
-	# Start piping stream to tasks!
 	.pipe gulp.dest 'dist/assets/js/'
 
 ###
