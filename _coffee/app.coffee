@@ -10,4 +10,4 @@ bgAnime = new window.BgAnime([
 		'/assets/svg/layer7.svg'
 	])
 
-bgAnime.svgLoad()
+#bgAnime.svgLoad()
