@@ -19,8 +19,8 @@ gulp.js用
 ###
 
 gulp.task 'coffee', ()->
-
-		gulp.src('_coffee-gulp/*.coffee')
+		gulp.src('_coffee/*.coffee')
+		.pipe plumber()
 		.pipe coffee()
 		.pipe gulp.dest('./')
 
@@ -28,32 +28,30 @@ gulp.task 'coffee', ()->
 browserify
 ###
 
-# gulp.task 'browserify', ()->
-# 		gulp.src('_js/*.js')
-# 		.pipe plumber()
-# 		.pipe browserify(
-# 			insertGlobals : true,
-# 			debug : !gulp.env.production
-# 		)
-# 		.pipe gulp.dest('dist/assets/js')
+gulp.task 'browserify', ()->
+		browserify
+			entries: ['_js/app.js']
+		.bundle()
+		.pipe source 'app.js'
+		.pipe gulp.dest 'dist/assets/js'
 
 ###
 coffee
 ###
 
-gulp.task 'coffee', ()->
-	browserify
-		entries: [
-			'_coffee/app.coffee'
-			'_coffee/_bg.coffee'
-		]
-		extensions: ['.coffee', '.js']
+# gulp.task 'coffee', ()->
+# 	browserify
+# 		entries: [
+# 			'_coffee/app.coffee'
+# 			'_coffee/_bg.coffee'
+# 		]
+# 		extensions: ['.coffee', '.js']
 
-	.transform 'coffeeify'
-	.bundle()
-	.pipe plumber()
-	.pipe source 'app.js'
-	.pipe gulp.dest 'dist/assets/js/'
+# 	.transform 'coffeeify'
+# 	.bundle()
+# 	.pipe plumber()
+# 	.pipe source 'app.js'
+# 	.pipe gulp.dest 'dist/assets/js/'
 
 ###
 sass
@@ -118,7 +116,10 @@ watchタスク　
 gulp.task 'watch', ()->
 	gulp.watch '_coffee/*.coffee', ['coffee']
 	gulp.watch '_sass/**/*.scss', ['sass']
+	gulp.watch '_js/**/*.js', ['browserify']
 	gulp.watch '_jade/**/*.jade', ['jade']
 	gulp.watch 'dist/**/*.html', ['reload']
+	gulp.watch 'dist/**/*.css', ['reload']
+	gulp.watch 'dist/**/*.js', ['reload']
 
 gulp.task 'default', ['connect', 'watch', 'coffee', 'sass', 'jade']

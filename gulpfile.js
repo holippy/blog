@@ -36,8 +36,8 @@
   gulp.js用
    */
 
-  gulp.task('gulpJS', function() {
-    return gulp.src('_coffee-gulp/*.coffee').pipe(coffee()).pipe(gulp.dest('./'));
+  gulp.task('coffee', function() {
+    return gulp.src('_coffee/*.coffee').pipe(plumber()).pipe(coffee()).pipe(gulp.dest('./'));
   });
 
 
@@ -45,17 +45,16 @@
   browserify
    */
 
+  gulp.task('browserify', function() {
+    return browserify({
+      entries: ['_js/app.js']
+    }).bundle().pipe(source('app.js')).pipe(gulp.dest('dist/assets/js'));
+  });
+
 
   /*
   coffee
    */
-
-  gulp.task('coffee', function() {
-    return browserify({
-      entries: ['_coffee/app.coffee', '_coffee/_bg.coffee'],
-      extensions: ['.coffee', '.js']
-    }).transform('coffeeify').bundle().pipe(plumber()).pipe(source('app.js')).pipe(gulp.dest('dist/assets/js/'));
-  });
 
 
   /*
@@ -120,11 +119,13 @@
    */
 
   gulp.task('watch', function() {
-    gulp.watch('_coffee-gulp/*.coffee', ['gulpJS']);
     gulp.watch('_coffee/*.coffee', ['coffee']);
     gulp.watch('_sass/**/*.scss', ['sass']);
+    gulp.watch('_js/**/*.js', ['browserify']);
     gulp.watch('_jade/**/*.jade', ['jade']);
-    return gulp.watch('dist/**/*.html', ['reload']);
+    gulp.watch('dist/**/*.html', ['reload']);
+    gulp.watch('dist/**/*.css', ['reload']);
+    return gulp.watch('dist/**/*.js', ['reload']);
   });
 
   gulp.task('default', ['connect', 'watch', 'coffee', 'sass', 'jade']);
