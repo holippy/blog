@@ -1,5 +1,5 @@
 
-window.BgAnime = function(data){
+var BgAnime = function(data){
   /*
   svgData 読み込むsvgデータのパスを配列で取得
   svgDataLength svnDataのlengthをキャッシュ
@@ -12,7 +12,7 @@ window.BgAnime = function(data){
   this.bgLayers = $('#bgLayers');
 }
 
-window.BgAnime.prototype = {
+BgAnime.prototype = {
 
   /*
   svgデータを先読み
@@ -63,3 +63,5 @@ window.BgAnime.prototype = {
     };
   }
 }
+
+module.exports = BgAnime;

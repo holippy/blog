@@ -1,5 +1,5 @@
 (function() {
-  var bower, browserify, coffee, concat, connect, filter, gulp, jade, minifyCss, plumber, rename, sass, source, sourcemaps, uglify;
+  var bower, browserify, coffee, concat, connect, filter, gulp, jade, minifyCss, plumber, reactify, rename, sass, source, sourcemaps, uglify;
 
   gulp = require('gulp');
 
@@ -31,6 +31,8 @@
 
   source = require('vinyl-source-stream');
 
+  reactify = require('reactify');
+
 
   /*
   gulp.js用
@@ -47,7 +49,8 @@
 
   gulp.task('browserify', function() {
     return browserify({
-      entries: ['_js/app.js']
+      entries: ['_js/app.js'],
+      transform: [reactify]
     }).bundle().pipe(source('app.js')).pipe(gulp.dest('dist/assets/js'));
   });
 
@@ -122,6 +125,7 @@
     gulp.watch('_coffee/*.coffee', ['coffee']);
     gulp.watch('_sass/**/*.scss', ['sass']);
     gulp.watch('_js/**/*.js', ['browserify']);
+    gulp.watch('_js/**/*.jsx', ['browserify']);
     gulp.watch('_jade/**/*.jade', ['jade']);
     gulp.watch('dist/**/*.html', ['reload']);
     gulp.watch('dist/**/*.css', ['reload']);

@@ -13,6 +13,7 @@ rename = require 'gulp-rename'
 uglify = require 'gulp-uglify'
 filter = require 'gulp-filter'
 source = require 'vinyl-source-stream'
+reactify = require 'reactify'
 
 ###
 gulp.js用
@@ -31,6 +32,7 @@ browserify
 gulp.task 'browserify', ()->
 		browserify
 			entries: ['_js/app.js']
+			transform: [reactify]
 		.bundle()
 		.pipe source 'app.js'
 		.pipe gulp.dest 'dist/assets/js'
@@ -117,6 +119,7 @@ gulp.task 'watch', ()->
 	gulp.watch '_coffee/*.coffee', ['coffee']
 	gulp.watch '_sass/**/*.scss', ['sass']
 	gulp.watch '_js/**/*.js', ['browserify']
+	gulp.watch '_js/**/*.jsx', ['browserify']
 	gulp.watch '_jade/**/*.jade', ['jade']
 	gulp.watch 'dist/**/*.html', ['reload']
 	gulp.watch 'dist/**/*.css', ['reload']
