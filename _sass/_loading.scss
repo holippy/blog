@@ -1,0 +1,30 @@
+#loading p{
+  margin-left: -15px;
+  margin-top: -15px;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  background: #d01c42;
+  z-index: 100;
+  &:nth-child(1){
+    @include animation( 0s, 1s, loading, linear, forwards, infinite );
+  }
+  &:nth-child(2){
+    @include animation( 0s, 1s, loading, linear, forwards, infinite );
+  }
+}
+
+@include keyframe(loading) {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0);
+  }
+}

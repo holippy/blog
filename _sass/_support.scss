@@ -1,0 +1,112 @@
+/*========================
+
+clearfix
+
+========================*/
+
+@mixin clearfix() {
+  & {
+    *zoom: 1;
+  }
+  &:before,
+  &:after {
+    content: "";
+    display: table;
+  }
+  &:after {
+    clear: both;
+  }
+}
+
+/*========================
+
+keyframe
+
+========================*/
+
+@mixin keyframe ($name) {
+    @-webkit-keyframes #{$name} {
+        @content;
+    }
+
+    @-moz-keyframes #{$name} {
+        @content;
+    }
+
+    @-o-keyframes #{$name} {
+        @content;
+    }
+
+    @keyframes #{$name} {
+        @content;
+    }
+}
+
+/*========================
+
+animation
+
+========================*/
+
+@mixin animation ($delay, $duration, $animation, $timing, $fill, $count) {
+    -webkit-animation-delay: $delay;
+    -webkit-animation-duration: $duration;
+    -webkit-animation-name: $animation;
+    -webkit-transition-timing-function: $timing;
+    -webkit-animation-fill-mode: $fill;
+    -webkit-animation-iteration-count: $count;
+
+    -moz-animation-delay: $delay;
+    -moz-animation-duration: $duration;
+    -moz-animation-name: $animation;
+    -moz-transition-timing-function: $timing;
+    -moz-animation-fill-mode: $fill;
+    -moz-animation-iteration-count: $count;
+
+    -o-animation-delay: $delay;
+    -o-animation-duration: $duration;
+    -o-animation-name: $animation;
+    -o-transition-timing-function: $timing;
+    -o-animation-fill-mode: $fill;
+    -o-animation-iteration-count: $count;
+
+    animation-delay: $delay;
+    animation-duration: $duration;
+    animation-name: $animation;
+    transition-timing-function: $timing;
+    animation-fill-mode: $fill;
+    animation-iteration-count: $count;
+}
+
+/*========================
+
+text align
+
+========================*/
+
+.ta-c{
+  text-align: center !important;
+}
+
+.ta-r{
+  text-align: right !important;
+}
+
+.ta-l{
+  text-align: left !important;
+}
+
+/*========================
+
+margin
+
+========================*/
+
+@for $i from 0 through 20 {
+  .mgb#{$i * 5} {
+    margin-bottom: #{$i * 5}px !important;
+  }
+  .mgt#{$i * 5} {
+    margin-top: #{$i * 5}px !important;
+  }
+}
