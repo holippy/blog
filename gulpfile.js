@@ -65,7 +65,12 @@
    */
 
   gulp.task('sass', function() {
-    return gulp.src('_sass/**/*.scss').pipe(plumber()).pipe(sourcemaps.init()).pipe(sass()).pipe(minifyCss()).pipe(sourcemaps.write('map')).pipe(gulp.dest('dist/assets/css/'));
+    return gulp.src('_sass/**/*.scss').pipe(plumber({
+      errorHandler: function(err) {
+        console.log(err.messageFormatted);
+        return this.emit('end');
+      }
+    })).pipe(sass()).pipe(sourcemaps.init()).pipe(minifyCss()).pipe(sourcemaps.write('map')).pipe(gulp.dest('dist/assets/css/'));
   });
 
 

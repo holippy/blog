@@ -1,0 +1,29 @@
+/*=====================================
+
+font
+
+=====================================*/
+
+@mixin Layout {
+
+  /*===========================
+  header
+  ===========================*/
+
+  .LyHead{
+    margin: 0 auto;
+    position: relative;
+    width: 1000px;
+    height: 130px;
+  }
+
+  .MdHead{
+    .mdLogo{
+      @include hide-text;
+      margin: 0 auto;
+      width: 90px;
+      height: 70px;
+      background: url( "/assets/svg/logo.svg" ) no-repeat;
+    }
+  }
+}

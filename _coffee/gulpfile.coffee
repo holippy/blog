@@ -61,9 +61,13 @@ sass
 
 gulp.task 'sass', ()->
 		gulp.src '_sass/**/*.scss'
-		.pipe plumber()
-		.pipe sourcemaps.init()
+		.pipe(plumber(
+			errorHandler: (err)->
+				console.log(err.messageFormatted);
+				this.emit('end');
+		))
 		.pipe sass()
+		.pipe sourcemaps.init()
 		.pipe minifyCss()
 		.pipe sourcemaps.write 'map'
 		.pipe gulp.dest 'dist/assets/css/'

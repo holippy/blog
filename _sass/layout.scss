@@ -1,16 +1,43 @@
 @charset "utf-8";
-@import "_reset";
-@import "app/assets/stylesheets/bourbon";
-@import "_support";
-@import "_loading";
-@import "_bg";
+@import "mixins/_reset";
+@import "mixins/_support";
+@import "bourbon/bourbon";
 
 /*=====================================
 
-iconフォント
+共通変数
 
 =====================================*/
 
-@import "_Font";
+$path-svg:"/assets/svg/";
 
-@include FontSetting;
+/*=====================================
+
+フォント
+
+=====================================*/
+
+@import "mixins/_Font";
+
+@include WebFont;
+@include IconFont;
+
+/*=====================================
+
+共通スタイル
+
+=====================================*/
+
+@import "mixins/_Setting";
+
+@include Setting;
+
+/*=====================================
+
+共通レイアウト
+
+=====================================*/
+
+@import "mixins/_Common";
+
+@include Layout;
