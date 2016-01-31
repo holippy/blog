@@ -7,7 +7,17 @@ setting
 @mixin Setting {
   body{
     font-family: 'noto-regular';
+    font-size: 14px;
     line-height: 1.5;
+  }
+
+  a{
+    color: $color-main;
+    text-decoration: none;
+
+    &:hover{
+      text-decoration: underline;
+    }
   }
   
 }
