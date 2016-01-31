@@ -1,7 +1,16 @@
 @charset "utf-8";
 @import "_reset";
+@import "app/assets/stylesheets/bourbon";
 @import "_support";
 @import "_loading";
 @import "_bg";
-@import "_structure";
 
+/*=====================================
+
+iconフォント
+
+=====================================*/
+
+@import "_Font";
+
+@include FontSetting;
