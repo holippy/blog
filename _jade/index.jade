@@ -24,14 +24,22 @@ body
       p.mdLogo Indoor Living
       nav.MdGNV
         ul
-          li.music
+          li
+            span.icon-icon05
+            a(href="#") About
+          li
+            span.icon-icon05
             a(href="#") Music
-          li.camera
+          li
+            span.icon-icon05
             a(href="#") Camera
-          li.Interior
+          li
+            span.icon-icon05
             a(href="#") Interior
 
-p.icon_camera
+      form.MdSearch(method="post")(action="#")
+        input(type="text")
+        button.icon-icon_search(type="submit")
 
 
   script(src="/assets/js/lib.js")

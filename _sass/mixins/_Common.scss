@@ -43,12 +43,36 @@ font
         margin-right: 0;
       }
 
-      &:before{
-        @extend .icon-circle;
-        @include position(absolute, 0 null null 0);
+      span:before{
+        @include position(absolute, 2px null null 5px);
         color: $color-main;
-
+        font-size: 15px;
       }
     }
+  }
+
+  .MdSearch{
+    @include position(absolute, null 20px 20px null);
+
+
+    input {
+      @include border-top-radius(5px);
+      @include border-bottom-radius(5px);
+      border: none;
+      padding: 2px 30px 2px 5px;
+      background: $color-main;
+      color: #FFF;
+      width: 200px;
+      font-size: 14px;
+    }
+
+    button{
+      border: none;
+      background: none;
+      color: #FFF;
+      font-size: 22px;
+      @include position(absolute, -3px -3px null null);
+    }
+
   }
 }
