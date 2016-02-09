@@ -12,6 +12,7 @@ browserify = require 'browserify'
 rename = require 'gulp-rename'
 uglify = require 'gulp-uglify'
 filter = require 'gulp-filter'
+babelify = require("babelify")
 source = require 'vinyl-source-stream'
 reactify = require 'reactify'
 
@@ -29,13 +30,27 @@ gulp.task 'coffee', ()->
 browserify
 ###
 
-gulp.task 'browserify', ()->
-		browserify
-			entries: ['_js/app.js']
-			transform: [reactify]
+# gulp.task 'browserify', ()->
+# 		browserify
+# 			entries: ['_js/app.js']
+# 			transform: [reactify]
+# 		.bundle()
+# 		.pipe source 'app.js'
+# 		.pipe gulp.dest 'dist/assets/js'
+
+gulp.task 'babelify', ()->
+	browserify(
+			entries: "_js/app.js"
+			extensions: [".js"]
+		)
+		.transform(babelify)
 		.bundle()
-		.pipe source 'app.js'
-		.pipe gulp.dest 'dist/assets/js'
+		.on("error", (err)->
+			console.log("Error : " + err.message);
+			this.emit("end");
+		)
+		.pipe(source("app.js"))
+		.pipe(gulp.dest("./dist/assets/js/"));
 
 ###
 coffee
@@ -122,8 +137,8 @@ watchタスク　
 gulp.task 'watch', ()->
 	gulp.watch '_coffee/*.coffee', ['coffee']
 	gulp.watch '_sass/**/*.scss', ['sass']
-	gulp.watch '_js/**/*.js', ['browserify']
-	gulp.watch '_js/**/*.jsx', ['browserify']
+	gulp.watch '_js/**/*.js', ['babelify']
+	gulp.watch '_js/**/*.jsx', ['babelify']
 	gulp.watch '_jade/**/*.jade', ['jade']
 	gulp.watch 'dist/**/*.html', ['reload']
 	gulp.watch 'dist/**/*.css', ['reload']

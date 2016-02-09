@@ -1,5 +1,5 @@
 (function() {
-  var bower, browserify, coffee, concat, connect, filter, gulp, jade, minifyCss, plumber, reactify, rename, sass, source, sourcemaps, uglify;
+  var babelify, bower, browserify, coffee, concat, connect, filter, gulp, jade, minifyCss, plumber, reactify, rename, sass, source, sourcemaps, uglify;
 
   gulp = require('gulp');
 
@@ -29,6 +29,8 @@
 
   filter = require('gulp-filter');
 
+  babelify = require("babelify");
+
   source = require('vinyl-source-stream');
 
   reactify = require('reactify');
@@ -47,11 +49,14 @@
   browserify
    */
 
-  gulp.task('browserify', function() {
+  gulp.task('babelify', function() {
     return browserify({
-      entries: ['_js/app.js'],
-      transform: [reactify]
-    }).bundle().pipe(source('app.js')).pipe(gulp.dest('dist/assets/js'));
+      entries: "_js/app.js",
+      extensions: [".js"]
+    }).transform(babelify).bundle().on("error", function(err) {
+      console.log("Error : " + err.message);
+      return this.emit("end");
+    }).pipe(source("app.js")).pipe(gulp.dest("./dist/assets/js/"));
   });
 
 
@@ -129,8 +134,8 @@
   gulp.task('watch', function() {
     gulp.watch('_coffee/*.coffee', ['coffee']);
     gulp.watch('_sass/**/*.scss', ['sass']);
-    gulp.watch('_js/**/*.js', ['browserify']);
-    gulp.watch('_js/**/*.jsx', ['browserify']);
+    gulp.watch('_js/**/*.js', ['babelify']);
+    gulp.watch('_js/**/*.jsx', ['babelify']);
     gulp.watch('_jade/**/*.jade', ['jade']);
     gulp.watch('dist/**/*.html', ['reload']);
     gulp.watch('dist/**/*.css', ['reload']);

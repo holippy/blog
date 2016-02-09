@@ -28,6 +28,12 @@ contents
 var articleJSX = require('./_article.jsx');
 var menuJSX = require('./_menu.jsx');
 
+var aa = ()=>{
+  const num = 0;
+  let string = 'aa';
+  var numnum = 10;
+}
+
 //var Userbox= require('./demo/userbox.jsx');
 
 
