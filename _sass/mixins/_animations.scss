@@ -1,0 +1,159 @@
+/*=====================================
+
+animation
+
+=====================================*/
+
+@include keyframes(slide01) {
+  from {
+    opacity: 1;
+    right: -100px;
+  }
+  to {
+    opacity: 1;
+    right: 15px;
+  }
+}
+
+@include keyframes(scale01) {
+  from {
+    opacity: 0;
+    @include transform(scale(0));
+  }
+  to {
+    opacity: 1;
+    @include transform(scale(1));
+  }
+}
+
+@include keyframes(bg01) {
+  from {
+    top: 0;
+    left: 0;
+    width: 810px;
+    height: 540px;
+  }
+  to {
+    top: -30px;
+    left: -45px;
+    width: 900px;
+    height: 600px;
+  }
+}
+
+@include keyframes(scale02) {
+  from {
+    opacity: 1;
+    @include transform(scale(1));
+  }
+  to {
+    opacity: 0;
+    @include transform(scale(0));
+  }
+}
+
+@include keyframes(bg02) {
+  from {
+    top: -30px;
+    left: -45px;
+    width: 900px;
+    height: 600px;
+  }
+  to {
+    top: 0;
+    left: 0;
+    width: 810px;
+    height: 540px;
+  }
+}
+
+/*===========================
+
+  logo
+
+===========================*/
+
+@include keyframes(logo01) {
+  from {
+    top: -70px;
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    top: -25px;
+    opacity: 1;
+    transform: scale(0.7);
+  }
+}
+
+/*===========================
+
+  cntsThumb01
+
+===========================*/
+
+@include keyframes(cntsThumb01) {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+@include keyframes(cntsThumb02) {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@include keyframes(cntsThumbIcn01) {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(120deg);
+  }
+}
+
+
+@include keyframes(cntsThumbIcn02) {
+  from {
+    transform: rotate(120deg);
+  }
+  to {
+    transform: rotate(0);
+  }
+}
+
+@include keyframes(shadow01) {
+  from {
+    box-shadow:rgba(0, 0, 0, 0.3) 0px 0px 0px 0px;
+    -webkit-box-shadow:rgba(0, 0, 0, 0.3) 0px 0px 0px 0px;
+    -moz-box-shadow:rgba(0, 0, 0, 0.3) 0px 0px 0px 0px;
+  }
+  to {
+    box-shadow:rgba(0, 0, 0, 0.3) 0px 0px 6px 3px;
+    -webkit-box-shadow:rgba(0, 0, 0, 0.3) 0px 0px 6px 3px;
+    -moz-box-shadow:rgba(0, 0, 0, 0.3) 0px 0px 6px 3px;
+  }
+}
+
+@include keyframes(shadow02) {
+  from {
+    box-shadow:rgba(0, 0, 0, 0.3) 0px 0px 6px 3px;
+    -webkit-box-shadow:rgba(0, 0, 0, 0.3) 0px 0px 6px 3px;
+    -moz-box-shadow:rgba(0, 0, 0, 0.3) 0px 0px 6px 3px;
+  }
+  to {
+    box-shadow:rgba(0, 0, 0, 0.3) 0px 0px 0px 0px;
+    -webkit-box-shadow:rgba(0, 0, 0, 0.3) 0px 0px 0px 0px;
+    -moz-box-shadow:rgba(0, 0, 0, 0.3) 0px 0px 0px 0px;
+  }
+}

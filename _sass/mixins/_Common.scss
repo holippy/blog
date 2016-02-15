@@ -1,35 +1,61 @@
 /*=====================================
 
-font
+Layout
 
 =====================================*/
 
 @mixin Layout {
 
   /*===========================
-  header
+  LyHead
   ===========================*/
 
   .LyHead{
+    padding-top: 20px;
     border-bottom: solid 5px $color-main;
     position: relative;
     width: 100%;
     height: 130px;
+    background: #FFF;
+
+    &.ExFixed{
+      height: 40px;
+      position: fixed;
+      top: 0;
+      z-index: 10;
+    }
   }
 
   .MdHead{
     margin: 0 auto;
     width: 1000px;
+    position: relative;
     .mdLogo{
       @include hide-text;
-      margin: 20px auto;
+      margin-top: 0;
+      margin-right: auto;
+      margin-bottom: 20px;
+      margin-left: auto;
       width: 90px;
       height: 70px;
       background: url( "/assets/svg/logo.svg" ) no-repeat;
+      background-size: 100% 100%;
     }
   }
 
+    &.ExFixed{
+      .mdLogo{
+        @include animation-name(logo01);
+        @include animation-duration(0.5s);
+        @include animation-timing-function(ease);
+        @include animation-iteration-count(1);
+        @include animation-fill-mode(forwards);
+        @include position(absolute, 0 null null 0);
+      }
+    }
+
   .MdGNV{
+    padding-bottom: 20px;
     text-align: center;
     li{
       display: inline-block;
@@ -52,12 +78,11 @@ font
   }
 
   .MdSearch{
-    @include position(absolute, null 20px 20px null);
-
+    @include position(absolute, null 0 20px null);
 
     input {
-      @include border-top-radius(5px);
-      @include border-bottom-radius(5px);
+      @include border-top-radius(3px);
+      @include border-bottom-radius(3px);
       border: none;
       padding: 2px 30px 2px 5px;
       background: $color-main;
@@ -74,5 +99,255 @@ font
       @include position(absolute, -3px -3px null null);
     }
 
+  }
+
+  /*===========================
+  LyCntsList
+  ===========================*/
+
+  .LyCntsList{
+    @include clearfix;
+    margin: 26px auto 0 auto;
+    width: 1000px;
+  }
+
+  /*===========================
+  LyFtr
+  ===========================*/
+
+  .LyFtr{
+    padding: 50px 0 80px 0;
+    width: 100%;
+    background: $color-main;
+    box-sizing: border-box;
+
+    .mdFtrCopyright{
+      color: #FFF;
+      text-align: center;
+    }
+
+  }
+}
+
+/*=====================================
+
+Common Modules
+
+=====================================*/
+
+/*=====================================
+
+pager
+
+=====================================*/
+
+@mixin MdPager01{
+  .MdPager01{
+    padding:10px 0 35px 0;
+    text-align: center;
+
+    li{
+      margin: 0 5px;
+      display: inline-block;
+    }
+
+    a{
+      @include border-top-radius(50%);
+      @include border-bottom-radius(50%);
+      border: solid 3px $color-main;
+
+      display: inline-block;
+      width: 30px;
+      height: 30px;
+      background: $color-main;
+      color: #FFF;
+      box-sizing: border-box;
+
+      &:hover{
+        color: $color-main;
+        text-decoration: none;
+        background: #FFF;
+      }
+
+      &.stay{
+        color: $color-main;
+        text-decoration: none;
+        background: #FFF;
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+/*=====================================
+
+index layout
+
+=====================================*/
+
+@mixin MdCntsThumb01{
+  .MdCntsThumb01{
+    @include border-top-radius(5px);
+    @include border-bottom-radius(5px);
+    margin-right: 26px;
+    margin-bottom: 26px;
+    border: solid 5px $color-main;
+    float: left;
+    width: 304px;
+
+    a{
+      display: block;
+      position: relative;
+      &:hover{
+        text-decoration: none;
+      }
+    }
+
+    &:nth-child(3n){
+      margin-right: 0;
+    }
+
+    .mdCntsThumb01Img{
+      border-bottom: solid 5px $color-main;
+      img{
+        width: 100%;
+        vertical-align: bottom;
+      }
+    }
+
+    .mdCntsThumb01InfoClm{
+      @include clearfix;
+      border-bottom: solid 5px $color-main;
+      width: 100%;
+
+      .mdCntsThumb01Clm01{
+        padding: 5px;
+        float: left;
+        width: 50%;
+        border-right: solid 5px $color-main;
+        box-sizing: border-box;
+        text-align: center;
+      }
+      .mdCntsThumb01Clm02{
+        @extend .mdCntsThumb01Clm01;
+        border-right: none;
+      }
+
+      .mdCntsThumb01Cat{
+        @include border-top-radius(5px);
+        @include border-bottom-radius(5px);
+        padding: 2px 0;
+        display: inline-block;
+        width: 100px;
+        background: $color-main;
+        color: #FFF;
+        font-size: 12px;
+      }
+      .mdCntsThumb01Date{
+        padding-top: 2px;
+        color: $color-default;
+      }
+    }
+
+    .mdCntsThumb01InfoInBox{
+      padding: 10px 10px 35px 10px;
+    }
+
+    .mdCntsThumb01Ttl{
+      margin-bottom: 10px;
+      font-size: 18px;
+      line-height: 1.2;
+    }
+
+    .mdCntsThumb01Txt{
+      color: $color-default;
+    }
+
+    .mdCntsThumb01Icn{
+      padding-top: 5px;
+      background: $color-main;
+    }
+    .mdCntsThumb01Icn{
+      @include position(absolute, null null 0 null);
+      width: 100%;
+      text-align: center;
+      z-index: 6;
+      span{
+        @include border-top-radius(50%);
+        @include border-bottom-radius(50%);
+        display: inline-block;
+        background: #FFF;
+
+        &:before{
+          margin-right: -1px;
+          padding-left: 1px;
+        }
+      }
+    }
+
+    &.ExHover01{
+      @include animation-name(shadow01);
+      @include animation-duration(0.2s);
+      @include animation-timing-function(ease);
+      @include animation-iteration-count(1);
+      @include animation-fill-mode(forwards);
+    }
+
+    &.ExHover02{
+      @include animation-name(shadow02);
+      @include animation-duration(0.2s);
+      @include animation-timing-function(ease);
+      @include animation-iteration-count(1);
+      @include animation-fill-mode(forwards);
+    }
+    &.ExHover01 .icon-icon04{
+      @include animation-name(cntsThumbIcn01);
+      @include animation-duration(0.5s);
+      @include animation-timing-function(ease);
+      @include animation-iteration-count(1);
+      @include animation-fill-mode(forwards);
+    }
+    &.ExHover02 .icon-icon04{
+      @include animation-name(cntsThumbIcn02);
+      @include animation-duration(0.5s);
+      @include animation-timing-function(ease);
+      @include animation-iteration-count(1);
+      @include animation-fill-mode(forwards);
+    }
+    .mdCntsThumb01Cover{
+      display: none;
+      @include position(absolute, 0 null 0 null);
+      width: 100%;
+      height: 100%;
+      z-index: 5;
+      background: rgba(256, 83, 63, 0.5);
+
+      .mdCntsThumb01Txt{
+        @include border-top-radius(20px);
+        @include border-bottom-radius(20px);
+        margin: 100px auto 0 auto;
+        color: $color-main;
+        padding: 5px;
+        width: 100px;
+        background: #FFF;
+        text-align: center;
+      }
+    }
+    &.ExHover01 .mdCntsThumb01Cover{
+      display: block;
+      @include animation-name(cntsThumb01);
+      @include animation-duration(0.4s);
+      @include animation-timing-function(ease);
+      @include animation-iteration-count(1);
+      @include animation-fill-mode(forwards);
+    }
+    &.ExHover02 .mdCntsThumb01Cover{
+      display: block;
+      @include animation-name(cntsThumb02);
+      @include animation-duration(0.2s);
+      @include animation-timing-function(ease);
+      @include animation-iteration-count(1);
+      @include animation-fill-mode(forwards);
+    }
   }
 }

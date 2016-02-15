@@ -20,19 +20,58 @@ var bgAnime = new bg([
 
 /*===========================
 
+app
+
+===========================*/
+
+var app = app || {};
+
+
+/*===========================
+
+slider
+
+===========================*/
+
+var slider = require('./pageFncs/slider.js');
+
+slider.init();
+
+/*===========================
+
+header
+
+===========================*/
+
+var header = require('./pageFncs/header.js');
+
+header.init();
+
+/*===========================
+
+cntsThumb
+
+===========================*/
+
+var cntsThumb = require('./pageFncs/cntsThumb.js');
+
+cntsThumb.init();
+
+/*===========================
+
 contents
 
 ===========================*/
 
 //window.mixin = require('./_mixin.js');
-var articleJSX = require('./_article.jsx');
-var menuJSX = require('./_menu.jsx');
+// var articleJSX = require('./_article.jsx');
+// var menuJSX = require('./_menu.jsx');
 
-var aa = ()=>{
-  const num = 0;
-  let string = 'aa';
-  var numnum = 10;
-}
+// var aa = ()=>{
+//   const num = 0;
+//   let string = 'aa';
+//   var numnum = 10;
+// }
 
 //var Userbox= require('./demo/userbox.jsx');
 

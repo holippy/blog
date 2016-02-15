@@ -10,6 +10,7 @@
 =====================================*/
 
 $color-main: #ff533f;
+$color-default: #333;
 $path-svg:"/assets/svg/";
 
 /*=====================================
@@ -18,7 +19,7 @@ $path-svg:"/assets/svg/";
 
 =====================================*/
 
-@import "mixins/_Font";
+@import "mixins/_font";
 
 @include WebFont;
 @include IconFont;
@@ -29,9 +30,17 @@ $path-svg:"/assets/svg/";
 
 =====================================*/
 
-@import "mixins/_Setting";
+@import "mixins/_setting";
 
 @include Setting;
+
+/*=====================================
+
+アニメーション
+
+=====================================*/
+
+@import "mixins/_animations";
 
 /*=====================================
 
@@ -39,6 +48,18 @@ $path-svg:"/assets/svg/";
 
 =====================================*/
 
-@import "mixins/_Common";
+@import "mixins/_common";
 
 @include Layout;
+@include MdPager01;
+
+/*=====================================
+
+トップページ
+
+=====================================*/
+
+@import "mixins/_top";
+
+@include MdSlideContianer;
+@include MdCntsThumb01;
