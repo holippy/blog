@@ -17,90 +17,90 @@ html(lang="ja")
     meta(property="fb:app_id", content="")
     link(rel="stylesheet" href="/assets/css/layout.css")
 
-body
+  body
 
-.LyHead
-  header.MdHead
-    p.mdLogo Indoor Living
-    nav.MdGNV
-      ul
-        li
-          span.icon-icon05
-          a(href="#") About
-        li
-          span.icon-icon05
-          a(href="#") Music
-        li
-          span.icon-icon05
-          a(href="#") Camera
-        li
-          span.icon-icon05
-          a(href="#") Interior
+    .LyHead
+      header.MdHead
+        p.mdLogo Indoor Living
+        nav.MdGNV
+          ul
+            li
+              span.icon-icon05
+              a(href="#") About
+            li
+              span.icon-icon05
+              a(href="#") Music
+            li
+              span.icon-icon05
+              a(href="#") Camera
+            li
+              span.icon-icon05
+              a(href="#") Interior
 
-    form.MdSearch(method="post" action="#")
-      input(type="text")
-      button.icon-icon_search(type="submit")
+        form.MdSearch(method="post" action="#")
+          input(type="text")
+          button.icon-icon_search(type="submit")
 
-div.MdSlideContianer
+    div.MdSlideContianer
 
-  ul.mdSlideListImg
-    each val in ['DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg', 'DSCF2559.jpg']
+      ul.mdSlideListImg
+        each val in ['DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg', 'DSCF2559.jpg']
+          li
+            - var imgPath = '/assets/img/slide/'+val
+            a(href="#")
+              p.mdSlideCat Music
+              p.mdSlideTtl
+                span タイトルタイトルタイトルタイトルタイトルタイトル
+              p.mdSlideImg
+                img(src='#{imgPath}')
+
+      - var i = 5
+      ul.mdSlideListPager
+        while i--
+          li
+            a.icon-icon01(href="#")
+
+      ul.mdSlideListBtn
+        li.mdSlideListBtnBack
+          a.icon-icon02(href="#")
+        li.mdSlideListBtnNext
+          a.icon-icon04(href="#")
+
+    .LyCntsList
+      each val in ['DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg','DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg','DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg',]
+        section.MdCntsThumb01
+          a(href="#")
+            p.mdCntsThumb01Img
+              - var imgPath = '/assets/img/slide/'+val
+              img(src='#{imgPath}')
+            div.mdCntsThumb01InfoClm
+              div.mdCntsThumb01Clm01
+                p.mdCntsThumb01Cat Music
+              div.mdCntsThumb01Clm02
+                p.mdCntsThumb01Date 2016/02/01
+            div.mdCntsThumb01InfoInBox
+              h2.mdCntsThumb01Ttl タイトルタイトルタイトルタイトルタイトル
+              p.mdCntsThumb01Txt テキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
+            p.mdCntsThumb01Icn
+              span.icon-icon04
+            div.mdCntsThumb01Cover
+              p.mdCntsThumb01Txt Read More
+
+    ul.MdPager01
       li
-        - var imgPath = '/assets/img/slide/'+val
-        a(href="#")
-          p.mdSlideCat Music
-          p.mdSlideTtl
-            span タイトルタイトルタイトルタイトルタイトルタイトル
-          p.mdSlideImg
-            img(src='#{imgPath}')
-
-  - var i = 5
-  ul.mdSlideListPager
-    while i--
+        a.stay(href="#") 1
       li
-        a.icon-icon01(href="#")
+        a(href="#") 2
+      li
+        a(href="#") 3
+      li
+        a(href="#") 4
+      li
+        a(href="#") 5
 
-  ul.mdSlideListBtn
-    li.mdSlideListBtnBack
-      a.icon-icon02(href="#")
-    li.mdSlideListBtnNext
-      a.icon-icon04(href="#")
+    .LyFtr
+      footer.MdFtr
+        p.mdFtrCopyright Copyright &copy; 2015 horiuchi. All right reserved.
 
-.LyCntsList
-  each val in ['DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg','DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg','DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg',]
-    section.MdCntsThumb01
-      a(href="#")
-        p.mdCntsThumb01Img
-          - var imgPath = '/assets/img/slide/'+val
-          img(src='#{imgPath}')
-        div.mdCntsThumb01InfoClm
-          div.mdCntsThumb01Clm01
-            p.mdCntsThumb01Cat Music
-          div.mdCntsThumb01Clm02
-            p.mdCntsThumb01Date 2016/02/01
-        div.mdCntsThumb01InfoInBox
-          h2.mdCntsThumb01Ttl タイトルタイトルタイトルタイトルタイトル
-          p.mdCntsThumb01Txt テキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
-        p.mdCntsThumb01Icn
-          span.icon-icon04
-        div.mdCntsThumb01Cover
-          p.mdCntsThumb01Txt Read More
-
-ul.MdPager01
-  li
-    a.stay(href="#") 1
-  li
-    a(href="#") 2
-  li
-    a(href="#") 3
-  li
-    a(href="#") 4
-  li
-    a(href="#") 5
-
-.LyFtr
-  footer.MdFtr
-    p.mdFtrCopyright Copyright &copy; 2015 horiuchi. All right reserved.
-
-script(src="/assets/js/lib.js")
-script(src="/assets/js/app.js")
+    script(src="/assets/js/lib.js")
+    script(src="/assets/js/app.js")
