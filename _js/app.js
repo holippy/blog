@@ -33,8 +33,9 @@ react
 
 ===========================*/
 
+var storeArticle = require('./react/store-article.js');
 var compArticleList = require('./react/comp-articleList.jsx');
-var storeArticleList = require('./react/store-articleList.js');
+var compGnav = require('./react/comp-gnav.jsx');
 
 
 /*===========================

@@ -95,8 +95,9 @@ react
 
 ===========================*/
 
+var storeArticle = require('./react/store-article.js');
 var compArticleList = require('./react/comp-articleList.jsx');
-var storeArticleList = require('./react/store-articleList.js');
+var compGnav = require('./react/comp-gnav.jsx');
 
 /*===========================
 
@@ -128,7 +129,7 @@ var cntsThumb = require('./pageFncs/cntsThumb.js');
 
 cntsThumb.init();
 
-},{"./_bg.js":1,"./pageFncs/cntsThumb.js":3,"./pageFncs/header.js":4,"./pageFncs/slider.js":5,"./react/comp-articleList.jsx":6,"./react/store-articleList.js":7}],3:[function(require,module,exports){
+},{"./_bg.js":1,"./pageFncs/cntsThumb.js":3,"./pageFncs/header.js":4,"./pageFncs/slider.js":5,"./react/comp-articleList.jsx":6,"./react/comp-gnav.jsx":7,"./react/store-article.js":8}],3:[function(require,module,exports){
 'use strict';
 
 var app = app || {};
@@ -453,31 +454,43 @@ module.exports = app.slider;
 },{}],6:[function(require,module,exports){
 'use strict';
 
-var ModArticle = require('./store-articleList');
+var Store = require('./store-article');
 
 var Article = React.createClass({
   displayName: 'Article',
-
-
+  getInitialState: function getInitialState() {
+    return {
+      page: 1,
+      data: []
+    };
+  },
   componentWillMount: function componentWillMount() {
-    ModArticle.storeData.addSubscribe({ callback: undefined.dataloaded });
+    Store.addSubscribe({ callback: this.dataloaded });
+    this.actionCreator();
   },
   actionCreator: function actionCreator() {
-    ModArticle.dispatcher.action.create({
+    Store.dispatcher.action.create({
       actionType: 'latest',
       page: 1,
       callback: this.dataloaded
     });
   },
   dataloaded: function dataloaded(data) {
-    console.log('article' + data);
+    if (Store.article.data) {
+      this.replaceState({ data: Store.article.data });
+    }
   },
   render: function render() {
-    return React.createElement(
-      'p',
-      { onClick: this.actionCreator },
-      'text text'
-    );
+
+    if (this.state.data.length === 0) {
+      return false;
+    } else {
+      return React.createElement(
+        'p',
+        { onClick: this.actionCreator },
+        'text text'
+      );
+    }
   }
 });
 
@@ -485,31 +498,95 @@ ReactDOM.render(React.createElement(Article, null), document.getElementById('exa
 
 module.exports = Article;
 
-},{"./store-articleList":7}],7:[function(require,module,exports){
+},{"./store-article":8}],7:[function(require,module,exports){
+'use strict';
+
+var Store = require('./store-article');
+
+var Gnav = React.createClass({
+  displayName: 'Gnav',
+  getInitialState: function getInitialState() {
+    return {
+      data: [],
+      view: false
+    };
+  },
+  componentWillMount: function componentWillMount() {
+    Store.addSubscribe({ callback: this.dataloaded });
+    this.actionCreator();
+  },
+  actionCreator: function actionCreator() {
+    Store.dispatcher.action.create({
+      actionType: 'gnav',
+      callback: this.dataloaded
+    });
+  },
+  dataloaded: function dataloaded(data) {
+    if (!this.state.view) {
+      this.replaceState({
+        data: Store.navi.data,
+        view: true
+      });
+    }
+  },
+  render: function render() {
+
+    if (!this.state.view) {
+      return false;
+    } else {
+      var lists = this.state.data.map(function (res) {
+
+        return React.createElement(
+          'li',
+          { key: res.ID },
+          React.createElement('span', { className: 'icon-icon05' }),
+          React.createElement(
+            'a',
+            { href: res.slug },
+            res.catName
+          )
+        );
+      });
+      return React.createElement(
+        'ul',
+        null,
+        lists
+      );
+    }
+  }
+});
+
+ReactDOM.render(React.createElement(Gnav, null), document.getElementById('Gnav'));
+
+module.exports = Gnav;
+
+},{"./store-article":8}],8:[function(require,module,exports){
 'use strict';
 
 var Dispatcher = require('flux').Dispatcher;
 
-var ModArticle = {};
+var Store = {};
 
-ModArticle.dispatcher = new Dispatcher();
-ModArticle.storeData = {
+Store.dispatcher = new Dispatcher();
+
+//sortData定義
+Store.article = {
   data: null,
   subscriber: []
 };
-ModArticle.storePager = { data: null };
 
-ModArticle.dispatcher.action = {
-  dispatch: function dispatch(payload, data) {
-    ModArticle.dispatcher.dispatch({
-      actionType: payload.actionType,
-      page: payload.page,
-      data: data,
-      callback: payload.callback
-    });
-  },
+//sortData定義
+Store.navi = {
+  data: null,
+  subscriber: []
+};
+
+//subscriber用配列定義
+Store.dispatcher.subscriber = [];
+
+Store.dispatcher.action = {
   create: function create(payload) {
-    var that = this;
+
     if (payload.actionType === 'latest') {
       var xhr = $.ajax({
         url: 'http://beautifulday.sakura.tv/wp/',
@@ -521,11 +598,14 @@ ModArticle.dispatcher.action = {
       });
 
       xhr.done(function (data) {
-        that.dispatch(payload, data);
+        Store.dispatcher.dispatch({
+          payload: payload,
+          data: data
+        });
       });
-    } else if (payload.actionType === 'navi') {
+    } else if (payload.actionType === 'gnav') {
       var xhr = $.ajax({
-        url: 'http://beautifulday.sakura.tv/wp/?page_id=37',
+        url: 'http://beautifulday.sakura.tv/wp/catlist/',
         type: 'GET',
         crossDomain: true,
         cache: false,
@@ -534,40 +614,50 @@ ModArticle.dispatcher.action = {
       });
 
       xhr.done(function (data) {
-        that.dispatch(payload, data);
+        Store.dispatcher.dispatch({
+          payload: payload,
+          data: data
+        });
       });
     }
   }
 };
 
-// ModArticle.dispatcher.register(function(payload) {
-//   console.log(payload);
-// });
-
-ModArticle.storeData.addSubscribe = function (callback) {
-  ModArticle.storeData.subscriber.push(callback.callback);
+Store.addSubscribe = function (callback) {
+  Store.article.subscriber.push(callback.callback);
 };
 
-ModArticle.storeData.publish = function () {
-  for (var i = 0; i < ModArticle.storeData.subscriber.length; i++) {
-    ModArticle.storeData.subscriber[i]();
+Store.publish = function () {
+  for (var i = 0; i < Store.article.subscriber.length; i++) {
+    Store.article.subscriber[i]();
   };
 };
 
-ModArticle.storeData.dispatchToken = ModArticle.dispatcher.register(function (payload) {
-  //ModArticle.dispatcher.waitFor([ModArticle.storePager.dispatchToken]);
-  console.log('article' + ':' + payload.data);
-  //ModArticle.storeData.update();
+Store.article.dispatchToken = Store.dispatcher.register(function (res) {
+
+  if (res.payload.actionType === 'latest') {
+
+    Store.article.data = res.data;
+
+    console.log(res.payload.actionType);
+  }
 });
 
-ModArticle.storePager.dispatchToken = ModArticle.dispatcher.register(function (payload) {
-  ModArticle.dispatcher.waitFor([ModArticle.storeData.dispatchToken]);
-  console.log('pager' + ':' + payload.data);
+Store.navi.dispatchToken = Store.dispatcher.register(function (res) {
+
+  if (res.payload.actionType === 'gnav') {
+
+    Store.dispatcher.waitFor([Store.article.dispatchToken]);
+    Store.navi.data = res.data;
+
+    console.log(res.payload.actionType);
+    Store.publish();
+  }
 });
 
-module.exports = ModArticle;
+module.exports = Store;
 
-},{"flux":9}],8:[function(require,module,exports){
+},{"flux":10}],9:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -619,7 +709,7 @@ var invariant = function (condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 }).call(this,require('_process'))
-},{"_process":11}],9:[function(require,module,exports){
+},{"_process":12}],10:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -631,7 +721,7 @@ module.exports = invariant;
 
 module.exports.Dispatcher = require('./lib/Dispatcher');
 
-},{"./lib/Dispatcher":10}],10:[function(require,module,exports){
+},{"./lib/Dispatcher":11}],11:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
@@ -865,7 +955,7 @@ var Dispatcher = (function () {
 
 module.exports = Dispatcher;
 }).call(this,require('_process'))
-},{"_process":11,"fbjs/lib/invariant":8}],11:[function(require,module,exports){
+},{"_process":12,"fbjs/lib/invariant":9}],12:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
