@@ -29,6 +29,16 @@ var app = app || {};
 
 /*===========================
 
+react
+
+===========================*/
+
+var compArticleList = require('./react/comp-articleList.jsx');
+var storeArticleList = require('./react/store-articleList.js');
+
+
+/*===========================
+
 slider
 
 ===========================*/

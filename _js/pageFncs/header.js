@@ -10,8 +10,7 @@ app.header = {
     this.eventSet();
   },
   headerControl(scrollTop){
-    console.log(scrollTop);
-
+    
     var size = ( 100 - (scrollTop / 90 * 100) ) / 100,
         mgb = 20 * ( 100 - (scrollTop / 90 * 100) ) / 100,
         width = this.logoWidth * ( 100 - (scrollTop / 90 * 100) ) / 100,
