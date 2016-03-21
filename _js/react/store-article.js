@@ -5,13 +5,13 @@ var Store = {};
 Store.dispatcher = new Dispatcher();
 
 //sortData定義
-Store.article = {
+Store.list = {
   data: null,
   subscriber: []
 };
 
 //sortData定義
-Store.navi = {
+Store.gnav = {
   data: null,
   subscriber: []
 };
@@ -21,79 +21,133 @@ Store.dispatcher.subscriber = [];
 
 
 Store.dispatcher.action = {
+  counter: 0,
+  queue: [],
+  compArray: [],
+  resData: {},
+  getData( num ){
+    return new Promise( (resolve, reject )=> {
+
+      var payload = this.queue[ this.counter ],
+          url,
+          data,
+          xhr;
+
+      switch ( payload.actionType ){
+        case 'gnav':
+          url = 'http://beautifulday.sakura.tv/wp/catlist/';
+          data = {};
+          break;
+        case 'list':
+          url = 'http://beautifulday.sakura.tv/wp/page/' + payload.page + '/';
+          data = { paged: payload.page }
+          break;
+        case 'pager':
+          url = 'http://beautifulday.sakura.tv/wp/dummy/';
+          data = {};
+          break;
+      }
+
+      xhr = $.ajax({
+          url: url,
+          //data: data,
+          type: 'GET',
+          crossDomain: true,
+          cache: false,
+          dataType: 'json'
+      });
+
+      xhr.done( ( data )=>{
+        this.counter = this.counter + 1;
+        this.resData[payload.actionType] = data;
+
+        if( this.counter === this.compArray.length ){
+          Store.dispatcher.dispatch(this.resData);
+          this.reset();
+        }else{
+          resolve( this.counter );
+        }
+      });
+    });
+  },
   create(payload){
 
-    if( payload.actionType === 'latest' ){
-      var xhr = $.ajax({
-          url: 'http://beautifulday.sakura.tv/wp/',
-          type: 'GET',
-          crossDomain: true,
-          cache: false,
-          dataType: 'json',
-        statusCode: {
-        }
-      });
+    _.each(payload.requireComps, ( compName )=>{
+      this.compArray.push(compName);
+      this.compArray = _.uniq(this.compArray);
+      this.compArray = _.sortBy(this.compArray);
+    });
 
-      xhr.done( ( data )=>{
-        Store.dispatcher.dispatch( {
-          payload: payload,
-          data: data
-        });
-      });
-    }else if( payload.actionType === 'gnav' ){
-      var xhr = $.ajax({
-          url: 'http://beautifulday.sakura.tv/wp/catlist/',
-          type: 'GET',
-          crossDomain: true,
-          cache: false,
-          dataType: 'json',
-        statusCode: {
-        }
-      });
+    this.queue.push( payload );
 
-      xhr.done( ( data )=>{
-        Store.dispatcher.dispatch( {
-          payload: payload,
-          data: data
-        });
-      });
+    if( this.queue.length === this.compArray.length ){
+
+      var doPromise = this.getData();
+      for (var i = 0; i < this.queue.length - 1; i++) {
+        doPromise = doPromise.then( (data)=>{
+          return this.getData();
+        } );
+      }
     }
+  },
+  reset(){
+    this.counter =  0;
+    this.queue = [];
+    this.compArray = [];
+    this.resData = {};
   }
 }
 
-Store.addSubscribe = function( callback ){
-  Store.article.subscriber.push( callback.callback );
+
+/*===========================
+
+subscriberにコールバックを追加
+
+===========================*/
+
+Store.addSubscribe = ( options )=>{
+  Store.dispatcher.subscriber.push({
+    actionType: options.actionType,
+    callback: options.callback
+  });
 }
 
-Store.publish = function( ){
-  for (var i = 0; i < Store.article.subscriber.length; i++) {
-    Store.article.subscriber[i]();
-  };
+/*===========================
+
+subscriberを実行
+
+===========================*/
+
+Store.publish = ()=>{
+  _.each(Store.dispatcher.subscriber, ( obj, key )=>{
+    obj.callback();
+  });
+}
+
+/*===========================
+
+subscriberから削除
+
+===========================*/
+
+Store.removeSubscribe = ( options )=>{
+  Store.dispatcher.subscriber = _.reject( Store.dispatcher.subscriber, ( obj, index )=>{
+    return obj.actionType == options.actionType;
+  });
 }
 
 
-Store.article.dispatchToken = Store.dispatcher.register(function( res ) {
-
-  if( res.payload.actionType === 'latest' ){
-
-    Store.article.data = res.data;
-
-    console.log( res.payload.actionType );
-
+Store.list.dispatchToken = Store.dispatcher.register(function( res ) {
+  if( res['list'] ){
+    Store.dispatcher.waitFor([Store.gnav.dispatchToken]);
+    Store.list.data = res['list'];
+    Store.publish();
   }
 });
 
-Store.navi.dispatchToken = Store.dispatcher.register(function( res ) {
-
-  if( res.payload.actionType === 'gnav' ){
-
-    
-    Store.dispatcher.waitFor([Store.article.dispatchToken]);
-    Store.navi.data = res.data;
-
-    console.log( res.payload.actionType );
-    Store.publish();
-
+Store.gnav.dispatchToken = Store.dispatcher.register(function( res ) {
+  if( res['gnav'] ){
+    Store.gnav.data = res['gnav'];
   }
 });
 

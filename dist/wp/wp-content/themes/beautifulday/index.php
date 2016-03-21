@@ -10,7 +10,7 @@ $paged = get_query_var( 'paged', 1 );
 
 {
 
-"data": {
+"page": {
   "nowPage": <?php echo $paged; ?>,
   "maxPage": <?php echo max_show_page_number(); ?>
 },
@@ -21,6 +21,9 @@ while(have_posts()): the_post(); ?>
 
 <?php
   global $wp_query;
+
+  //カテゴリ情報
+  $cat = get_the_category( $post->ID);
 
   $imgPath = '';
 
@@ -38,9 +41,11 @@ while(have_posts()): the_post(); ?>
 ?>
 
   {
+    "ID": "<?php echo ($post->ID); ?>",
     "title": <?php echo json_encode($post->post_title); ?>,
-    "content": <?php echo json_encode( wpautop( $post->post_content ) ) ; ?>,
-    "url": "<?php echo get_permalink();?>",
+    "content": <?php echo json_encode(strip_tags( $post->post_content )); ?>,
+    "category": "<?php echo $cat[0]->name; ?>",
+    "url": "<?php echo get_permalink(); ?>",
     "date": "<?php the_time('Y.m.d'); ?>",
     "thumb": "<?php echo $imgPath; ?>"
 

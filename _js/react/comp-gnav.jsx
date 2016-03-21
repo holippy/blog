@@ -1,7 +1,11 @@
 var Store = require('./store-article');
 
 var Gnav = React.createClass({
-
+  getDefaultProps(){
+    return {
+      actionType:"gnav"
+    }
+  },
   getInitialState(){
     return {
       data: [],
@@ -9,26 +13,31 @@ var Gnav = React.createClass({
     }
   },
   componentWillMount(){
-    Store.addSubscribe({callback: this.dataloaded});
-    this.actionCreator();
-  },
-  actionCreator(){
-    Store.dispatcher.action.create({
-      actionType: 'gnav',
+    Store.addSubscribe({
+      actionType: this.props.actionType,
       callback: this.dataloaded
     });
-
+    this.actionCreator( [ this.props.actionType, 'list'] );
   },
-  dataloaded(data){
-    if( !this.state.view ){
-      this.replaceState({ 
-        data: Store.navi.data,
-        view: true
-      });
-    }
+  actionCreator( comps ){
+    Store.dispatcher.action.create({
+      actionType: this.props.actionType,
+      page: 1,
+      callback: this.dataloaded,
+      requireComps: comps
+    });
+  },
+  dataloaded(){
+    this.replaceState({ 
+      data: Store.gnav.data,
+      view: true
+    });
+
+    Store.removeSubscribe({
+      actionType: this.props.actionType
+    });
   },
   render(){
-
     if( !this.state.view ){
       return false;
     }else{
@@ -47,7 +56,7 @@ var Gnav = React.createClass({
 });
 
 ReactDOM.render(
-  <Gnav/>,
+  <Gnav actionType="gnav" />,
   document.getElementById('Gnav')
 );
 

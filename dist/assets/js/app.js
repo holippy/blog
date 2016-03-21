@@ -96,6 +96,7 @@ react
 ===========================*/
 
 var storeArticle = require('./react/store-article.js');
+
 var compArticleList = require('./react/comp-articleList.jsx');
 var compGnav = require('./react/comp-gnav.jsx');
 
@@ -129,7 +130,7 @@ var cntsThumb = require('./pageFncs/cntsThumb.js');
 
 cntsThumb.init();
 
-},{"./_bg.js":1,"./pageFncs/cntsThumb.js":3,"./pageFncs/header.js":4,"./pageFncs/slider.js":5,"./react/comp-articleList.jsx":6,"./react/comp-gnav.jsx":7,"./react/store-article.js":8}],3:[function(require,module,exports){
+},{"./_bg.js":1,"./pageFncs/cntsThumb.js":3,"./pageFncs/header.js":4,"./pageFncs/slider.js":5,"./react/comp-articleList.jsx":6,"./react/comp-gnav.jsx":7,"./react/store-article.js":9}],3:[function(require,module,exports){
 'use strict';
 
 var app = app || {};
@@ -455,56 +456,175 @@ module.exports = app.slider;
 'use strict';
 
 var Store = require('./store-article');
+var Pager = require('./comp-pager.jsx');
 
-var Article = React.createClass({
-  displayName: 'Article',
+var ArticleList = React.createClass({
+  displayName: 'ArticleList',
+  getDefaultProps: function getDefaultProps() {
+    return {
+      actionType: "list"
+    };
+  },
   getInitialState: function getInitialState() {
     return {
-      page: 1,
-      data: []
+      nowPage: 0,
+      maxPage: [],
+      article: []
     };
   },
   componentWillMount: function componentWillMount() {
-    Store.addSubscribe({ callback: this.dataloaded });
-    this.actionCreator();
-  },
-  actionCreator: function actionCreator() {
-    Store.dispatcher.action.create({
-      actionType: 'latest',
-      page: 1,
+    Store.addSubscribe({
+      actionType: this.props.actionType,
       callback: this.dataloaded
     });
+    this.actionCreator(this.state.nowPage, [this.props.actionType, 'gnav']);
   },
-  dataloaded: function dataloaded(data) {
-    if (Store.article.data) {
-      this.replaceState({ data: Store.article.data });
+  actionCreator: function actionCreator(page, comps) {
+    Store.dispatcher.action.create({
+      actionType: this.props.actionType,
+      page: page,
+      callback: this.dataloaded,
+      requireComps: comps
+    });
+  },
+  dataloaded: function dataloaded() {
+
+    var _countArray = [];
+
+    if (Store.list.data) {
+      for (var i = 0; i < Store.list.data.page.maxPage; i++) {
+        _countArray.push(i);
+      }
+
+      this.replaceState({
+        nowPage: Store.list.data.page.nowPage,
+        maxPage: _countArray,
+        article: Store.list.data.article
+      });
+    }
+  },
+  pagerClick: function pagerClick(e) {
+    e.preventDefault();
+    console.log(e.target.dataset.num);
+    if (e.target.dataset.num === '1') {
+
+      this.actionCreator(0, [this.props.actionType]);
+    } else {
+      this.actionCreator(e.target.dataset.num, [this.props.actionType]);
     }
   },
   render: function render() {
+    var _this = this;
 
-    if (this.state.data.length === 0) {
+    if (this.state.article.length === 0) {
       return false;
     } else {
+
+      var article = this.state.article.map(function (res, index) {
+        return React.createElement(
+          'section',
+          { key: index, className: 'MdCntsThumb01' },
+          React.createElement(
+            'a',
+            { href: res.url },
+            React.createElement(
+              'p',
+              { className: 'mdCntsThumb01Img' },
+              React.createElement('img', { src: res.thumb })
+            ),
+            React.createElement(
+              'div',
+              { className: 'mdCntsThumb01InfoClm' },
+              React.createElement(
+                'div',
+                { className: 'mdCntsThumb01Clm01' },
+                React.createElement(
+                  'p',
+                  { className: 'mdCntsThumb01Cat' },
+                  res.category
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'mdCntsThumb01Clm02' },
+                React.createElement(
+                  'p',
+                  { className: 'mdCntsThumb01Date' },
+                  res.date
+                )
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'mdCntsThumb01InfoInBox' },
+              React.createElement(
+                'h2',
+                { className: 'mdCntsThumb01Ttl' },
+                'タイトルタイトルタイトルタイトルタイトル'
+              ),
+              React.createElement(
+                'p',
+                { className: 'mdCntsThumb01Txt' },
+                'テキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト'
+              )
+            ),
+            React.createElement(
+              'p',
+              { className: 'mdCntsThumb01Icn' },
+              React.createElement('span', { className: 'icon-icon04' })
+            ),
+            React.createElement(
+              'div',
+              { className: 'mdCntsThumb01Cover' },
+              React.createElement(
+                'p',
+                { className: 'mdCntsThumb01Txt' },
+                'Read More'
+              )
+            )
+          )
+        );
+      });
+
+      var pager = this.state.maxPage.map(function (index) {
+        return React.createElement(Pager, { pagerClick: _this.pagerClick, num: index, key: index });
+      });
+
+      //var pager = this.state.data.map()
       return React.createElement(
-        'p',
-        { onClick: this.actionCreator },
-        'text text'
+        'div',
+        null,
+        React.createElement(
+          'div',
+          { className: 'LyCntsList' },
+          article
+        ),
+        React.createElement(
+          'ul',
+          { className: 'MdPager01' },
+          pager
+        )
       );
     }
   }
 });
 
-ReactDOM.render(React.createElement(Article, null), document.getElementById('example'));
+ReactDOM.render(React.createElement(ArticleList, null), document.getElementById('Main'));
 
-module.exports = Article;
+module.exports = ArticleList;
 
-},{"./store-article":8}],7:[function(require,module,exports){
+},{"./comp-pager.jsx":8,"./store-article":9}],7:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
 
 var Gnav = React.createClass({
   displayName: 'Gnav',
+  getDefaultProps: function getDefaultProps() {
+    return {
+      actionType: "gnav"
+    };
+  },
   getInitialState: function getInitialState() {
     return {
       data: [],
@@ -512,25 +632,31 @@ var Gnav = React.createClass({
     };
   },
   componentWillMount: function componentWillMount() {
-    Store.addSubscribe({ callback: this.dataloaded });
-    this.actionCreator();
-  },
-  actionCreator: function actionCreator() {
-    Store.dispatcher.action.create({
-      actionType: 'gnav',
+    Store.addSubscribe({
+      actionType: this.props.actionType,
       callback: this.dataloaded
     });
+    this.actionCreator([this.props.actionType, 'list']);
   },
-  dataloaded: function dataloaded(data) {
-    if (!this.state.view) {
-      this.replaceState({
-        data: Store.navi.data,
-        view: true
-      });
-    }
+  actionCreator: function actionCreator(comps) {
+    Store.dispatcher.action.create({
+      actionType: this.props.actionType,
+      page: 1,
+      callback: this.dataloaded,
+      requireComps: comps
+    });
+  },
+  dataloaded: function dataloaded() {
+    this.replaceState({
+      data: Store.gnav.data,
+      view: true
+    });
+
+    Store.removeSubscribe({
+      actionType: this.props.actionType
+    });
   },
   render: function render() {
-
     if (!this.state.view) {
       return false;
     } else {
@@ -556,11 +682,84 @@ var Gnav = React.createClass({
   }
 });
 
-ReactDOM.render(React.createElement(Gnav, null), document.getElementById('Gnav'));
+ReactDOM.render(React.createElement(Gnav, { actionType: 'gnav' }), document.getElementById('Gnav'));
 
 module.exports = Gnav;
 
-},{"./store-article":8}],8:[function(require,module,exports){
+},{"./store-article":9}],8:[function(require,module,exports){
+"use strict";
+
+var Store = require('./store-article');
+
+var Pager = React.createClass({
+  displayName: "Pager",
+  getDefaultProps: function getDefaultProps() {
+    return {
+      actionType: "pager"
+    };
+  },
+  getInitialState: function getInitialState() {
+    return {
+      page: 1,
+      data: []
+    };
+  },
+  componentWillMount: function componentWillMount() {
+    Store.addSubscribe({
+      actionType: this.props.actionType,
+      callback: this.dataloaded
+    });
+    //this.actionCreator([ this.props.actionType, 'gnav', 'list' ]);
+  },
+  actionCreator: function actionCreator(comps) {
+
+    Store.dispatcher.action.create({
+      actionType: this.props.actionType,
+      page: 1,
+      callback: this.dataloaded,
+      requireComps: comps
+    });
+  },
+  dataloaded: function dataloaded() {
+    if (Store.list.data) {
+      this.replaceState({ data: Store.list.data.article });
+    }
+  },
+  render: function render() {
+
+    return React.createElement(
+      "li",
+      { key: this.props.num + 1 },
+      React.createElement(
+        "a",
+        { href: "#", "data-num": this.props.num + 1, onClick: this.props.pagerClick },
+        this.props.num + 1
+      )
+    );
+    // if(this.state.data.length === 0){
+    //   return false;
+    // }else{
+    //   var lists = this.state.data.map((res, index)=>{
+
+    //     return (<li><a href="#" class="stay">1</a></li>);
+    //   });
+    //   return (
+    //     <ul className="MdPager01">
+    //     {lists}
+    //     </ul>
+    //   );
+    // }
+  }
+});
+
+// ReactDOM.render(
+//   <Pager />,
+//   document.getElementById('Gnav')
+// );
+
+module.exports = Pager;
+
+},{"./store-article":9}],9:[function(require,module,exports){
 'use strict';
 
 var Dispatcher = require('flux').Dispatcher;
@@ -570,13 +769,13 @@ var Store = {};
 Store.dispatcher = new Dispatcher();
 
 //sortData定義
-Store.article = {
+Store.list = {
   data: null,
   subscriber: []
 };
 
 //sortData定義
-Store.navi = {
+Store.gnav = {
   data: null,
   subscriber: []
 };
@@ -585,79 +784,140 @@ Store.navi = {
 Store.dispatcher.subscriber = [];
 
 Store.dispatcher.action = {
+  counter: 0,
+  queue: [],
+  compArray: [],
+  resData: {},
+  getData: function getData(num) {
+    var _this = this;
+
+    return new Promise(function (resolve, reject) {
+
+      var payload = _this.queue[_this.counter],
+          url,
+          data,
+          xhr;
+
+      switch (payload.actionType) {
+        case 'gnav':
+          url = 'http://beautifulday.sakura.tv/wp/catlist/';
+          data = {};
+          break;
+        case 'list':
+          url = 'http://beautifulday.sakura.tv/wp/page/' + payload.page + '/';
+          data = { paged: payload.page };
+          break;
+        case 'pager':
+          url = 'http://beautifulday.sakura.tv/wp/dummy/';
+          data = {};
+          break;
+      }
+
+      xhr = $.ajax({
+        url: url,
+        //data: data,
+        type: 'GET',
+        crossDomain: true,
+        cache: false,
+        dataType: 'json'
+      });
+
+      xhr.done(function (data) {
+        _this.counter = _this.counter + 1;
+        _this.resData[payload.actionType] = data;
+
+        if (_this.counter === _this.compArray.length) {
+          Store.dispatcher.dispatch(_this.resData);
+          _this.reset();
+        } else {
+          resolve(_this.counter);
+        }
+      });
+    });
+  },
   create: function create(payload) {
+    var _this2 = this;
 
-    if (payload.actionType === 'latest') {
-      var xhr = $.ajax({
-        url: 'http://beautifulday.sakura.tv/wp/',
-        type: 'GET',
-        crossDomain: true,
-        cache: false,
-        dataType: 'json',
-        statusCode: {}
-      });
+    _.each(payload.requireComps, function (compName) {
+      _this2.compArray.push(compName);
+      _this2.compArray = _.uniq(_this2.compArray);
+      _this2.compArray = _.sortBy(_this2.compArray);
+    });
 
-      xhr.done(function (data) {
-        Store.dispatcher.dispatch({
-          payload: payload,
-          data: data
+    this.queue.push(payload);
+
+    if (this.queue.length === this.compArray.length) {
+
+      var doPromise = this.getData();
+      for (var i = 0; i < this.queue.length - 1; i++) {
+        doPromise = doPromise.then(function (data) {
+          return _this2.getData();
         });
-      });
-    } else if (payload.actionType === 'gnav') {
-      var xhr = $.ajax({
-        url: 'http://beautifulday.sakura.tv/wp/catlist/',
-        type: 'GET',
-        crossDomain: true,
-        cache: false,
-        dataType: 'json',
-        statusCode: {}
-      });
-
-      xhr.done(function (data) {
-        Store.dispatcher.dispatch({
-          payload: payload,
-          data: data
-        });
-      });
+      }
     }
+  },
+  reset: function reset() {
+    this.counter = 0;
+    this.queue = [];
+    this.compArray = [];
+    this.resData = {};
   }
 };
 
-Store.addSubscribe = function (callback) {
-  Store.article.subscriber.push(callback.callback);
+/*===========================
+
+subscriberにコールバックを追加
+
+===========================*/
+
+Store.addSubscribe = function (options) {
+  Store.dispatcher.subscriber.push({
+    actionType: options.actionType,
+    callback: options.callback
+  });
 };
+
+/*===========================
+
+subscriberを実行
+
+===========================*/
 
 Store.publish = function () {
-  for (var i = 0; i < Store.article.subscriber.length; i++) {
-    Store.article.subscriber[i]();
-  };
+  _.each(Store.dispatcher.subscriber, function (obj, key) {
+    obj.callback();
+  });
 };
 
-Store.article.dispatchToken = Store.dispatcher.register(function (res) {
+/*===========================
 
-  if (res.payload.actionType === 'latest') {
+subscriberから削除
 
-    Store.article.data = res.data;
+===========================*/
 
-    console.log(res.payload.actionType);
+Store.removeSubscribe = function (options) {
+  Store.dispatcher.subscriber = _.reject(Store.dispatcher.subscriber, function (obj, index) {
+    return obj.actionType == options.actionType;
+  });
+};
+
+Store.list.dispatchToken = Store.dispatcher.register(function (res) {
+  if (res['list']) {
+    Store.dispatcher.waitFor([Store.gnav.dispatchToken]);
+    Store.list.data = res['list'];
+    Store.publish();
   }
 });
 
-Store.navi.dispatchToken = Store.dispatcher.register(function (res) {
-
-  if (res.payload.actionType === 'gnav') {
-
-    Store.dispatcher.waitFor([Store.article.dispatchToken]);
-    Store.navi.data = res.data;
-
-    console.log(res.payload.actionType);
-    Store.publish();
+Store.gnav.dispatchToken = Store.dispatcher.register(function (res) {
+  if (res['gnav']) {
+    Store.gnav.data = res['gnav'];
   }
 });
 
 module.exports = Store;
 
-},{"flux":10}],9:[function(require,module,exports){
+},{"flux":11}],10:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -709,7 +969,7 @@ var invariant = function (condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 }).call(this,require('_process'))
-},{"_process":12}],10:[function(require,module,exports){
+},{"_process":13}],11:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -721,7 +981,7 @@ module.exports = invariant;
 
 module.exports.Dispatcher = require('./lib/Dispatcher');
 
-},{"./lib/Dispatcher":11}],11:[function(require,module,exports){
+},{"./lib/Dispatcher":12}],12:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
@@ -955,7 +1215,7 @@ var Dispatcher = (function () {
 
 module.exports = Dispatcher;
 }).call(this,require('_process'))
-},{"_process":12,"fbjs/lib/invariant":9}],12:[function(require,module,exports){
+},{"_process":13,"fbjs/lib/invariant":10}],13:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
