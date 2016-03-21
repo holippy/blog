@@ -34,21 +34,19 @@ var Pager = React.createClass({
     }
   },
   render(){
+    var stay = this.props.stay;
 
-    return (<li key={this.props.num + 1}><a href="#" data-num={this.props.num + 1} onClick={this.props.pagerClick}>{this.props.num + 1}</a></li>);
-    // if(this.state.data.length === 0){
-    //   return false;
-    // }else{
-    //   var lists = this.state.data.map((res, index)=>{
-      
-    //     return (<li><a href="#" class="stay">1</a></li>);
-    //   });
-    //   return (
-    //     <ul className="MdPager01">
-    //     {lists}
-    //     </ul>
-    //   );
-    // }
+    if( stay != 0 ){
+      stay = stay - 1;
+    }
+
+    if( this.props.num === stay ){
+      return (<li key={this.props.num}><a href="#" data-num={this.props.num + 1} onClick={this.props.pagerClick} className="stay">{this.props.num + 1}</a></li>);
+
+    }else{
+      return (<li key={this.props.num}><a href="#" data-num={this.props.num + 1} onClick={this.props.pagerClick}>{this.props.num + 1}</a></li>);
+    }
+
   }
 });
 

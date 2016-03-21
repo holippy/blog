@@ -8,7 +8,7 @@ var Gnav = React.createClass({
   },
   getInitialState(){
     return {
-      data: [],
+      gnav: [],
       view: false
     }
   },
@@ -17,7 +17,7 @@ var Gnav = React.createClass({
       actionType: this.props.actionType,
       callback: this.dataloaded
     });
-    this.actionCreator( [ this.props.actionType, 'list'] );
+    this.actionCreator( [ this.props.actionType, 'list', 'mainvisual'] );
   },
   actionCreator( comps ){
     Store.dispatcher.action.create({
@@ -28,9 +28,9 @@ var Gnav = React.createClass({
     });
   },
   dataloaded(){
+    console.log(Store.gnav.data);
     this.replaceState({ 
-      data: Store.gnav.data,
-      view: true
+      gnav: Store.gnav.data
     });
 
     Store.removeSubscribe({
@@ -38,10 +38,10 @@ var Gnav = React.createClass({
     });
   },
   render(){
-    if( !this.state.view ){
+    if(this.state.gnav.length === 0){
       return false;
     }else{
-      let lists = this.state.data.map((res)=>{
+      let lists = this.state.gnav.map((res)=>{
       
       return <li key={res.ID}><span className="icon-icon05"></span><a href={res.slug}>{res.catName}</a></li>;
                   

@@ -35,6 +35,7 @@ react
 
 var storeArticle = require('./react/store-article.js');
 
+var compArticleList = require('./react/comp-mainvisual.jsx');
 var compArticleList = require('./react/comp-articleList.jsx');
 var compGnav = require('./react/comp-gnav.jsx');
 
@@ -45,9 +46,8 @@ slider
 
 ===========================*/
 
-var slider = require('./pageFncs/slider.js');
-
-slider.init();
+//var slider = require('./pageFncs/slider.js');
+//slider.init();
 
 /*===========================
 
@@ -67,4 +67,3 @@ cntsThumb
 
 var cntsThumb = require('./pageFncs/cntsThumb.js');
 
-cntsThumb.init();

@@ -13,6 +13,7 @@ app.slider = {
     this.slideBtnBack = $('.mdSlideListBtnBack');
     this.slideBtnNext = $('.mdSlideListBtnNext');
     this.slidePager = $('.mdSlideListPager li');
+
     this.startPos;
 
     for (var i = 0; i < 3; i++) {
@@ -39,10 +40,10 @@ app.slider = {
   },
   posSet(){
     this.slideList.css({
-      left: (- this.slideImgWidth * this.slideSet * 2) + ( $(window).width() / 2 - this.slideImgWidth / 2 )
+      left: (- this.slideImgWidth * this.slideSet * 2) + ( $(window).width() / 2 - this.slideImgWidth / 2 ) - 5
     });
 
-    this.startPos = (- this.slideImgWidth * this.slideSet * 2) + ( $(window).width() / 2 - this.slideImgWidth / 2 );
+    this.startPos = (- this.slideImgWidth * this.slideSet * 2) + ( $(window).width() / 2 - this.slideImgWidth / 2 ) - 5;
   },
   reset(){
     this.slideList.css({left: this.startPos});

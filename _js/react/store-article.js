@@ -2,6 +2,41 @@ var Dispatcher = require('flux').Dispatcher;
 
 var Store = {};
 
+Store.PageControl = {
+  paramObjs: {},
+  getParam(){
+    var _url = location.href.split('?'),
+        _params;
+
+    if( _url[1] ){
+      _params = _url[1].split('&');
+
+      for (let i = 0; i < _params.length; i++) {
+        let split = _params[i].split('='),
+            key = split[0],
+            value = split[1];
+
+        if( key === 'paged' && value === '1' ){
+          value = '0';
+        }
+
+        this.paramObjs[key] = value;
+
+      }
+    }else{
+      this.paramObjs = { 'type': 'index', 'paged': '0' };
+    }
+  }
+}
+
+Store.PageControl.getParam();
+$(window).on('popstate', ()=>{
+  
+  Store.PageControl.getParam();
+  console.log(Store.PageControl.paramObjs);
+});
+
+
 Store.dispatcher = new Dispatcher();
 
 //sortData定義
@@ -16,9 +51,14 @@ Store.gnav = {
   subscriber: []
 };
 
+//sortData定義
+Store.mainvisual = {
+  data: null,
+  subscriber: []
+};
+
 //subscriber用配列定義
 Store.dispatcher.subscriber = [];
-
 
 Store.dispatcher.action = {
   counter: 0,
@@ -26,7 +66,11 @@ Store.dispatcher.action = {
   compArray: [],
   resData: {},
   getData( num ){
+
+
     return new Promise( (resolve, reject )=> {
+
+
 
       var payload = this.queue[ this.counter ],
           url,
@@ -40,10 +84,14 @@ Store.dispatcher.action = {
           break;
         case 'list':
           url = 'http://beautifulday.sakura.tv/wp/page/' + payload.page + '/';
-          data = { paged: payload.page }
+          data = { paged: payload.page };
           break;
         case 'pager':
           url = 'http://beautifulday.sakura.tv/wp/dummy/';
+          data = {};
+          break;
+        case 'mainvisual':
+          url = 'http://beautifulday.sakura.tv/wp/mainvisual/';
           data = {};
           break;
       }
@@ -58,6 +106,7 @@ Store.dispatcher.action = {
       });
 
       xhr.done( ( data )=>{
+
         this.counter = this.counter + 1;
         this.resData[payload.actionType] = data;
 
@@ -71,7 +120,6 @@ Store.dispatcher.action = {
     });
   },
   create(payload){
-
     _.each(payload.requireComps, ( compName )=>{
       this.compArray.push(compName);
       this.compArray = _.uniq(this.compArray);
@@ -80,7 +128,11 @@ Store.dispatcher.action = {
 
     this.queue.push( payload );
 
+    
+
     if( this.queue.length === this.compArray.length ){
+
+
 
       var doPromise = this.getData();
       for (var i = 0; i < this.queue.length - 1; i++) {
@@ -137,20 +189,51 @@ Store.removeSubscribe = ( options )=>{
 }
 
 
+/*===========================
+
+listのdispatchToken
+
+===========================*/
+
 Store.list.dispatchToken = Store.dispatcher.register(function( res ) {
   if( res['list'] ){
-    Store.dispatcher.waitFor([Store.gnav.dispatchToken]);
+    Store.dispatcher.waitFor([Store.mainvisual.dispatchToken]);
     Store.list.data = res['list'];
     Store.publish();
   }
 });
 
+/*===========================
+
+gnavのdispatchToken
+
+===========================*/
+
 Store.gnav.dispatchToken = Store.dispatcher.register(function( res ) {
   if( res['gnav'] ){
     Store.gnav.data = res['gnav'];
+  }else{
+    Store.gnav.data = false;
+    return true;
   }
 });
 
+/*===========================
+
+mainvisualのdispatchToken
+
+===========================*/
+
+Store.mainvisual.dispatchToken = Store.dispatcher.register(function( res ) {
+  
+  if( res['mainvisual'] ){
+    Store.dispatcher.waitFor([Store.gnav.dispatchToken]);
+    Store.mainvisual.data = res['mainvisual'];
+  }else{
+    Store.mainvisual.data = false;
+    return true;
+  }
+});
 
 
 module.exports = Store;

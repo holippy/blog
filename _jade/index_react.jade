@@ -19,7 +19,7 @@ html(lang="ja")
 
   body
 
-    .LyHead.ExHidden
+    .LyHead
       header.MdHead
         p.mdLogo Indoor Living
         nav#Gnav.MdGNV
@@ -28,30 +28,7 @@ html(lang="ja")
           input(type="text")
           button.icon-icon_search(type="submit")
 
-    div.MdSlideContianer.ExHidden
-
-      ul.mdSlideListImg
-        each val in ['DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg', 'DSCF2559.jpg']
-          li
-            - var imgPath = '/assets/img/slide/'+val
-            a(href="#")
-              p.mdSlideCat Music
-              p.mdSlideTtl
-                span タイトルタイトルタイトルタイトルタイトルタイトル
-              p.mdSlideImg
-                img(src='#{imgPath}')
-
-      - var i = 5
-      ul.mdSlideListPager
-        while i--
-          li
-            a.icon-icon01(href="#")
-
-      ul.mdSlideListBtn
-        li.mdSlideListBtnBack
-          a.icon-icon02(href="#")
-        li.mdSlideListBtnNext
-          a.icon-icon04(href="#")
+    div#Mainvisual.MdSlideContianer
 
     #Main.LyMain
 

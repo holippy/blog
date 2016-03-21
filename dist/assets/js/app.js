@@ -97,6 +97,7 @@ react
 
 var storeArticle = require('./react/store-article.js');
 
+var compArticleList = require('./react/comp-mainvisual.jsx');
 var compArticleList = require('./react/comp-articleList.jsx');
 var compGnav = require('./react/comp-gnav.jsx');
 
@@ -106,9 +107,8 @@ slider
 
 ===========================*/
 
-var slider = require('./pageFncs/slider.js');
-
-slider.init();
+//var slider = require('./pageFncs/slider.js');
+//slider.init();
 
 /*===========================
 
@@ -128,9 +128,7 @@ cntsThumb
 
 var cntsThumb = require('./pageFncs/cntsThumb.js');
 
-cntsThumb.init();
-
-},{"./_bg.js":1,"./pageFncs/cntsThumb.js":3,"./pageFncs/header.js":4,"./pageFncs/slider.js":5,"./react/comp-articleList.jsx":6,"./react/comp-gnav.jsx":7,"./react/store-article.js":9}],3:[function(require,module,exports){
+},{"./_bg.js":1,"./pageFncs/cntsThumb.js":3,"./pageFncs/header.js":4,"./react/comp-articleList.jsx":6,"./react/comp-gnav.jsx":7,"./react/comp-mainvisual.jsx":8,"./react/store-article.js":10}],3:[function(require,module,exports){
 'use strict';
 
 var app = app || {};
@@ -230,6 +228,7 @@ app.slider = {
     this.slideBtnBack = $('.mdSlideListBtnBack');
     this.slideBtnNext = $('.mdSlideListBtnNext');
     this.slidePager = $('.mdSlideListPager li');
+
     this.startPos;
 
     for (var i = 0; i < 3; i++) {
@@ -255,10 +254,10 @@ app.slider = {
   },
   posSet: function posSet() {
     this.slideList.css({
-      left: -this.slideImgWidth * this.slideSet * 2 + ($(window).width() / 2 - this.slideImgWidth / 2)
+      left: -this.slideImgWidth * this.slideSet * 2 + ($(window).width() / 2 - this.slideImgWidth / 2) - 5
     });
 
-    this.startPos = -this.slideImgWidth * this.slideSet * 2 + ($(window).width() / 2 - this.slideImgWidth / 2);
+    this.startPos = -this.slideImgWidth * this.slideSet * 2 + ($(window).width() / 2 - this.slideImgWidth / 2) - 5;
   },
   reset: function reset() {
     this.slideList.css({ left: this.startPos });
@@ -457,6 +456,7 @@ module.exports = app.slider;
 
 var Store = require('./store-article');
 var Pager = require('./comp-pager.jsx');
+var CntsThumb = require('../pageFncs/cntsThumb.js');
 
 var ArticleList = React.createClass({
   displayName: 'ArticleList',
@@ -473,13 +473,27 @@ var ArticleList = React.createClass({
     };
   },
   componentWillMount: function componentWillMount() {
-    Store.addSubscribe({
-      actionType: this.props.actionType,
-      callback: this.dataloaded
+
+    if (Store.PageControl.paramObjs.type === 'index') {
+      Store.addSubscribe({
+        actionType: this.props.actionType,
+        callback: this.dataloaded
+      });
+
+      this.actionCreator(Store.PageControl.paramObjs.paged, [this.props.actionType, 'gnav', 'mainvisual']);
+    }
+
+    this.events();
+  },
+  events: function events() {
+    var _this = this;
+
+    $(window).on('popstate', function () {
+      _this.actionCreator(Store.PageControl.paramObjs.paged, [_this.props.actionType]);
     });
-    this.actionCreator(this.state.nowPage, [this.props.actionType, 'gnav']);
   },
   actionCreator: function actionCreator(page, comps) {
+
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
       page: page,
@@ -488,38 +502,72 @@ var ArticleList = React.createClass({
     });
   },
   dataloaded: function dataloaded() {
+    var _this2 = this;
 
     var _countArray = [];
 
     if (Store.list.data) {
+
       for (var i = 0; i < Store.list.data.page.maxPage; i++) {
         _countArray.push(i);
       }
 
-      this.replaceState({
-        nowPage: Store.list.data.page.nowPage,
-        maxPage: _countArray,
-        article: Store.list.data.article
+      this.imgLoading(Store.list.data.article).then(function (e) {
+
+        _this2.replaceState({
+          nowPage: Store.list.data.page.nowPage,
+          maxPage: _countArray,
+          article: Store.list.data.article
+        });
       });
     }
   },
+  componentDidUpdate: function componentDidUpdate() {
+    CntsThumb.init();
+  },
   pagerClick: function pagerClick(e) {
-    e.preventDefault();
-    console.log(e.target.dataset.num);
-    if (e.target.dataset.num === '1') {
 
-      this.actionCreator(0, [this.props.actionType]);
+    e.preventDefault();
+    var _num = e.target.dataset.num;
+
+    if (_num === '1') {
+      _num = 0;
+    }
+
+    if (this.state.nowPage === _num) {
+      return false;
     } else {
-      this.actionCreator(e.target.dataset.num, [this.props.actionType]);
+      this.actionCreator(_num, [this.props.actionType]);
+
+      history.pushState(null, null, '/index_react.html?type=' + Store.PageControl.paramObjs.type + '&paged=' + e.target.dataset.num);
+      Store.PageControl.getParam();
     }
   },
+  imgLoading: function imgLoading(data) {
+    var counter = 0;
+
+    return new Promise(function (resolve, reject) {
+
+      data.map(function (res, index) {
+        var img = new Image();
+
+        $(img).on('load', function () {
+          counter = counter + 1;
+          if (counter == data.length) {
+            resolve(counter);
+          }
+        });
+
+        $(img).attr('src', res.thumb);
+      });
+    });
+  },
   render: function render() {
-    var _this = this;
+    var _this3 = this;
 
     if (this.state.article.length === 0) {
       return false;
     } else {
-
       var article = this.state.article.map(function (res, index) {
         return React.createElement(
           'section',
@@ -587,10 +635,8 @@ var ArticleList = React.createClass({
       });
 
       var pager = this.state.maxPage.map(function (index) {
-        return React.createElement(Pager, { pagerClick: _this.pagerClick, num: index, key: index });
+        return React.createElement(Pager, { pagerClick: _this3.pagerClick, num: index, key: index, stay: _this3.state.nowPage });
       });
-
-      //var pager = this.state.data.map()
       return React.createElement(
         'div',
         null,
@@ -613,7 +659,7 @@ ReactDOM.render(React.createElement(ArticleList, null), document.getElementById(
 
 module.exports = ArticleList;
 
-},{"./comp-pager.jsx":8,"./store-article":9}],7:[function(require,module,exports){
+},{"../pageFncs/cntsThumb.js":3,"./comp-pager.jsx":9,"./store-article":10}],7:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
@@ -627,7 +673,7 @@ var Gnav = React.createClass({
   },
   getInitialState: function getInitialState() {
     return {
-      data: [],
+      gnav: [],
       view: false
     };
   },
@@ -636,7 +682,7 @@ var Gnav = React.createClass({
       actionType: this.props.actionType,
       callback: this.dataloaded
     });
-    this.actionCreator([this.props.actionType, 'list']);
+    this.actionCreator([this.props.actionType, 'list', 'mainvisual']);
   },
   actionCreator: function actionCreator(comps) {
     Store.dispatcher.action.create({
@@ -647,9 +693,9 @@ var Gnav = React.createClass({
     });
   },
   dataloaded: function dataloaded() {
+    console.log(Store.gnav.data);
     this.replaceState({
-      data: Store.gnav.data,
-      view: true
+      gnav: Store.gnav.data
     });
 
     Store.removeSubscribe({
@@ -657,10 +703,10 @@ var Gnav = React.createClass({
     });
   },
   render: function render() {
-    if (!this.state.view) {
+    if (this.state.gnav.length === 0) {
       return false;
     } else {
-      var lists = this.state.data.map(function (res) {
+      var lists = this.state.gnav.map(function (res) {
 
         return React.createElement(
           'li',
@@ -686,7 +732,149 @@ ReactDOM.render(React.createElement(Gnav, { actionType: 'gnav' }), document.getE
 
 module.exports = Gnav;
 
-},{"./store-article":9}],8:[function(require,module,exports){
+},{"./store-article":10}],8:[function(require,module,exports){
+'use strict';
+
+var Store = require('./store-article');
+var Slider = require('../pageFncs/slider.js');
+
+var Mainvisual = React.createClass({
+  displayName: 'Mainvisual',
+  getDefaultProps: function getDefaultProps() {
+    return {
+      actionType: "mainvisual"
+    };
+  },
+  getInitialState: function getInitialState() {
+    return {
+      page: 1,
+      mainvisual: []
+    };
+  },
+  componentWillMount: function componentWillMount() {
+    Store.addSubscribe({
+      actionType: this.props.actionType,
+      callback: this.dataloaded
+    });
+    this.actionCreator([this.props.actionType, 'list', 'mainvisual']);
+  },
+  actionCreator: function actionCreator(comps) {
+    Store.dispatcher.action.create({
+      actionType: this.props.actionType,
+      callback: this.dataloaded,
+      requireComps: comps
+    });
+  },
+  dataloaded: function dataloaded() {
+    var _this = this;
+
+    if (Store.mainvisual.data) {
+      this.imgLoading(Store.mainvisual.data).then(function (e) {
+        _this.replaceState({ mainvisual: Store.mainvisual.data });
+      });
+    }
+  },
+  imgLoading: function imgLoading(data) {
+    var counter = 0;
+
+    return new Promise(function (resolve, reject) {
+
+      data.map(function (res, index) {
+        var img = new Image();
+
+        $(img).on('load', function () {
+          counter = counter + 1;
+          if (counter == data.length) {
+            resolve(counter);
+          }
+        });
+
+        $(img).attr('src', res.thumb);
+      });
+    });
+  },
+  componentDidUpdate: function componentDidUpdate() {
+    Slider.init();
+  },
+  render: function render() {
+    if (this.state.mainvisual.length === 0) {
+      return false;
+    } else {
+      var imgs = this.state.mainvisual.map(function (res, index) {
+        return React.createElement(
+          'li',
+          { key: index },
+          React.createElement(
+            'a',
+            { href: res.url },
+            React.createElement(
+              'p',
+              { className: 'mdSlideCat' },
+              res.category
+            ),
+            React.createElement(
+              'p',
+              { className: 'mdSlideTtl' },
+              React.createElement(
+                'span',
+                null,
+                res.title
+              )
+            ),
+            React.createElement(
+              'p',
+              { className: 'mdSlideImg' },
+              React.createElement('img', { src: res.thumb })
+            )
+          )
+        );
+      });
+
+      var pager = this.state.mainvisual.map(function (res, index) {
+        return React.createElement(
+          'li',
+          { key: index },
+          React.createElement('a', { href: '#', className: 'icon-icon01' })
+        );
+      });
+
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(
+          'ul',
+          { className: 'mdSlideListImg' },
+          imgs
+        ),
+        React.createElement(
+          'ul',
+          { className: 'mdSlideListPager' },
+          pager
+        ),
+        React.createElement(
+          'ul',
+          { className: 'mdSlideListBtn' },
+          React.createElement(
+            'li',
+            { className: 'mdSlideListBtnBack' },
+            React.createElement('a', { href: '#', className: 'icon-icon02' })
+          ),
+          React.createElement(
+            'li',
+            { className: 'mdSlideListBtnNext' },
+            React.createElement('a', { href: '#', className: 'icon-icon04' })
+          )
+        )
+      );
+    }
+  }
+});
+
+ReactDOM.render(React.createElement(Mainvisual, null), document.getElementById('Mainvisual'));
+
+module.exports = Mainvisual;
+
+},{"../pageFncs/slider.js":5,"./store-article":10}],9:[function(require,module,exports){
 "use strict";
 
 var Store = require('./store-article');
@@ -726,29 +914,33 @@ var Pager = React.createClass({
     }
   },
   render: function render() {
+    var stay = this.props.stay;
 
-    return React.createElement(
-      "li",
-      { key: this.props.num + 1 },
-      React.createElement(
-        "a",
-        { href: "#", "data-num": this.props.num + 1, onClick: this.props.pagerClick },
-        this.props.num + 1
-      )
-    );
-    // if(this.state.data.length === 0){
-    //   return false;
-    // }else{
-    //   var lists = this.state.data.map((res, index)=>{
+    if (stay != 0) {
+      stay = stay - 1;
+    }
 
-    //     return (<li><a href="#" class="stay">1</a></li>);
-    //   });
-    //   return (
-    //     <ul className="MdPager01">
-    //     {lists}
-    //     </ul>
-    //   );
-    // }
+    if (this.props.num === stay) {
+      return React.createElement(
+        "li",
+        { key: this.props.num },
+        React.createElement(
+          "a",
+          { href: "#", "data-num": this.props.num + 1, onClick: this.props.pagerClick, className: "stay" },
+          this.props.num + 1
+        )
+      );
+    } else {
+      return React.createElement(
+        "li",
+        { key: this.props.num },
+        React.createElement(
+          "a",
+          { href: "#", "data-num": this.props.num + 1, onClick: this.props.pagerClick },
+          this.props.num + 1
+        )
+      );
+    }
   }
 });
 
@@ -759,12 +951,45 @@ var Pager = React.createClass({
 
 module.exports = Pager;
 
-},{"./store-article":9}],9:[function(require,module,exports){
+},{"./store-article":10}],10:[function(require,module,exports){
 'use strict';
 
 var Dispatcher = require('flux').Dispatcher;
 
 var Store = {};
+
+Store.PageControl = {
+  paramObjs: {},
+  getParam: function getParam() {
+    var _url = location.href.split('?'),
+        _params;
+
+    if (_url[1]) {
+      _params = _url[1].split('&');
+
+      for (var i = 0; i < _params.length; i++) {
+        var split = _params[i].split('='),
+            key = split[0],
+            value = split[1];
+
+        if (key === 'paged' && value === '1') {
+          value = '0';
+        }
+
+        this.paramObjs[key] = value;
+      }
+    } else {
+      this.paramObjs = { 'type': 'index', 'paged': '0' };
+    }
+  }
+};
+
+Store.PageControl.getParam();
+$(window).on('popstate', function () {
+
+  Store.PageControl.getParam();
+  console.log(Store.PageControl.paramObjs);
+});
 
 Store.dispatcher = new Dispatcher();
 
@@ -776,6 +1001,12 @@ Store.list = {
 
 //sortData定義
 Store.gnav = {
+  data: null,
+  subscriber: []
+};
+
+//sortData定義
+Store.mainvisual = {
   data: null,
   subscriber: []
 };
@@ -811,6 +1042,10 @@ Store.dispatcher.action = {
           url = 'http://beautifulday.sakura.tv/wp/dummy/';
           data = {};
           break;
+        case 'mainvisual':
+          url = 'http://beautifulday.sakura.tv/wp/mainvisual/';
+          data = {};
+          break;
       }
 
       xhr = $.ajax({
@@ -823,6 +1058,7 @@ Store.dispatcher.action = {
       });
 
       xhr.done(function (data) {
+
         _this.counter = _this.counter + 1;
         _this.resData[payload.actionType] = data;
 
@@ -901,23 +1137,55 @@ Store.removeSubscribe = function (options) {
   });
 };
 
+/*===========================
+
+listのdispatchToken
+
+===========================*/
+
 Store.list.dispatchToken = Store.dispatcher.register(function (res) {
   if (res['list']) {
-    Store.dispatcher.waitFor([Store.gnav.dispatchToken]);
+    Store.dispatcher.waitFor([Store.mainvisual.dispatchToken]);
     Store.list.data = res['list'];
     Store.publish();
   }
 });
 
+/*===========================
+
+gnavのdispatchToken
+
+===========================*/
+
 Store.gnav.dispatchToken = Store.dispatcher.register(function (res) {
   if (res['gnav']) {
     Store.gnav.data = res['gnav'];
+  } else {
+    Store.gnav.data = false;
+    return true;
+  }
+});
+
+/*===========================
+
+mainvisualのdispatchToken
+
+===========================*/
+
+Store.mainvisual.dispatchToken = Store.dispatcher.register(function (res) {
+
+  if (res['mainvisual']) {
+    Store.dispatcher.waitFor([Store.gnav.dispatchToken]);
+    Store.mainvisual.data = res['mainvisual'];
+  } else {
+    Store.mainvisual.data = false;
+    return true;
   }
 });
 
 module.exports = Store;
 
-},{"flux":11}],10:[function(require,module,exports){
+},{"flux":12}],11:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -969,7 +1237,7 @@ var invariant = function (condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 }).call(this,require('_process'))
-},{"_process":13}],11:[function(require,module,exports){
+},{"_process":14}],12:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -981,7 +1249,7 @@ module.exports = invariant;
 
 module.exports.Dispatcher = require('./lib/Dispatcher');
 
-},{"./lib/Dispatcher":12}],12:[function(require,module,exports){
+},{"./lib/Dispatcher":13}],13:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
@@ -1215,7 +1483,7 @@ var Dispatcher = (function () {
 
 module.exports = Dispatcher;
 }).call(this,require('_process'))
-},{"_process":13,"fbjs/lib/invariant":10}],13:[function(require,module,exports){
+},{"_process":14,"fbjs/lib/invariant":11}],14:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};

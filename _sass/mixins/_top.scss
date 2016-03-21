@@ -250,7 +250,7 @@ top page
 
       .mdSlideListBtnNext{
         a{
-          @include position(absolute, 230px -60px null null);
+          @include position(absolute, 230px -65px null null);
           @include border-top-radius(50%);
           @include border-bottom-radius(50%);
           border: solid 3px $color-main;
