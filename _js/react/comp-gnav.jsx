@@ -19,6 +19,13 @@ var Gnav = React.createClass({
     });
     this.actionCreator( [ this.props.actionType, 'list', 'mainvisual'] );
   },
+  componentDidUpdate(){
+    //rupdate後にグロナビとフッターを表示
+    $('.LyHead').css({display: 'block'});
+    $('.LyFtr').css({display: 'block'});
+  },
+  componentDidMount(){
+  },
   actionCreator( comps ){
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
@@ -28,7 +35,7 @@ var Gnav = React.createClass({
     });
   },
   dataloaded(){
-    console.log(Store.gnav.data);
+
     this.replaceState({ 
       gnav: Store.gnav.data
     });
@@ -44,8 +51,9 @@ var Gnav = React.createClass({
       let lists = this.state.gnav.map((res)=>{
       
       return <li key={res.ID}><span className="icon-icon05"></span><a href={res.slug}>{res.catName}</a></li>;
-                  
+
       });
+      
       return (
         <ul>
           {lists}

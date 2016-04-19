@@ -2,8 +2,16 @@ var Dispatcher = require('flux').Dispatcher;
 
 var Store = {};
 
+
+/*===========================
+
+push state管理
+
+===========================*/
+
 Store.PageControl = {
   paramObjs: {},
+  loadStatus: false,
   getParam(){
     var _url = location.href.split('?'),
         _params;
@@ -36,6 +44,21 @@ $(window).on('popstate', ()=>{
   console.log(Store.PageControl.paramObjs);
 });
 
+/*===========================
+
+loading管理
+
+===========================*/
+
+Store.LoadControl = {
+  loading: $('#MdLoading'),
+  show(){
+    this.loading.css({display: 'block'});
+  },
+  hidden(){
+    this.loading.css({display: 'none'});
+  }
+}
 
 Store.dispatcher = new Dispatcher();
 
@@ -65,17 +88,17 @@ Store.dispatcher.action = {
   queue: [],
   compArray: [],
   resData: {},
+  xhr: null,
+  loadStatus: false,
   getData( num ){
 
+    this.loadStatus = true;
 
     return new Promise( (resolve, reject )=> {
 
-
-
       var payload = this.queue[ this.counter ],
           url,
-          data,
-          xhr;
+          data;
 
       switch ( payload.actionType ){
         case 'gnav':
@@ -84,6 +107,7 @@ Store.dispatcher.action = {
           break;
         case 'list':
           url = 'http://beautifulday.sakura.tv/wp/page/' + payload.page + '/';
+          console.log(payload.page);
           data = { paged: payload.page };
           break;
         case 'pager':
@@ -96,7 +120,13 @@ Store.dispatcher.action = {
           break;
       }
 
-      xhr = $.ajax({
+
+      //loadStatusをtrueにする
+      //loadStatus = true;
+
+      console.log(this.xhr);
+
+      this.xhr = $.ajax({
           url: url,
           //data: data,
           type: 'GET',
@@ -105,13 +135,15 @@ Store.dispatcher.action = {
           dataType: 'json'
       });
 
-      xhr.done( ( data )=>{
+      this.xhr.done( ( data )=>{
 
         this.counter = this.counter + 1;
         this.resData[payload.actionType] = data;
 
         if( this.counter === this.compArray.length ){
           Store.dispatcher.dispatch(this.resData);
+          this.loadStatus = false;
+          Store.LoadControl.hidden();
           this.reset();
         }else{
           resolve( this.counter );
@@ -120,6 +152,16 @@ Store.dispatcher.action = {
     });
   },
   create(payload){
+
+    Store.LoadControl.show();
+
+    //すでにajaxが実行中だった場合はabortして各パラメータをリセット
+    if( this.loadStatus ){
+      console.log('abort');
+      this.xhr.abort();
+      this.reset();
+    }
+
     _.each(payload.requireComps, ( compName )=>{
       this.compArray.push(compName);
       this.compArray = _.uniq(this.compArray);
@@ -128,12 +170,8 @@ Store.dispatcher.action = {
 
     this.queue.push( payload );
 
-    
-
     if( this.queue.length === this.compArray.length ){
-
-
-
+      console.log('getDAta');
       var doPromise = this.getData();
       for (var i = 0; i < this.queue.length - 1; i++) {
         doPromise = doPromise.then( (data)=>{
@@ -147,6 +185,8 @@ Store.dispatcher.action = {
     this.queue = [];
     this.compArray = [];
     this.resData = {};
+    this.xhr = null;
+    this.loadStatus = false;
   }
 }
 

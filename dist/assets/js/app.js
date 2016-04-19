@@ -136,7 +136,25 @@ var app = app || {};
 app.cntsThumb = {
   init: function init() {
     this.thumb = $('.MdCntsThumb01');
+
+    for (var i = 0; i < this.thumb.length; i++) {
+      this.thumbShow(this.thumb[i], i);
+    }
+
     this.setEvnt();
+  },
+  thumbShow: function thumbShow(elm, index) {
+    console.log(index);
+
+    TweenMax.set(elm, { display: 'block', opacity: 0 });
+
+    setTimeout(function () {
+
+      TweenMax.to(elm, 1, {
+        opacity: 1,
+        ease: Power3.easeOut
+      });
+    }, index * 200);
   },
   setEvnt: function setEvnt() {
     this.thumb.each(function (i, elm) {
@@ -221,6 +239,7 @@ app.slider = {
     this.slideCurrent = 0;
     this.targetPos = 0;
 
+    this.slide = $('.MdSlideContianer');
     this.slideList = $('.mdSlideListImg');
     this.slideImgs = $('.mdSlideListImg li');
     this.slideSet = this.slideList.children().length;
@@ -230,6 +249,8 @@ app.slider = {
     this.slidePager = $('.mdSlideListPager li');
 
     this.startPos;
+
+    this.slide.css({ display: 'block' });
 
     for (var i = 0; i < 3; i++) {
       this.slideImgs.each(function (i, elm) {
@@ -493,7 +514,6 @@ var ArticleList = React.createClass({
     });
   },
   actionCreator: function actionCreator(page, comps) {
-
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
       page: page,
@@ -524,6 +544,7 @@ var ArticleList = React.createClass({
   },
   componentDidUpdate: function componentDidUpdate() {
     CntsThumb.init();
+    this.thumbClick();
   },
   pagerClick: function pagerClick(e) {
 
@@ -562,6 +583,14 @@ var ArticleList = React.createClass({
       });
     });
   },
+  thumbClick: function thumbClick(e) {
+    $('.MdCntsThumb01 a').each(function (i, elm) {
+      $(elm).on('click', function (e) {
+        e.preventDefault();
+        console.log($(elm).attr('href'));
+      });
+    });
+  },
   render: function render() {
     var _this3 = this;
 
@@ -574,7 +603,7 @@ var ArticleList = React.createClass({
           { key: index, className: 'MdCntsThumb01' },
           React.createElement(
             'a',
-            { href: res.url },
+            { href: "/wp/" + res.ID },
             React.createElement(
               'p',
               { className: 'mdCntsThumb01Img' },
@@ -637,9 +666,19 @@ var ArticleList = React.createClass({
       var pager = this.state.maxPage.map(function (index) {
         return React.createElement(Pager, { pagerClick: _this3.pagerClick, num: index, key: index, stay: _this3.state.nowPage });
       });
+
       return React.createElement(
-        'div',
+        'section',
         null,
+        React.createElement(
+          'h2',
+          { className: 'MdHdgCmn01' },
+          React.createElement(
+            'span',
+            null,
+            'All Contents'
+          )
+        ),
         React.createElement(
           'div',
           { className: 'LyCntsList' },
@@ -684,6 +723,12 @@ var Gnav = React.createClass({
     });
     this.actionCreator([this.props.actionType, 'list', 'mainvisual']);
   },
+  componentDidUpdate: function componentDidUpdate() {
+    //rupdate後にグロナビとフッターを表示
+    $('.LyHead').css({ display: 'block' });
+    $('.LyFtr').css({ display: 'block' });
+  },
+  componentDidMount: function componentDidMount() {},
   actionCreator: function actionCreator(comps) {
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
@@ -693,7 +738,7 @@ var Gnav = React.createClass({
     });
   },
   dataloaded: function dataloaded() {
-    console.log(Store.gnav.data);
+
     this.replaceState({
       gnav: Store.gnav.data
     });
@@ -719,6 +764,7 @@ var Gnav = React.createClass({
           )
         );
       });
+
       return React.createElement(
         'ul',
         null,
@@ -958,8 +1004,15 @@ var Dispatcher = require('flux').Dispatcher;
 
 var Store = {};
 
+/*===========================
+
+push state管理
+
+===========================*/
+
 Store.PageControl = {
   paramObjs: {},
+  loadStatus: false,
   getParam: function getParam() {
     var _url = location.href.split('?'),
         _params;
@@ -991,6 +1044,22 @@ $(window).on('popstate', function () {
   console.log(Store.PageControl.paramObjs);
 });
 
+/*===========================
+
+loading管理
+
+===========================*/
+
+Store.LoadControl = {
+  loading: $('#MdLoading'),
+  show: function show() {
+    this.loading.css({ display: 'block' });
+  },
+  hidden: function hidden() {
+    this.loading.css({ display: 'none' });
+  }
+};
+
 Store.dispatcher = new Dispatcher();
 
 //sortData定義
@@ -1019,15 +1088,18 @@ Store.dispatcher.action = {
   queue: [],
   compArray: [],
   resData: {},
+  xhr: null,
+  loadStatus: false,
   getData: function getData(num) {
     var _this = this;
+
+    this.loadStatus = true;
 
     return new Promise(function (resolve, reject) {
 
       var payload = _this.queue[_this.counter],
           url,
-          data,
-          xhr;
+          data;
 
       switch (payload.actionType) {
         case 'gnav':
@@ -1036,6 +1108,7 @@ Store.dispatcher.action = {
           break;
         case 'list':
           url = 'http://beautifulday.sakura.tv/wp/page/' + payload.page + '/';
+          console.log(payload.page);
           data = { paged: payload.page };
           break;
         case 'pager':
@@ -1048,7 +1121,12 @@ Store.dispatcher.action = {
           break;
       }
 
-      xhr = $.ajax({
+      //loadStatusをtrueにする
+      //loadStatus = true;
+
+      console.log(_this.xhr);
+
+      _this.xhr = $.ajax({
         url: url,
         //data: data,
         type: 'GET',
@@ -1057,13 +1135,15 @@ Store.dispatcher.action = {
         dataType: 'json'
       });
 
-      xhr.done(function (data) {
+      _this.xhr.done(function (data) {
 
         _this.counter = _this.counter + 1;
         _this.resData[payload.actionType] = data;
 
         if (_this.counter === _this.compArray.length) {
           Store.dispatcher.dispatch(_this.resData);
+          _this.loadStatus = false;
+          Store.LoadControl.hidden();
           _this.reset();
         } else {
           resolve(_this.counter);
@@ -1074,6 +1154,15 @@ Store.dispatcher.action = {
   create: function create(payload) {
     var _this2 = this;
 
+    Store.LoadControl.show();
+
+    //すでにajaxが実行中だった場合はabortして各パラメータをリセット
+    if (this.loadStatus) {
+      console.log('abort');
+      this.xhr.abort();
+      this.reset();
+    }
+
     _.each(payload.requireComps, function (compName) {
       _this2.compArray.push(compName);
       _this2.compArray = _.uniq(_this2.compArray);
@@ -1083,7 +1172,7 @@ Store.dispatcher.action = {
     this.queue.push(payload);
 
     if (this.queue.length === this.compArray.length) {
-
+      console.log('getDAta');
       var doPromise = this.getData();
       for (var i = 0; i < this.queue.length - 1; i++) {
         doPromise = doPromise.then(function (data) {
@@ -1097,6 +1186,8 @@ Store.dispatcher.action = {
     this.queue = [];
     this.compArray = [];
     this.resData = {};
+    this.xhr = null;
+    this.loadStatus = false;
   }
 };
 

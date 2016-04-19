@@ -36,7 +36,6 @@ var ArticleList = React.createClass({
 
   },
   actionCreator( page, comps ){
-
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
       page: page,
@@ -67,6 +66,7 @@ var ArticleList = React.createClass({
   },
   componentDidUpdate(){
     CntsThumb.init();
+    this.thumbClick();
   },
   pagerClick( e ){
 
@@ -108,13 +108,23 @@ var ArticleList = React.createClass({
       });
     });
   },
+
+  thumbClick( e ){
+    $('.MdCntsThumb01 a').each(( i, elm)=>{
+      $(elm).on('click', (e)=>{
+        e.preventDefault();
+        console.log($(elm).attr('href'));
+      });
+
+    });
+  },
   render(){
     if(this.state.article.length === 0){
       return false;
     }else{
       var article = this.state.article.map((res, index)=>{
         return (
-            <section key={index} className="MdCntsThumb01"><a href={res.url}>
+            <section key={index} className="MdCntsThumb01"><a href={"/wp/" + res.ID}>
                 <p className="mdCntsThumb01Img"><img src={res.thumb} /></p>
                 <div className="mdCntsThumb01InfoClm">
                   <div className="mdCntsThumb01Clm01">
@@ -141,15 +151,17 @@ var ArticleList = React.createClass({
             <Pager pagerClick={this.pagerClick} num={index} key={index} stay={this.state.nowPage} />
           );
       });
+
       return (
-        <div>
+        <section>
+        <h2 className="MdHdgCmn01"><span>All Contents</span></h2>
         <div className="LyCntsList">
         {article}
         </div>
         <ul className="MdPager01">
         {pager}
         </ul>
-        </div>
+        </section>
       );
     }
   }

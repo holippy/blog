@@ -6,6 +6,7 @@ app.slider = {
     this.slideCurrent = 0;
     this.targetPos = 0;
     
+    this.slide = $('.MdSlideContianer');
     this.slideList = $('.mdSlideListImg');
     this.slideImgs = $('.mdSlideListImg li');
     this.slideSet = this.slideList.children().length;
@@ -15,6 +16,8 @@ app.slider = {
     this.slidePager = $('.mdSlideListPager li');
 
     this.startPos;
+
+    this.slide.css({display: 'block'});
 
     for (var i = 0; i < 3; i++) {
       this.slideImgs.each((i,elm)=>{

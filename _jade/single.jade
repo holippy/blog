@@ -1,0 +1,123 @@
+doctype
+html(lang="ja")
+  head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    title Indoor Living
+    meta(name="description", content="")
+    meta(name="keywords", content="")
+    meta(name="author", content="")
+    meta(property="og:title", content="")
+    meta(property="og:type", content="website")
+    meta(property="og:url", content="")
+    meta(property="og:image", content="")
+    meta(property="og:site_name", content="")
+    meta(property="og:description", content="")
+    meta(property="fb:app_id", content="")
+    link(rel="stylesheet" href="/assets/css/layout.css")
+
+  body
+    .LyHead
+      header.MdHead
+        h1.mdLogo Indoor Living
+        nav#Gnav.MdGNV
+          ul
+            li
+              span.icon-icon05
+              a(href="#") About
+            li
+              span.icon-icon05
+              a(href="#") Music
+            li
+              span.icon-icon05
+              a(href="#") Camera
+            li
+              span.icon-icon05
+              a(href="#") Interior
+
+        form.MdSearch(method="post" action="#")
+          input(type="text")
+          button.icon-icon_search(type="submit")
+
+    div.MdMvSingle01
+      img(src='/assets/img/single/mv_single_01.png')
+
+    section.MdMainSingle01
+      div.mdContainer
+        main.mdMain
+
+          div.MdCntsData01
+            p.mdDate 2016/4/20
+            p.mdCat 
+              a camera
+          h1.MdTtlSingle01 Focusing ZEISS DSLR Lenses For Peak Performance PART ONE: The Challenges
+
+          div.mdCms
+            h2 Challenge #2: DSLR focus assist (“green dot”) is prone to error
+
+            p Alignment: there are two light paths and two sensors in a DSLR: the light path straight to the imaging sensor, and the twist and turns of the light path to the focusing sensor along the path to the optical viewfinder. If the two light paths are not exactly the same distance (more than 0.02 mm is a significant error), then focus will be skewed even if the user has perfect vision and focuses the image perfectly (as perceived). The camera manufacturer may be able to adjust the camera to fix such alignment issues.
+
+            p Focusing screen: even with a perfectly adjusted viewfinder, the surface structure of modern focusing screens makes it difficult for the eye to distinguish between in-focus and out-of-focus, particularly off-center. In effect, the focusing screen doesn’t allow focus discrimination much better than f/2.8, so f/1.4 and f/2 lenses tend to be hit and miss for focus. Also, f/1.4 and f/2 lenses are generally not much brighter than f/2.8 lenses with these modern screens. The traditional split image and microprism focusing aids have disappeared from Canon and Nikon DSLRs. There may also be markings that overlay the screen and obstruct the view for manual focus, though some camera models have options to hide these markings.
+
+            h2 Make the project kick-off the first iteration
+
+            p Alignment: there are two light paths and two sensors in a DSLR: the light path straight to the imaging sensor, and the twist and turns of the light path to the focusing sensor along the path to the optical viewfinder. If the two light paths are not exactly the same distance (more than 0.02 mm is a significant error), then focus will be skewed even if the user has perfect vision and focuses the image perfectly (as perceived). The camera manufacturer may be able to adjust the camera to fix such alignment issues.
+
+            h2 Challenge #2: DSLR focus assist (“green dot”) is prone to error
+
+            p Alignment: there are two light paths and two sensors in a DSLR: the light path straight to the imaging sensor, and the twist and turns of the light path to the focusing sensor along the path to the optical viewfinder. If the two light paths are not exactly the same distance (more than 0.02 mm is a significant error), then focus will be skewed even if the user has perfect vision and focuses the image perfectly (as perceived). The camera manufacturer may be able to adjust the camera to fix such alignment issues.
+
+            p Focusing screen: even with a perfectly adjusted viewfinder, the surface structure of modern focusing screens makes it difficult for the eye to distinguish between in-focus and out-of-focus, particularly off-center. In effect, the focusing screen doesn’t allow focus discrimination much better than f/2.8, so f/1.4 and f/2 lenses tend to be hit and miss for focus. Also, f/1.4 and f/2 lenses are generally not much brighter than f/2.8 lenses with these modern screens. The traditional split image and microprism focusing aids have disappeared from Canon and Nikon DSLRs. There may also be markings that overlay the screen and obstruct the view for manual focus, though some camera models have options to hide these markings.
+
+        aside.mdAside
+          p.MdTtlOutline Outline
+          ul.MdListAnc01
+            li.icon-icon04
+              a(href="#") Challenge #2: DSLR focus assist (“green dot”) is prone to error
+            li.icon-icon04
+              a(href="#") Make the project kick-off the first iteration
+    section
+      h2.MdHdgCmn01 
+        span All Contents
+
+      .LyCntsList
+        each val in ['DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg','DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg','DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg',]
+          section.MdCntsThumb01
+            a(href="#")
+              p.mdCntsThumb01Img
+                - var imgPath = '/assets/img/slide/'+val
+                img(src='#{imgPath}')
+              div.mdCntsThumb01InfoClm
+                div.mdCntsThumb01Clm01
+                  p.mdCntsThumb01Cat Music
+                div.mdCntsThumb01Clm02
+                  p.mdCntsThumb01Date 2016/02/01
+              div.mdCntsThumb01InfoInBox
+                h2.mdCntsThumb01Ttl タイトルタイトルタイトルタイトルタイトル
+                p.mdCntsThumb01Txt テキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
+              p.mdCntsThumb01Icn
+                span.icon-icon04
+              div.mdCntsThumb01Cover
+                p.mdCntsThumb01Txt Read More
+
+    ul.MdPager01
+      li
+        a.stay(href="#") 1
+      li
+        a(href="#") 2
+      li
+        a(href="#") 3
+      li
+        a(href="#") 4
+      li
+        a(href="#") 5
+
+    .LyFtr
+      footer.MdFtr
+        p.mdFtrCopyright Copyright &copy; 2015 horiuchi. All right reserved.
+
+    #example
+
+    script(src="/assets/js/lib.js")
+    script(src="/assets/js/app.js")

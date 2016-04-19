@@ -1,0 +1,119 @@
+/*=====================================
+
+single page
+
+=====================================*/
+
+@mixin MdMvSingle01{
+  .MdMvSingle01{
+    margin: 20px 0 40px 0;
+    background-color: $color-bg-gray;
+    text-align: center;
+
+    img{
+      vertical-align: bottom;
+    }
+  }
+}
+
+@mixin MdMainSingle01{
+  .MdMainSingle01{
+    padding-bottom: 20px;
+    border-bottom: solid 3px $color-bg-gray;
+    @include clearfix;
+
+    .mdContainer{
+      margin: 0 auto;
+      padding: 0 20px;
+      width: 960px;
+    }
+
+    .mdMain{
+      float: right;
+      width: 660px;
+    }
+
+    .mdAside{
+      float: left;
+      width: 240px;
+    }
+  }
+}
+
+@mixin MdTitleSingle01{
+
+  .MdCntsData01{
+    margin-bottom: 10px;
+
+    .mdDate{
+      margin-right: 10px;
+      display: inline-block;
+      color: $color-gray;
+    }
+
+    .mdCat{
+      @include border-top-radius(5px);
+      @include border-bottom-radius(5px);
+
+      padding: 2px 5px;
+      display: inline-block;
+      background-color: $color-main;
+
+      a{
+        color: #FFF;
+      }
+    }
+  }
+
+  .MdTtlSingle01{
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border-bottom: solid 3px $color-main;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+
+
+}
+
+@mixin MdCmsStyle{
+
+  .mdCms{
+    h2{
+      margin-bottom: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    p{
+      margin-bottom: 20px;
+    }
+  }
+
+}
+
+@mixin MdOutline{
+
+  .MdTtlOutline{
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .MdListAnc01{
+    li{
+      margin-bottom: 15px;
+      padding-left: 15px;
+      position: relative;
+      color: $color-main;
+
+      &:before{
+        @include position(absolute, 0 null null 0);
+
+      }
+    }
+    a{
+      color: $color-default;
+    }
+  }
+}

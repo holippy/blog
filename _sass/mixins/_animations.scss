@@ -76,13 +76,34 @@ animation
 @include keyframes(logo01) {
   from {
     top: -70px;
-    opacity: 0;
+    //opacity: 0;
     transform: scale(0.7);
   }
   to {
     top: -25px;
-    opacity: 1;
+    //opacity: 1;
     transform: scale(0.7);
+  }
+}
+
+/*===========================
+
+  loading
+
+===========================*/
+
+@include keyframes(loading) {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
   }
 }
 

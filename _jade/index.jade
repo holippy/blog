@@ -18,10 +18,9 @@ html(lang="ja")
     link(rel="stylesheet" href="/assets/css/layout.css")
 
   body
-
     .LyHead
       header.MdHead
-        p.mdLogo Indoor Living
+        h1.mdLogo Indoor Living
         nav#Gnav.MdGNV
           ul
             li
@@ -66,25 +65,29 @@ html(lang="ja")
         li.mdSlideListBtnNext
           a.icon-icon04(href="#")
 
-    .LyCntsList
-      each val in ['DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg','DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg','DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg',]
-        section.MdCntsThumb01
-          a(href="#")
-            p.mdCntsThumb01Img
-              - var imgPath = '/assets/img/slide/'+val
-              img(src='#{imgPath}')
-            div.mdCntsThumb01InfoClm
-              div.mdCntsThumb01Clm01
-                p.mdCntsThumb01Cat Music
-              div.mdCntsThumb01Clm02
-                p.mdCntsThumb01Date 2016/02/01
-            div.mdCntsThumb01InfoInBox
-              h2.mdCntsThumb01Ttl タイトルタイトルタイトルタイトルタイトル
-              p.mdCntsThumb01Txt テキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
-            p.mdCntsThumb01Icn
-              span.icon-icon04
-            div.mdCntsThumb01Cover
-              p.mdCntsThumb01Txt Read More
+    section
+      h2.MdHdgCmn01 
+        span All Contents
+
+      .LyCntsList
+        each val in ['DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg','DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg','DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg',]
+          section.MdCntsThumb01
+            a(href="#")
+              p.mdCntsThumb01Img
+                - var imgPath = '/assets/img/slide/'+val
+                img(src='#{imgPath}')
+              div.mdCntsThumb01InfoClm
+                div.mdCntsThumb01Clm01
+                  p.mdCntsThumb01Cat Music
+                div.mdCntsThumb01Clm02
+                  p.mdCntsThumb01Date 2016/02/01
+              div.mdCntsThumb01InfoInBox
+                h2.mdCntsThumb01Ttl タイトルタイトルタイトルタイトルタイトル
+                p.mdCntsThumb01Txt テキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
+              p.mdCntsThumb01Icn
+                span.icon-icon04
+              div.mdCntsThumb01Cover
+                p.mdCntsThumb01Txt Read More
 
     ul.MdPager01
       li
