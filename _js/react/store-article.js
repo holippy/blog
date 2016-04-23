@@ -62,23 +62,30 @@ Store.LoadControl = {
 
 Store.dispatcher = new Dispatcher();
 
-//sortData定義
+//list定義
 Store.list = {
   data: null,
   subscriber: []
 };
 
-//sortData定義
+//gnav定義
 Store.gnav = {
   data: null,
   subscriber: []
 };
 
-//sortData定義
+//mainvisual定義
 Store.mainvisual = {
   data: null,
   subscriber: []
 };
+
+//single定義
+Store.single = {
+  data: null,
+  subscriber: []
+};
+
 
 //subscriber用配列定義
 Store.dispatcher.subscriber = [];
@@ -116,6 +123,10 @@ Store.dispatcher.action = {
           break;
         case 'mainvisual':
           url = 'http://beautifulday.sakura.tv/wp/mainvisual/';
+          data = {};
+          break;
+        case 'single':
+          url = 'http://beautifulday.sakura.tv/wp/' + payload.page + '/';
           data = {};
           break;
       }
@@ -171,7 +182,6 @@ Store.dispatcher.action = {
     this.queue.push( payload );
 
     if( this.queue.length === this.compArray.length ){
-      console.log('getDAta');
       var doPromise = this.getData();
       for (var i = 0; i < this.queue.length - 1; i++) {
         doPromise = doPromise.then( (data)=>{
@@ -275,5 +285,21 @@ Store.mainvisual.dispatchToken = Store.dispatcher.register(function( res ) {
   }
 });
 
+/*===========================
+
+singleのdispatchToken
+
+===========================*/
+
+Store.single.dispatchToken = Store.dispatcher.register(function( res ) {
+  console.log(Store.dispatcher.subscriber);
+  if( res['single'] ){
+    Store.single.data = res['single'];
+    Store.publish();
+  }else{
+    Store.single.data = false;
+    return true;
+  }
+});
 
 module.exports = Store;

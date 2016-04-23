@@ -13,6 +13,7 @@ var Pager = React.createClass({
     }
   },
   componentWillMount(){
+    console.log('add');
     Store.addSubscribe({
       actionType: this.props.actionType,
       callback: this.dataloaded
@@ -29,6 +30,11 @@ var Pager = React.createClass({
     });
   },
   dataloaded(){
+
+    Store.removeSubscribe({
+      actionType: this.props.actionType
+    });
+
     if(Store.list.data){
       this.replaceState({ data: Store.list.data.article });
     }

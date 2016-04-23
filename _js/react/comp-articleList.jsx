@@ -45,6 +45,10 @@ var ArticleList = React.createClass({
   },
   dataloaded(){
 
+    Store.removeSubscribe({
+      actionType: this.props.actionType
+    });
+
     var _countArray = [];
 
     if(Store.list.data){
@@ -66,7 +70,10 @@ var ArticleList = React.createClass({
   },
   componentDidUpdate(){
     CntsThumb.init();
-    this.thumbClick();
+
+    $('.MdCntsThumb01 a').on('click', (e)=>{
+      e.preventDefault();
+    });
   },
   pagerClick( e ){
 
@@ -80,6 +87,7 @@ var ArticleList = React.createClass({
     if( this.state.nowPage === _num ) {
       return false;
     }else{
+      console.log('pager');
       this.actionCreator( _num, [ this.props.actionType ]);
 
       history.pushState(null,null,'/index_react.html?type=' + Store.PageControl.paramObjs.type + '&paged=' + e.target.dataset.num);
@@ -109,22 +117,16 @@ var ArticleList = React.createClass({
     });
   },
 
-  thumbClick( e ){
-    $('.MdCntsThumb01 a').each(( i, elm)=>{
-      $(elm).on('click', (e)=>{
-        e.preventDefault();
-        console.log($(elm).attr('href'));
-      });
-
-    });
+  thumbClick( ID ){
+    this.props.thumbClick(ID);
   },
   render(){
     if(this.state.article.length === 0){
       return false;
     }else{
-      var article = this.state.article.map((res, index)=>{
+      var article = this.state.article.map((res, i)=>{
         return (
-            <section key={index} className="MdCntsThumb01"><a href={"/wp/" + res.ID}>
+            <section key={i} className="MdCntsThumb01"><a onClick={this.thumbClick.bind(this, res.ID)} href={res.ID}>
                 <p className="mdCntsThumb01Img"><img src={res.thumb} /></p>
                 <div className="mdCntsThumb01InfoClm">
                   <div className="mdCntsThumb01Clm01">
@@ -169,9 +171,9 @@ var ArticleList = React.createClass({
 
 
 
-ReactDOM.render(
-  <ArticleList />,
-  document.getElementById('Main')
-);
+// ReactDOM.render(
+//   <ArticleList />,
+//   document.getElementById('Main')
+// );
 
 module.exports = ArticleList;

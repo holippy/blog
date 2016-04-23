@@ -21,6 +21,7 @@ var Mainvisual = React.createClass({
     this.actionCreator( [ this.props.actionType, 'list', 'mainvisual'] );
   },
   actionCreator( comps ){
+    console.log("mv");
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
       callback: this.dataloaded,
@@ -28,6 +29,11 @@ var Mainvisual = React.createClass({
     });
   },
   dataloaded(){
+    
+    Store.removeSubscribe({
+      actionType: this.props.actionType
+    });
+
     if(Store.mainvisual.data){
       this.imgLoading( Store.mainvisual.data ).then((e)=>{
         this.replaceState({ mainvisual: Store.mainvisual.data });
@@ -80,7 +86,7 @@ var Mainvisual = React.createClass({
       });
 
       return (
-        <div>
+        <div className="MdSlideContianer">
           <ul className="mdSlideListImg">
           {imgs}
           </ul>
@@ -97,9 +103,9 @@ var Mainvisual = React.createClass({
   }
 });
 
-ReactDOM.render(
-  <Mainvisual />,
-  document.getElementById('Mainvisual')
-);
+// ReactDOM.render(
+//   <Mainvisual />,
+//   document.getElementById('Mainvisual')
+// );
 
 module.exports = Mainvisual;

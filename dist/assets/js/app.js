@@ -1,92 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
-var BgAnime = function BgAnime(data) {
-  /*
-  svgData 読み込むsvgデータのパスを配列で取得
-  svgDataLength svnDataのlengthをキャッシュ
-  loadCounter svgデータ読み込み用カウンター初期値は0
-  */
-
-  this.svgData = data;
-  this.svgDataLength = data.length;
-  this.loadCounter = 0;
-  this.bgLayers = $('#bgLayers');
-};
-
-BgAnime.prototype = {
-
-  /*
-  svgデータを先読み
-  先読みが済んだらsetItemsへ
-  */
-
-  svgLoad: function svgLoad() {
-
-    var that = this;
-
-    for (var i = 0; i < that.svgDataLength; i++) {
-      (function () {
-        var item = new Image();
-        item.src = that.svgData[i];
-
-        $(item).on('load', function () {
-          that.loadCounter = that.loadCounter + 1;
-
-          if (that.loadCounter === that.svgDataLength) {
-            setTimeout(function () {
-              that.setItems();
-            }, 1000);
-          }
-        });
-      })();
-    };
-  },
-
-  /*
-  loadingを非表示にしてからsvgをdomに追加
-  */
-
-  setItems: function setItems() {
-
-    var that = this;
-
-    $('#loading').remove();
-
-    for (var i = 0; i < that.svgDataLength; i++) {
-
-      if (i !== 6) {
-        that.bgLayers.append('<figure class="svg' + (i + 1) + '"><img src="' + that.svgData[i] + '"></figure>');
-      } else {
-        that.bgLayers.append('<figure class="svg' + (i + 1) + '"></figure>');
-      }
-    };
-  }
-};
-
-module.exports = BgAnime;
-
-},{}],2:[function(require,module,exports){
-'use strict';
-
-/*===========================
-
-background
-
-===========================*/
-
-var bg = require('./_bg.js');
-
-var bgAnime = new bg(['/assets/svg/layer1.svg', '/assets/svg/layer2.svg', '/assets/svg/layer3.svg', '/assets/svg/layer4.svg', '/assets/svg/layer5.svg', '/assets/svg/layer6.svg', '/assets/svg/layer7.svg']);
-
-//bgAnime.svgLoad();
-
-/*===========================
-
-app
-
-===========================*/
-
 var app = app || {};
 
 /*===========================
@@ -98,7 +12,7 @@ react
 var storeArticle = require('./react/store-article.js');
 
 var compArticleList = require('./react/comp-mainvisual.jsx');
-var compArticleList = require('./react/comp-articleList.jsx');
+var compArticleList = require('./react/comp-page.jsx');
 var compGnav = require('./react/comp-gnav.jsx');
 
 /*===========================
@@ -128,7 +42,7 @@ cntsThumb
 
 var cntsThumb = require('./pageFncs/cntsThumb.js');
 
-},{"./_bg.js":1,"./pageFncs/cntsThumb.js":3,"./pageFncs/header.js":4,"./react/comp-articleList.jsx":6,"./react/comp-gnav.jsx":7,"./react/comp-mainvisual.jsx":8,"./react/store-article.js":10}],3:[function(require,module,exports){
+},{"./pageFncs/cntsThumb.js":2,"./pageFncs/header.js":3,"./react/comp-gnav.jsx":6,"./react/comp-mainvisual.jsx":7,"./react/comp-page.jsx":8,"./react/store-article.js":11}],2:[function(require,module,exports){
 'use strict';
 
 var app = app || {};
@@ -171,7 +85,7 @@ app.cntsThumb = {
 
 module.exports = app.cntsThumb;
 
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 'use strict';
 
 var app = app || {};
@@ -227,7 +141,7 @@ app.header = {
 
 module.exports = app.header;
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 
 var app = app || {};
@@ -472,7 +386,7 @@ app.slider = {
 
 module.exports = app.slider;
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
@@ -524,6 +438,10 @@ var ArticleList = React.createClass({
   dataloaded: function dataloaded() {
     var _this2 = this;
 
+    Store.removeSubscribe({
+      actionType: this.props.actionType
+    });
+
     var _countArray = [];
 
     if (Store.list.data) {
@@ -544,7 +462,10 @@ var ArticleList = React.createClass({
   },
   componentDidUpdate: function componentDidUpdate() {
     CntsThumb.init();
-    this.thumbClick();
+
+    $('.MdCntsThumb01 a').on('click', function (e) {
+      e.preventDefault();
+    });
   },
   pagerClick: function pagerClick(e) {
 
@@ -558,6 +479,7 @@ var ArticleList = React.createClass({
     if (this.state.nowPage === _num) {
       return false;
     } else {
+      console.log('pager');
       this.actionCreator(_num, [this.props.actionType]);
 
       history.pushState(null, null, '/index_react.html?type=' + Store.PageControl.paramObjs.type + '&paged=' + e.target.dataset.num);
@@ -583,13 +505,8 @@ var ArticleList = React.createClass({
       });
     });
   },
-  thumbClick: function thumbClick(e) {
-    $('.MdCntsThumb01 a').each(function (i, elm) {
-      $(elm).on('click', function (e) {
-        e.preventDefault();
-        console.log($(elm).attr('href'));
-      });
-    });
+  thumbClick: function thumbClick(ID) {
+    this.props.thumbClick(ID);
   },
   render: function render() {
     var _this3 = this;
@@ -597,13 +514,13 @@ var ArticleList = React.createClass({
     if (this.state.article.length === 0) {
       return false;
     } else {
-      var article = this.state.article.map(function (res, index) {
+      var article = this.state.article.map(function (res, i) {
         return React.createElement(
           'section',
-          { key: index, className: 'MdCntsThumb01' },
+          { key: i, className: 'MdCntsThumb01' },
           React.createElement(
             'a',
-            { href: "/wp/" + res.ID },
+            { onClick: _this3.thumbClick.bind(_this3, res.ID), href: res.ID },
             React.createElement(
               'p',
               { className: 'mdCntsThumb01Img' },
@@ -694,11 +611,14 @@ var ArticleList = React.createClass({
   }
 });
 
-ReactDOM.render(React.createElement(ArticleList, null), document.getElementById('Main'));
+// ReactDOM.render(
+//   <ArticleList />,
+//   document.getElementById('Main')
+// );
 
 module.exports = ArticleList;
 
-},{"../pageFncs/cntsThumb.js":3,"./comp-pager.jsx":9,"./store-article":10}],7:[function(require,module,exports){
+},{"../pageFncs/cntsThumb.js":2,"./comp-pager.jsx":9,"./store-article":11}],6:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
@@ -778,7 +698,7 @@ ReactDOM.render(React.createElement(Gnav, { actionType: 'gnav' }), document.getE
 
 module.exports = Gnav;
 
-},{"./store-article":10}],8:[function(require,module,exports){
+},{"./store-article":11}],7:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
@@ -805,6 +725,7 @@ var Mainvisual = React.createClass({
     this.actionCreator([this.props.actionType, 'list', 'mainvisual']);
   },
   actionCreator: function actionCreator(comps) {
+    console.log("mv");
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
       callback: this.dataloaded,
@@ -813,6 +734,10 @@ var Mainvisual = React.createClass({
   },
   dataloaded: function dataloaded() {
     var _this = this;
+
+    Store.removeSubscribe({
+      actionType: this.props.actionType
+    });
 
     if (Store.mainvisual.data) {
       this.imgLoading(Store.mainvisual.data).then(function (e) {
@@ -886,7 +811,7 @@ var Mainvisual = React.createClass({
 
       return React.createElement(
         'div',
-        null,
+        { className: 'MdSlideContianer' },
         React.createElement(
           'ul',
           { className: 'mdSlideListImg' },
@@ -916,17 +841,72 @@ var Mainvisual = React.createClass({
   }
 });
 
-ReactDOM.render(React.createElement(Mainvisual, null), document.getElementById('Mainvisual'));
+// ReactDOM.render(
+//   <Mainvisual />,
+//   document.getElementById('Mainvisual')
+// );
 
 module.exports = Mainvisual;
 
-},{"../pageFncs/slider.js":5,"./store-article":10}],9:[function(require,module,exports){
-"use strict";
+},{"../pageFncs/slider.js":4,"./store-article":11}],8:[function(require,module,exports){
+'use strict';
+
+var Store = require('./store-article');
+var ArticleList = require('./comp-articleList.jsx');
+var Mainvisual = require('./comp-mainvisual.jsx');
+var Single = require('./comp-single.jsx');
+
+var Page = React.createClass({
+  displayName: 'Page',
+  getDefaultProps: function getDefaultProps() {
+    return {};
+  },
+  getInitialState: function getInitialState() {
+    return {
+      pageType: 'top'
+    };
+  },
+  componentWillMount: function componentWillMount() {},
+
+  articleID: null,
+  actionCreator: function actionCreator(article, comps) {},
+  thumbClick: function thumbClick(ID) {
+
+    this.articleID = ID;
+
+    this.replaceState({
+      pageType: 'single'
+    });
+  },
+  render: function render() {
+    console.log(this.state.pageType);
+    if (this.state.pageType == 'top') {
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(Mainvisual, null),
+        React.createElement(ArticleList, { thumbClick: this.thumbClick }),
+        React.createElement(Pager, { pagerClick: this.pagerClick, num: index, key: index, stay: this.state.nowPage })
+      );
+    } else if (this.state.pageType == 'single') {
+      return React.createElement(Single, { articleID: this.articleID });
+    } else {
+      return false;
+    }
+  }
+});
+
+ReactDOM.render(React.createElement(Page, null), document.getElementById('Main'));
+
+module.exports = ArticleList;
+
+},{"./comp-articleList.jsx":5,"./comp-mainvisual.jsx":7,"./comp-single.jsx":10,"./store-article":11}],9:[function(require,module,exports){
+'use strict';
 
 var Store = require('./store-article');
 
 var Pager = React.createClass({
-  displayName: "Pager",
+  displayName: 'Pager',
   getDefaultProps: function getDefaultProps() {
     return {
       actionType: "pager"
@@ -939,6 +919,7 @@ var Pager = React.createClass({
     };
   },
   componentWillMount: function componentWillMount() {
+    console.log('add');
     Store.addSubscribe({
       actionType: this.props.actionType,
       callback: this.dataloaded
@@ -955,6 +936,11 @@ var Pager = React.createClass({
     });
   },
   dataloaded: function dataloaded() {
+
+    Store.removeSubscribe({
+      actionType: this.props.actionType
+    });
+
     if (Store.list.data) {
       this.replaceState({ data: Store.list.data.article });
     }
@@ -968,21 +954,21 @@ var Pager = React.createClass({
 
     if (this.props.num === stay) {
       return React.createElement(
-        "li",
+        'li',
         { key: this.props.num },
         React.createElement(
-          "a",
-          { href: "#", "data-num": this.props.num + 1, onClick: this.props.pagerClick, className: "stay" },
+          'a',
+          { href: '#', 'data-num': this.props.num + 1, onClick: this.props.pagerClick, className: 'stay' },
           this.props.num + 1
         )
       );
     } else {
       return React.createElement(
-        "li",
+        'li',
         { key: this.props.num },
         React.createElement(
-          "a",
-          { href: "#", "data-num": this.props.num + 1, onClick: this.props.pagerClick },
+          'a',
+          { href: '#', 'data-num': this.props.num + 1, onClick: this.props.pagerClick },
           this.props.num + 1
         )
       );
@@ -997,7 +983,171 @@ var Pager = React.createClass({
 
 module.exports = Pager;
 
-},{"./store-article":10}],10:[function(require,module,exports){
+},{"./store-article":11}],10:[function(require,module,exports){
+'use strict';
+
+var Store = require('./store-article');
+
+var Single = React.createClass({
+  displayName: 'Single',
+  getDefaultProps: function getDefaultProps() {
+    return {
+      actionType: "single"
+    };
+  },
+  getInitialState: function getInitialState() {
+    return {
+      data: null
+    };
+  },
+  componentWillMount: function componentWillMount() {
+    console.log(this.props.articleID);
+
+    Store.addSubscribe({
+      actionType: this.props.actionType,
+      callback: this.dataloaded
+    });
+
+    this.actionCreator(this.props.articleID, [this.props.actionType]);
+  },
+  events: function events() {},
+  actionCreator: function actionCreator(page, comps) {
+    Store.dispatcher.action.create({
+      actionType: this.props.actionType,
+      page: page,
+      callback: this.dataloaded,
+      requireComps: comps
+    });
+  },
+  dataloaded: function dataloaded() {
+    console.log('loaded');
+    this.replaceState({
+      data: Store.single.data
+    });
+  },
+  componentDidUpdate: function componentDidUpdate() {},
+  render: function render() {
+    if (this.state.data === null) {
+      return false;
+    } else {
+      return React.createElement(
+        'section',
+        { className: 'MdMainSingle01' },
+        React.createElement(
+          'div',
+          { className: 'mdContainer' },
+          React.createElement(
+            'main',
+            { className: 'mdMain' },
+            React.createElement(
+              'div',
+              { className: 'MdCntsData01' },
+              React.createElement(
+                'p',
+                { className: 'mdDate' },
+                '2016/4/20'
+              ),
+              React.createElement(
+                'p',
+                { className: 'mdCat' },
+                ' ',
+                React.createElement(
+                  'a',
+                  null,
+                  'camera'
+                )
+              )
+            ),
+            React.createElement(
+              'h1',
+              { className: 'MdTtlSingle01' },
+              'Focusing ZEISS DSLR Lenses For Peak Performance PART ONE: The Challenges'
+            ),
+            React.createElement(
+              'div',
+              { className: 'mdCms' },
+              React.createElement(
+                'h2',
+                null,
+                'Challenge #2: DSLR focus assist (“green dot”) is prone to error'
+              ),
+              React.createElement(
+                'p',
+                null,
+                'Alignment: there are two light paths and two sensors in a DSLR: the light path straight to the imaging sensor, and the twist and turns of the light path to the focusing sensor along the path to the optical viewfinder. If the two light paths are not exactly the same distance (more than 0.02 mm is a significant error), then focus will be skewed even if the user has perfect vision and focuses the image perfectly (as perceived). The camera manufacturer may be able to adjust the camera to fix such alignment issues.'
+              ),
+              React.createElement(
+                'p',
+                null,
+                'Focusing screen: even with a perfectly adjusted viewfinder, the surface structure of modern focusing screens makes it difficult for the eye to distinguish between in-focus and out-of-focus, particularly off-center. In effect, the focusing screen doesn’t allow focus discrimination much better than f/2.8, so f/1.4 and f/2 lenses tend to be hit and miss for focus. Also, f/1.4 and f/2 lenses are generally not much brighter than f/2.8 lenses with these modern screens. The traditional split image and microprism focusing aids have disappeared from Canon and Nikon DSLRs. There may also be markings that overlay the screen and obstruct the view for manual focus, though some camera models have options to hide these markings.'
+              ),
+              React.createElement(
+                'h2',
+                null,
+                'Make the project kick-off the first iteration'
+              ),
+              React.createElement(
+                'p',
+                null,
+                'Alignment: there are two light paths and two sensors in a DSLR: the light path straight to the imaging sensor, and the twist and turns of the light path to the focusing sensor along the path to the optical viewfinder. If the two light paths are not exactly the same distance (more than 0.02 mm is a significant error), then focus will be skewed even if the user has perfect vision and focuses the image perfectly (as perceived). The camera manufacturer may be able to adjust the camera to fix such alignment issues.'
+              ),
+              React.createElement(
+                'h2',
+                null,
+                'Challenge #2: DSLR focus assist (“green dot”) is prone to error'
+              ),
+              React.createElement(
+                'p',
+                null,
+                'Alignment: there are two light paths and two sensors in a DSLR: the light path straight to the imaging sensor, and the twist and turns of the light path to the focusing sensor along the path to the optical viewfinder. If the two light paths are not exactly the same distance (more than 0.02 mm is a significant error), then focus will be skewed even if the user has perfect vision and focuses the image perfectly (as perceived). The camera manufacturer may be able to adjust the camera to fix such alignment issues.'
+              ),
+              React.createElement(
+                'p',
+                null,
+                'Focusing screen: even with a perfectly adjusted viewfinder, the surface structure of modern focusing screens makes it difficult for the eye to distinguish between in-focus and out-of-focus, particularly off-center. In effect, the focusing screen doesn’t allow focus discrimination much better than f/2.8, so f/1.4 and f/2 lenses tend to be hit and miss for focus. Also, f/1.4 and f/2 lenses are generally not much brighter than f/2.8 lenses with these modern screens. The traditional split image and microprism focusing aids have disappeared from Canon and Nikon DSLRs. There may also be markings that overlay the screen and obstruct the view for manual focus, though some camera models have options to hide these markings.'
+              )
+            )
+          ),
+          React.createElement(
+            'aside',
+            { className: 'mdAside' },
+            React.createElement(
+              'p',
+              { className: 'MdTtlOutline' },
+              'Outline'
+            ),
+            React.createElement(
+              'ul',
+              { className: 'MdListAnc01' },
+              React.createElement(
+                'li',
+                { className: 'icon-icon04' },
+                React.createElement(
+                  'a',
+                  { href: '#' },
+                  'Challenge #2: DSLR focus assist (“green dot”) is prone to error'
+                )
+              ),
+              React.createElement(
+                'li',
+                { className: 'icon-icon04' },
+                React.createElement(
+                  'a',
+                  { href: '#' },
+                  'Make the project kick-off the first iteration'
+                )
+              )
+            )
+          )
+        )
+      );
+    }
+  }
+});
+
+module.exports = Single;
+
+},{"./store-article":11}],11:[function(require,module,exports){
 'use strict';
 
 var Dispatcher = require('flux').Dispatcher;
@@ -1062,20 +1212,26 @@ Store.LoadControl = {
 
 Store.dispatcher = new Dispatcher();
 
-//sortData定義
+//list定義
 Store.list = {
   data: null,
   subscriber: []
 };
 
-//sortData定義
+//gnav定義
 Store.gnav = {
   data: null,
   subscriber: []
 };
 
-//sortData定義
+//mainvisual定義
 Store.mainvisual = {
+  data: null,
+  subscriber: []
+};
+
+//single定義
+Store.single = {
   data: null,
   subscriber: []
 };
@@ -1117,6 +1273,10 @@ Store.dispatcher.action = {
           break;
         case 'mainvisual':
           url = 'http://beautifulday.sakura.tv/wp/mainvisual/';
+          data = {};
+          break;
+        case 'single':
+          url = 'http://beautifulday.sakura.tv/wp/' + payload.page + '/';
           data = {};
           break;
       }
@@ -1172,7 +1332,6 @@ Store.dispatcher.action = {
     this.queue.push(payload);
 
     if (this.queue.length === this.compArray.length) {
-      console.log('getDAta');
       var doPromise = this.getData();
       for (var i = 0; i < this.queue.length - 1; i++) {
         doPromise = doPromise.then(function (data) {
@@ -1274,9 +1433,26 @@ Store.mainvisual.dispatchToken = Store.dispatcher.register(function (res) {
   }
 });
 
+/*===========================
+
+singleのdispatchToken
+
+===========================*/
+
+Store.single.dispatchToken = Store.dispatcher.register(function (res) {
+  console.log(Store.dispatcher.subscriber);
+  if (res['single']) {
+    Store.single.data = res['single'];
+    Store.publish();
+  } else {
+    Store.single.data = false;
+    return true;
+  }
+});
+
 module.exports = Store;
 
-},{"flux":12}],11:[function(require,module,exports){
+},{"flux":13}],12:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -1328,7 +1504,7 @@ var invariant = function (condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 }).call(this,require('_process'))
-},{"_process":14}],12:[function(require,module,exports){
+},{"_process":15}],13:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1340,7 +1516,7 @@ module.exports = invariant;
 
 module.exports.Dispatcher = require('./lib/Dispatcher');
 
-},{"./lib/Dispatcher":13}],13:[function(require,module,exports){
+},{"./lib/Dispatcher":14}],14:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
@@ -1574,7 +1750,7 @@ var Dispatcher = (function () {
 
 module.exports = Dispatcher;
 }).call(this,require('_process'))
-},{"_process":14,"fbjs/lib/invariant":11}],14:[function(require,module,exports){
+},{"_process":15,"fbjs/lib/invariant":12}],15:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -1667,4 +1843,4 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}]},{},[2]);
+},{}]},{},[1]);

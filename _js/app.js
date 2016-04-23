@@ -1,29 +1,3 @@
-/*===========================
-
-background
-
-===========================*/
-
-var bg = require('./_bg.js');
-
-var bgAnime = new bg([
-  '/assets/svg/layer1.svg',
-  '/assets/svg/layer2.svg',
-  '/assets/svg/layer3.svg',
-  '/assets/svg/layer4.svg',
-  '/assets/svg/layer5.svg',
-  '/assets/svg/layer6.svg',
-  '/assets/svg/layer7.svg'
-  ]);
-
-//bgAnime.svgLoad();
-
-/*===========================
-
-app
-
-===========================*/
-
 var app = app || {};
 
 
@@ -36,7 +10,7 @@ react
 var storeArticle = require('./react/store-article.js');
 
 var compArticleList = require('./react/comp-mainvisual.jsx');
-var compArticleList = require('./react/comp-articleList.jsx');
+var compArticleList = require('./react/comp-page.jsx');
 var compGnav = require('./react/comp-gnav.jsx');
 
 
