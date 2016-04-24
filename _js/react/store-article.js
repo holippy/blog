@@ -38,10 +38,9 @@ Store.PageControl = {
 }
 
 Store.PageControl.getParam();
+
 $(window).on('popstate', ()=>{
-  
   Store.PageControl.getParam();
-  console.log(Store.PageControl.paramObjs);
 });
 
 /*===========================
@@ -99,6 +98,8 @@ Store.dispatcher.action = {
   loadStatus: false,
   getData( num ){
 
+
+
     this.loadStatus = true;
 
     return new Promise( (resolve, reject )=> {
@@ -114,7 +115,6 @@ Store.dispatcher.action = {
           break;
         case 'list':
           url = 'http://beautifulday.sakura.tv/wp/page/' + payload.page + '/';
-          console.log(payload.page);
           data = { paged: payload.page };
           break;
         case 'pager':
@@ -134,19 +134,18 @@ Store.dispatcher.action = {
 
       //loadStatusをtrueにする
       //loadStatus = true;
-
-      console.log(this.xhr);
-
       this.xhr = $.ajax({
           url: url,
           //data: data,
           type: 'GET',
           crossDomain: true,
-          cache: false,
+          cache: true,
           dataType: 'json'
       });
 
       this.xhr.done( ( data )=>{
+
+        console.log(data);
 
         this.counter = this.counter + 1;
         this.resData[payload.actionType] = data;
@@ -179,9 +178,14 @@ Store.dispatcher.action = {
       this.compArray = _.sortBy(this.compArray);
     });
 
+    
+
     this.queue.push( payload );
 
+    console.log(payload.requireComps);
+
     if( this.queue.length === this.compArray.length ){
+
       var doPromise = this.getData();
       for (var i = 0; i < this.queue.length - 1; i++) {
         doPromise = doPromise.then( (data)=>{
@@ -247,6 +251,7 @@ listのdispatchToken
 
 Store.list.dispatchToken = Store.dispatcher.register(function( res ) {
   if( res['list'] ){
+
     Store.dispatcher.waitFor([Store.mainvisual.dispatchToken]);
     Store.list.data = res['list'];
     Store.publish();
@@ -263,7 +268,6 @@ Store.gnav.dispatchToken = Store.dispatcher.register(function( res ) {
   if( res['gnav'] ){
     Store.gnav.data = res['gnav'];
   }else{
-    Store.gnav.data = false;
     return true;
   }
 });
@@ -280,7 +284,6 @@ Store.mainvisual.dispatchToken = Store.dispatcher.register(function( res ) {
     Store.dispatcher.waitFor([Store.gnav.dispatchToken]);
     Store.mainvisual.data = res['mainvisual'];
   }else{
-    Store.mainvisual.data = false;
     return true;
   }
 });
@@ -292,7 +295,6 @@ singleのdispatchToken
 ===========================*/
 
 Store.single.dispatchToken = Store.dispatcher.register(function( res ) {
-  console.log(Store.dispatcher.subscriber);
   if( res['single'] ){
     Store.single.data = res['single'];
     Store.publish();

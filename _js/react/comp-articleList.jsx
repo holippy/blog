@@ -3,6 +3,7 @@ var Pager = require('./comp-pager.jsx');
 var CntsThumb = require('../pageFncs/cntsThumb.js');
 
 var ArticleList = React.createClass({
+  first: true,
   getDefaultProps(){
     return {
       actionType:"list"
@@ -17,25 +18,32 @@ var ArticleList = React.createClass({
   },
   componentWillMount(){
 
-    if( Store.PageControl.paramObjs.type === 'index' ){
-      Store.addSubscribe({
-        actionType: this.props.actionType,
-        callback: this.dataloaded
-      });
-
+    if( Store.gnav.data === null && Store.mainvisual.data == null ){
       this.actionCreator( Store.PageControl.paramObjs.paged, [ this.props.actionType, 'gnav', 'mainvisual' ]);
+    }else{
+      this.actionCreator( Store.PageControl.paramObjs.paged, [ this.props.actionType, 'mainvisual']);
     }
 
-    this.events();
   },
-  events(){
-    
-    $(window).on('popstate', ()=>{
-      this.actionCreator( Store.PageControl.paramObjs.paged, [ this.props.actionType ]);
-    });
+  componentWillReceiveProps(){
 
+    if( !this.first ){
+    
+      if( Store.gnav.data === null && Store.mainvisual.data == null ){
+        this.actionCreator( Store.PageControl.paramObjs.paged, [ this.props.actionType, 'gnav', 'mainvisual' ]);
+      }else{
+        console.log('re');
+        this.actionCreator( Store.PageControl.paramObjs.paged, [ this.props.actionType, 'mainvisual']);
+      }
+    }
   },
   actionCreator( page, comps ){
+
+    Store.addSubscribe({
+      actionType: this.props.actionType,
+      callback: this.dataloaded
+    });
+
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
       page: page,
@@ -45,32 +53,35 @@ var ArticleList = React.createClass({
   },
   dataloaded(){
 
+    var _countArray = [];
+
     Store.removeSubscribe({
       actionType: this.props.actionType
     });
 
-    var _countArray = [];
-
     if(Store.list.data){
 
-    for (var i = 0; i < Store.list.data.page.maxPage; i++) {
-      _countArray.push(i);
-    }
+      for (var i = 0; i < Store.list.data.page.maxPage; i++) {
+        _countArray.push(i);
+      }
 
-    this.imgLoading( Store.list.data.article ).then((e)=>{
+      this.imgLoading( Store.list.data.article ).then((e)=>{
 
-      this.replaceState({
-        nowPage: Store.list.data.page.nowPage,
-        maxPage: _countArray,
-        article: Store.list.data.article
+        this.replaceState({
+          nowPage: Store.list.data.page.nowPage,
+          maxPage: _countArray,
+          article: Store.list.data.article
+        });
+        
       });
-      
-    });
     }
   },
-  componentDidUpdate(){
-    CntsThumb.init();
 
+  componentDidUpdate(){
+
+    this.first = false;
+
+    CntsThumb.init();
     $('.MdCntsThumb01 a').on('click', (e)=>{
       e.preventDefault();
     });
@@ -78,6 +89,7 @@ var ArticleList = React.createClass({
   pagerClick( e ){
 
     e.preventDefault();
+
     var _num = e.target.dataset.num;
 
     if( _num === '1'){
@@ -87,9 +99,7 @@ var ArticleList = React.createClass({
     if( this.state.nowPage === _num ) {
       return false;
     }else{
-      console.log('pager');
       this.actionCreator( _num, [ this.props.actionType ]);
-
       history.pushState(null,null,'/index_react.html?type=' + Store.PageControl.paramObjs.type + '&paged=' + e.target.dataset.num);
       Store.PageControl.getParam();
     }
@@ -121,9 +131,11 @@ var ArticleList = React.createClass({
     this.props.thumbClick(ID);
   },
   render(){
+
     if(this.state.article.length === 0){
       return false;
     }else{
+      
       var article = this.state.article.map((res, i)=>{
         return (
             <section key={i} className="MdCntsThumb01"><a onClick={this.thumbClick.bind(this, res.ID)} href={res.ID}>
@@ -148,11 +160,11 @@ var ArticleList = React.createClass({
           );
       });
 
-      var pager = this.state.maxPage.map((index)=>{
-        return (
-            <Pager pagerClick={this.pagerClick} num={index} key={index} stay={this.state.nowPage} />
-          );
-      });
+      // var pager = this.state.maxPage.map((index)=>{
+      //   return (
+      //       <Pager pagerClick={this.pagerClick} num={index} key={index} stay={this.state.nowPage} />
+      //     );
+      // });
 
       return (
         <section>
@@ -160,9 +172,7 @@ var ArticleList = React.createClass({
         <div className="LyCntsList">
         {article}
         </div>
-        <ul className="MdPager01">
-        {pager}
-        </ul>
+        <Pager pagerClick={this.pagerClick} max={this.state.maxPage} stay={this.state.nowPage} />
         </section>
       );
     }

@@ -17,6 +17,7 @@ app.slider = {
 
     this.startPos;
 
+    this.slide.addClass("FncStart");
     this.slide.css({display: 'block'});
 
     for (var i = 0; i < 3; i++) {
@@ -39,6 +40,20 @@ app.slider = {
     this.posSet();
     this.evntSet();
     this.autoPlay();
+
+  },
+  unmount(){
+    clearInterval(this.intervalTimer);
+
+    $(window).off('resize');
+
+    this.slidePager.each((i, elm)=>{
+      $(elm).off('click');
+    });
+
+    this.slideBtnBack.off('click');
+
+    this.slideBtnNext.off('click');
 
   },
   posSet(){

@@ -7,6 +7,8 @@ app.header = {
     this.logoWidth = 90;
     this.logoHeight = 70;
 
+    this.header.addClass('FncStart');
+
     this.eventSet();
   },
   headerControl(scrollTop){

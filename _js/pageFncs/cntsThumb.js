@@ -4,6 +4,8 @@ app.cntsThumb = {
   init(){
     this.thumb = $('.MdCntsThumb01');
 
+    
+
     for (var i = 0; i < this.thumb.length; i++) {
       this.thumbShow(this.thumb[i], i);
     }
@@ -11,8 +13,6 @@ app.cntsThumb = {
     this.setEvnt();
   },
   thumbShow( elm, index ){
-    console.log(index);
-
     TweenMax.set(elm , {display: 'block', opacity: 0});
 
     setTimeout(()=>{

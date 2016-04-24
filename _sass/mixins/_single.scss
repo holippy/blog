@@ -9,8 +9,11 @@ single page
     margin: 20px 0 40px 0;
     background-color: $color-bg-gray;
     text-align: center;
+    height: 450px;
+    overflow: hidden;
 
     img{
+      margin-top: -110px;
       vertical-align: bottom;
     }
   }
@@ -81,13 +84,19 @@ single page
 
   .mdCms{
     h2{
+      margin-top: 40px;
       margin-bottom: 20px;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
     }
 
     p{
       margin-bottom: 20px;
+    }
+
+    img{
+      width: 100%;
+      height: auto;
     }
   }
 
@@ -105,6 +114,7 @@ single page
       margin-bottom: 15px;
       padding-left: 15px;
       position: relative;
+      line-height: 1.6;
       color: $color-main;
 
       &:before{

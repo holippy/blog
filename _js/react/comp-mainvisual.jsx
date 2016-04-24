@@ -2,6 +2,7 @@ var Store = require('./store-article');
 var Slider = require('../pageFncs/slider.js');
 
 var Mainvisual = React.createClass({
+  first: true,
   getDefaultProps(){
     return {
       actionType:"mainvisual"
@@ -14,14 +15,33 @@ var Mainvisual = React.createClass({
     }
   },
   componentWillMount(){
+
+    if( Store.mainvisual.data === null ){
+      this.actionCreator( [ this.props.actionType, 'list', 'gnav'] );
+    }else if( Store.mainvisual.data !== null ){
+      this.actionCreator( [ this.props.actionType, 'list'] );
+    }
+  },
+
+  componentWillReceiveProps(){
+
+    if( !this.first ){
+      if( Store.mainvisual.data === null ){
+        console.log('re');
+        this.actionCreator( [ this.props.actionType, 'list', 'gnav'] );
+      }else if( Store.mainvisual.data !== null ){
+        this.actionCreator( [ this.props.actionType, 'list'] );
+      }
+    }
+
+  },
+  actionCreator( comps ){
+
     Store.addSubscribe({
       actionType: this.props.actionType,
       callback: this.dataloaded
     });
-    this.actionCreator( [ this.props.actionType, 'list', 'mainvisual'] );
-  },
-  actionCreator( comps ){
-    console.log("mv");
+
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
       callback: this.dataloaded,
@@ -29,14 +49,15 @@ var Mainvisual = React.createClass({
     });
   },
   dataloaded(){
-    
+
     Store.removeSubscribe({
       actionType: this.props.actionType
     });
 
+    this.replaceState({ mainvisual: Store.mainvisual.data });
+
     if(Store.mainvisual.data){
       this.imgLoading( Store.mainvisual.data ).then((e)=>{
-        this.replaceState({ mainvisual: Store.mainvisual.data });
       });
     }
   },
@@ -61,7 +82,20 @@ var Mainvisual = React.createClass({
     });
   },
   componentDidUpdate(){
-    Slider.init();
+
+    this.first = false;
+
+    if( $('.MdSlideContianer.FncStart').length === 0 ){
+      console.log('start');
+      Slider.init();
+    }
+  },
+  componentWillUnmount(){
+    console.log('unmount');
+    Slider.unmount();
+  },
+  componentDidMount(){
+
   },
   render(){
     if(this.state.mainvisual.length === 0){
@@ -86,7 +120,7 @@ var Mainvisual = React.createClass({
       });
 
       return (
-        <div className="MdSlideContianer">
+        <div key={this.mainvisualID} className="MdSlideContianer">
           <ul className="mdSlideListImg">
           {imgs}
           </ul>
@@ -99,13 +133,10 @@ var Mainvisual = React.createClass({
           </ul>
         </div>
       );
+
+      
     }
   }
 });
-
-// ReactDOM.render(
-//   <Mainvisual />,
-//   document.getElementById('Mainvisual')
-// );
 
 module.exports = Mainvisual;

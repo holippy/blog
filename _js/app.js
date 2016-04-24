@@ -9,9 +9,9 @@ react
 
 var storeArticle = require('./react/store-article.js');
 
-var compArticleList = require('./react/comp-mainvisual.jsx');
-var compArticleList = require('./react/comp-page.jsx');
-var compGnav = require('./react/comp-gnav.jsx');
+
+var page = require('./react/comp-page.jsx');
+
 
 
 /*===========================

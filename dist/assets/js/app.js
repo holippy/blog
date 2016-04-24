@@ -11,9 +11,7 @@ react
 
 var storeArticle = require('./react/store-article.js');
 
-var compArticleList = require('./react/comp-mainvisual.jsx');
-var compArticleList = require('./react/comp-page.jsx');
-var compGnav = require('./react/comp-gnav.jsx');
+var page = require('./react/comp-page.jsx');
 
 /*===========================
 
@@ -42,7 +40,7 @@ cntsThumb
 
 var cntsThumb = require('./pageFncs/cntsThumb.js');
 
-},{"./pageFncs/cntsThumb.js":2,"./pageFncs/header.js":3,"./react/comp-gnav.jsx":6,"./react/comp-mainvisual.jsx":7,"./react/comp-page.jsx":8,"./react/store-article.js":11}],2:[function(require,module,exports){
+},{"./pageFncs/cntsThumb.js":2,"./pageFncs/header.js":3,"./react/comp-page.jsx":8,"./react/store-article.js":11}],2:[function(require,module,exports){
 'use strict';
 
 var app = app || {};
@@ -58,8 +56,6 @@ app.cntsThumb = {
     this.setEvnt();
   },
   thumbShow: function thumbShow(elm, index) {
-    console.log(index);
-
     TweenMax.set(elm, { display: 'block', opacity: 0 });
 
     setTimeout(function () {
@@ -96,6 +92,8 @@ app.header = {
     this.logo = $('.mdLogo');
     this.logoWidth = 90;
     this.logoHeight = 70;
+
+    this.header.addClass('FncStart');
 
     this.eventSet();
   },
@@ -164,6 +162,7 @@ app.slider = {
 
     this.startPos;
 
+    this.slide.addClass("FncStart");
     this.slide.css({ display: 'block' });
 
     for (var i = 0; i < 3; i++) {
@@ -186,6 +185,19 @@ app.slider = {
     this.posSet();
     this.evntSet();
     this.autoPlay();
+  },
+  unmount: function unmount() {
+    clearInterval(this.intervalTimer);
+
+    $(window).off('resize');
+
+    this.slidePager.each(function (i, elm) {
+      $(elm).off('click');
+    });
+
+    this.slideBtnBack.off('click');
+
+    this.slideBtnNext.off('click');
   },
   posSet: function posSet() {
     this.slideList.css({
@@ -395,6 +407,8 @@ var CntsThumb = require('../pageFncs/cntsThumb.js');
 
 var ArticleList = React.createClass({
   displayName: 'ArticleList',
+
+  first: true,
   getDefaultProps: function getDefaultProps() {
     return {
       actionType: "list"
@@ -409,25 +423,31 @@ var ArticleList = React.createClass({
   },
   componentWillMount: function componentWillMount() {
 
-    if (Store.PageControl.paramObjs.type === 'index') {
-      Store.addSubscribe({
-        actionType: this.props.actionType,
-        callback: this.dataloaded
-      });
-
+    if (Store.gnav.data === null && Store.mainvisual.data == null) {
       this.actionCreator(Store.PageControl.paramObjs.paged, [this.props.actionType, 'gnav', 'mainvisual']);
+    } else {
+      this.actionCreator(Store.PageControl.paramObjs.paged, [this.props.actionType, 'mainvisual']);
     }
-
-    this.events();
   },
-  events: function events() {
-    var _this = this;
+  componentWillReceiveProps: function componentWillReceiveProps() {
 
-    $(window).on('popstate', function () {
-      _this.actionCreator(Store.PageControl.paramObjs.paged, [_this.props.actionType]);
-    });
+    if (!this.first) {
+
+      if (Store.gnav.data === null && Store.mainvisual.data == null) {
+        this.actionCreator(Store.PageControl.paramObjs.paged, [this.props.actionType, 'gnav', 'mainvisual']);
+      } else {
+        console.log('re');
+        this.actionCreator(Store.PageControl.paramObjs.paged, [this.props.actionType, 'mainvisual']);
+      }
+    }
   },
   actionCreator: function actionCreator(page, comps) {
+
+    Store.addSubscribe({
+      actionType: this.props.actionType,
+      callback: this.dataloaded
+    });
+
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
       page: page,
@@ -436,13 +456,13 @@ var ArticleList = React.createClass({
     });
   },
   dataloaded: function dataloaded() {
-    var _this2 = this;
+    var _this = this;
+
+    var _countArray = [];
 
     Store.removeSubscribe({
       actionType: this.props.actionType
     });
-
-    var _countArray = [];
 
     if (Store.list.data) {
 
@@ -452,7 +472,7 @@ var ArticleList = React.createClass({
 
       this.imgLoading(Store.list.data.article).then(function (e) {
 
-        _this2.replaceState({
+        _this.replaceState({
           nowPage: Store.list.data.page.nowPage,
           maxPage: _countArray,
           article: Store.list.data.article
@@ -461,8 +481,10 @@ var ArticleList = React.createClass({
     }
   },
   componentDidUpdate: function componentDidUpdate() {
-    CntsThumb.init();
 
+    this.first = false;
+
+    CntsThumb.init();
     $('.MdCntsThumb01 a').on('click', function (e) {
       e.preventDefault();
     });
@@ -470,6 +492,7 @@ var ArticleList = React.createClass({
   pagerClick: function pagerClick(e) {
 
     e.preventDefault();
+
     var _num = e.target.dataset.num;
 
     if (_num === '1') {
@@ -479,9 +502,7 @@ var ArticleList = React.createClass({
     if (this.state.nowPage === _num) {
       return false;
     } else {
-      console.log('pager');
       this.actionCreator(_num, [this.props.actionType]);
-
       history.pushState(null, null, '/index_react.html?type=' + Store.PageControl.paramObjs.type + '&paged=' + e.target.dataset.num);
       Store.PageControl.getParam();
     }
@@ -509,18 +530,19 @@ var ArticleList = React.createClass({
     this.props.thumbClick(ID);
   },
   render: function render() {
-    var _this3 = this;
+    var _this2 = this;
 
     if (this.state.article.length === 0) {
       return false;
     } else {
+
       var article = this.state.article.map(function (res, i) {
         return React.createElement(
           'section',
           { key: i, className: 'MdCntsThumb01' },
           React.createElement(
             'a',
-            { onClick: _this3.thumbClick.bind(_this3, res.ID), href: res.ID },
+            { onClick: _this2.thumbClick.bind(_this2, res.ID), href: res.ID },
             React.createElement(
               'p',
               { className: 'mdCntsThumb01Img' },
@@ -580,9 +602,11 @@ var ArticleList = React.createClass({
         );
       });
 
-      var pager = this.state.maxPage.map(function (index) {
-        return React.createElement(Pager, { pagerClick: _this3.pagerClick, num: index, key: index, stay: _this3.state.nowPage });
-      });
+      // var pager = this.state.maxPage.map((index)=>{
+      //   return (
+      //       <Pager pagerClick={this.pagerClick} num={index} key={index} stay={this.state.nowPage} />
+      //     );
+      // });
 
       return React.createElement(
         'section',
@@ -601,11 +625,7 @@ var ArticleList = React.createClass({
           { className: 'LyCntsList' },
           article
         ),
-        React.createElement(
-          'ul',
-          { className: 'MdPager01' },
-          pager
-        )
+        React.createElement(Pager, { pagerClick: this.pagerClick, max: this.state.maxPage, stay: this.state.nowPage })
       );
     }
   }
@@ -622,6 +642,7 @@ module.exports = ArticleList;
 'use strict';
 
 var Store = require('./store-article');
+var Header = require('../pageFncs/header.js');
 
 var Gnav = React.createClass({
   displayName: 'Gnav',
@@ -637,16 +658,27 @@ var Gnav = React.createClass({
     };
   },
   componentWillMount: function componentWillMount() {
+
     Store.addSubscribe({
       actionType: this.props.actionType,
       callback: this.dataloaded
     });
-    this.actionCreator([this.props.actionType, 'list', 'mainvisual']);
+
+    if (this.props.pageType === 'index' && Store.gnav.data === null) {
+      this.actionCreator([this.props.actionType, 'list', 'mainvisual']);
+    } else if (this.props.pageType === 'single' && Store.gnav.data === null) {
+      this.actionCreator([this.props.actionType, 'single']);
+    }
   },
   componentDidUpdate: function componentDidUpdate() {
-    //rupdate後にグロナビとフッターを表示
+    //update後にグロナビとフッターを表示
     $('.LyHead').css({ display: 'block' });
     $('.LyFtr').css({ display: 'block' });
+
+    if ($('.LyHead.FncStart').length === 0) {
+      console.log('headerinit');
+      Header.init();
+    }
   },
   componentDidMount: function componentDidMount() {},
   actionCreator: function actionCreator(comps) {
@@ -667,10 +699,16 @@ var Gnav = React.createClass({
       actionType: this.props.actionType
     });
   },
+  backTop: function backTop(e) {
+    e.preventDefault();
+    this.props.backTop();
+  },
   render: function render() {
+
     if (this.state.gnav.length === 0) {
       return false;
     } else {
+
       var lists = this.state.gnav.map(function (res) {
 
         return React.createElement(
@@ -686,19 +724,44 @@ var Gnav = React.createClass({
       });
 
       return React.createElement(
-        'ul',
-        null,
-        lists
+        'div',
+        { className: 'LyHead' },
+        React.createElement(
+          'header',
+          { className: 'MdHead' },
+          React.createElement(
+            'p',
+            { className: 'mdLogo' },
+            React.createElement(
+              'a',
+              { href: '#', onClick: this.backTop },
+              'Indoor Living'
+            )
+          ),
+          React.createElement(
+            'nav',
+            { id: 'Gnav', className: 'MdGNV' },
+            React.createElement(
+              'ul',
+              null,
+              lists
+            )
+          ),
+          React.createElement(
+            'form',
+            { method: 'post', action: '#', className: 'MdSearch' },
+            React.createElement('input', { type: 'text' }),
+            React.createElement('button', { type: 'submit', className: 'icon-icon_search' })
+          )
+        )
       );
     }
   }
 });
 
-ReactDOM.render(React.createElement(Gnav, { actionType: 'gnav' }), document.getElementById('Gnav'));
-
 module.exports = Gnav;
 
-},{"./store-article":11}],7:[function(require,module,exports){
+},{"../pageFncs/header.js":3,"./store-article":11}],7:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
@@ -706,6 +769,8 @@ var Slider = require('../pageFncs/slider.js');
 
 var Mainvisual = React.createClass({
   displayName: 'Mainvisual',
+
+  first: true,
   getDefaultProps: function getDefaultProps() {
     return {
       actionType: "mainvisual"
@@ -718,14 +783,31 @@ var Mainvisual = React.createClass({
     };
   },
   componentWillMount: function componentWillMount() {
+
+    if (Store.mainvisual.data === null) {
+      this.actionCreator([this.props.actionType, 'list', 'gnav']);
+    } else if (Store.mainvisual.data !== null) {
+      this.actionCreator([this.props.actionType, 'list']);
+    }
+  },
+  componentWillReceiveProps: function componentWillReceiveProps() {
+
+    if (!this.first) {
+      if (Store.mainvisual.data === null) {
+        console.log('re');
+        this.actionCreator([this.props.actionType, 'list', 'gnav']);
+      } else if (Store.mainvisual.data !== null) {
+        this.actionCreator([this.props.actionType, 'list']);
+      }
+    }
+  },
+  actionCreator: function actionCreator(comps) {
+
     Store.addSubscribe({
       actionType: this.props.actionType,
       callback: this.dataloaded
     });
-    this.actionCreator([this.props.actionType, 'list', 'mainvisual']);
-  },
-  actionCreator: function actionCreator(comps) {
-    console.log("mv");
+
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
       callback: this.dataloaded,
@@ -733,16 +815,15 @@ var Mainvisual = React.createClass({
     });
   },
   dataloaded: function dataloaded() {
-    var _this = this;
 
     Store.removeSubscribe({
       actionType: this.props.actionType
     });
 
+    this.replaceState({ mainvisual: Store.mainvisual.data });
+
     if (Store.mainvisual.data) {
-      this.imgLoading(Store.mainvisual.data).then(function (e) {
-        _this.replaceState({ mainvisual: Store.mainvisual.data });
-      });
+      this.imgLoading(Store.mainvisual.data).then(function (e) {});
     }
   },
   imgLoading: function imgLoading(data) {
@@ -765,8 +846,19 @@ var Mainvisual = React.createClass({
     });
   },
   componentDidUpdate: function componentDidUpdate() {
-    Slider.init();
+
+    this.first = false;
+
+    if ($('.MdSlideContianer.FncStart').length === 0) {
+      console.log('start');
+      Slider.init();
+    }
   },
+  componentWillUnmount: function componentWillUnmount() {
+    console.log('unmount');
+    Slider.unmount();
+  },
+  componentDidMount: function componentDidMount() {},
   render: function render() {
     if (this.state.mainvisual.length === 0) {
       return false;
@@ -811,7 +903,7 @@ var Mainvisual = React.createClass({
 
       return React.createElement(
         'div',
-        { className: 'MdSlideContianer' },
+        { key: this.mainvisualID, className: 'MdSlideContianer' },
         React.createElement(
           'ul',
           { className: 'mdSlideListImg' },
@@ -841,11 +933,6 @@ var Mainvisual = React.createClass({
   }
 });
 
-// ReactDOM.render(
-//   <Mainvisual />,
-//   document.getElementById('Mainvisual')
-// );
-
 module.exports = Mainvisual;
 
 },{"../pageFncs/slider.js":4,"./store-article":11}],8:[function(require,module,exports){
@@ -854,6 +941,7 @@ module.exports = Mainvisual;
 var Store = require('./store-article');
 var ArticleList = require('./comp-articleList.jsx');
 var Mainvisual = require('./comp-mainvisual.jsx');
+var Gnav = require('./comp-gnav.jsx');
 var Single = require('./comp-single.jsx');
 
 var Page = React.createClass({
@@ -863,33 +951,78 @@ var Page = React.createClass({
   },
   getInitialState: function getInitialState() {
     return {
-      pageType: 'top'
+      pageType: 'index'
     };
   },
-  componentWillMount: function componentWillMount() {},
+  componentWillMount: function componentWillMount() {
+    if (Store.PageControl.paramObjs.type === 'single') {
+
+      this.articleID = Store.PageControl.paramObjs.paged;
+
+      this.replaceState({
+        pageType: 'single'
+      });
+    }
+
+    this.event();
+  },
 
   articleID: null,
   actionCreator: function actionCreator(article, comps) {},
+  event: function event() {
+    var _this = this;
+
+    $(window).on('popstate', function () {
+
+      if (Store.PageControl.paramObjs.type === 'single') {
+
+        _this.articleID = Store.PageControl.paramObjs.paged;
+
+        _this.replaceState({
+          pageType: 'single'
+        });
+      } else if (Store.PageControl.paramObjs.type === 'index') {
+
+        _this.replaceState({
+          pageType: 'index'
+        });
+      }
+    });
+  },
   thumbClick: function thumbClick(ID) {
 
     this.articleID = ID;
+
+    history.pushState(null, null, '/index_react.html?type=' + 'single' + '&paged=' + ID);
+    Store.PageControl.getParam();
 
     this.replaceState({
       pageType: 'single'
     });
   },
+  backTop: function backTop() {
+    this.replaceState({
+      pageType: 'index'
+    });
+    history.pushState(null, null, '/index_react.html');
+    Store.PageControl.getParam();
+  },
   render: function render() {
-    console.log(this.state.pageType);
-    if (this.state.pageType == 'top') {
+    if (this.state.pageType == 'index') {
       return React.createElement(
         'div',
         null,
+        React.createElement(Gnav, { pageType: this.state.pageType, backTop: this.backTop }),
         React.createElement(Mainvisual, null),
-        React.createElement(ArticleList, { thumbClick: this.thumbClick }),
-        React.createElement(Pager, { pagerClick: this.pagerClick, num: index, key: index, stay: this.state.nowPage })
+        React.createElement(ArticleList, { thumbClick: this.thumbClick })
       );
     } else if (this.state.pageType == 'single') {
-      return React.createElement(Single, { articleID: this.articleID });
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(Gnav, { pageType: this.state.pageType, backTop: this.backTop }),
+        React.createElement(Single, { articleID: this.articleID })
+      );
     } else {
       return false;
     }
@@ -900,79 +1033,49 @@ ReactDOM.render(React.createElement(Page, null), document.getElementById('Main')
 
 module.exports = ArticleList;
 
-},{"./comp-articleList.jsx":5,"./comp-mainvisual.jsx":7,"./comp-single.jsx":10,"./store-article":11}],9:[function(require,module,exports){
-'use strict';
-
-var Store = require('./store-article');
+},{"./comp-articleList.jsx":5,"./comp-gnav.jsx":6,"./comp-mainvisual.jsx":7,"./comp-single.jsx":10,"./store-article":11}],9:[function(require,module,exports){
+"use strict";
 
 var Pager = React.createClass({
-  displayName: 'Pager',
-  getDefaultProps: function getDefaultProps() {
-    return {
-      actionType: "pager"
-    };
-  },
-  getInitialState: function getInitialState() {
-    return {
-      page: 1,
-      data: []
-    };
-  },
-  componentWillMount: function componentWillMount() {
-    console.log('add');
-    Store.addSubscribe({
-      actionType: this.props.actionType,
-      callback: this.dataloaded
-    });
-    //this.actionCreator([ this.props.actionType, 'gnav', 'list' ]);
-  },
-  actionCreator: function actionCreator(comps) {
-
-    Store.dispatcher.action.create({
-      actionType: this.props.actionType,
-      page: 1,
-      callback: this.dataloaded,
-      requireComps: comps
-    });
-  },
-  dataloaded: function dataloaded() {
-
-    Store.removeSubscribe({
-      actionType: this.props.actionType
-    });
-
-    if (Store.list.data) {
-      this.replaceState({ data: Store.list.data.article });
-    }
-  },
+  displayName: "Pager",
   render: function render() {
+    var _this = this;
+
     var stay = this.props.stay;
 
     if (stay != 0) {
       stay = stay - 1;
     }
 
-    if (this.props.num === stay) {
-      return React.createElement(
-        'li',
-        { key: this.props.num },
-        React.createElement(
-          'a',
-          { href: '#', 'data-num': this.props.num + 1, onClick: this.props.pagerClick, className: 'stay' },
-          this.props.num + 1
-        )
-      );
-    } else {
-      return React.createElement(
-        'li',
-        { key: this.props.num },
-        React.createElement(
-          'a',
-          { href: '#', 'data-num': this.props.num + 1, onClick: this.props.pagerClick },
-          this.props.num + 1
-        )
-      );
-    }
+    var pager = this.props.max.map(function (index) {
+      if (index === stay) {
+        return React.createElement(
+          "li",
+          { key: index },
+          React.createElement(
+            "a",
+            { href: "#", "data-num": index + 1, onClick: _this.props.pagerClick, className: "stay" },
+            index + 1
+          )
+        );
+      } else {
+        return React.createElement(
+          "li",
+          { key: index },
+          React.createElement(
+            "a",
+            { href: "#", "data-num": index + 1, onClick: _this.props.pagerClick },
+            index + 1
+          )
+        );
+      }
+    });
+
+    return React.createElement(
+      "ul",
+      { className: "MdPager01" },
+      pager
+    );
   }
 });
 
@@ -983,7 +1086,7 @@ var Pager = React.createClass({
 
 module.exports = Pager;
 
-},{"./store-article":11}],10:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
@@ -1008,7 +1111,11 @@ var Single = React.createClass({
       callback: this.dataloaded
     });
 
-    this.actionCreator(this.props.articleID, [this.props.actionType]);
+    if (Store.gnav.data === null) {
+      this.actionCreator(this.props.articleID, [this.props.actionType, 'gnav']);
+    } else {
+      this.actionCreator(this.props.articleID, [this.props.actionType]);
+    }
   },
   events: function events() {},
   actionCreator: function actionCreator(page, comps) {
@@ -1020,7 +1127,11 @@ var Single = React.createClass({
     });
   },
   dataloaded: function dataloaded() {
-    console.log('loaded');
+
+    Store.removeSubscribe({
+      actionType: this.props.actionType
+    });
+
     this.replaceState({
       data: Store.single.data
     });
@@ -1030,112 +1141,74 @@ var Single = React.createClass({
     if (this.state.data === null) {
       return false;
     } else {
+
+      var heading2 = this.state.data.hdg2.map(function (res, i) {
+        return React.createElement(
+          'li',
+          { className: 'icon-icon04', key: i },
+          React.createElement(
+            'a',
+            { href: '#' },
+            res
+          )
+        );
+      });
+
       return React.createElement(
-        'section',
-        { className: 'MdMainSingle01' },
+        'div',
+        { key: this.props.articleID },
         React.createElement(
           'div',
-          { className: 'mdContainer' },
+          { className: 'MdMvSingle01' },
+          React.createElement('img', { src: this.state.data.visual })
+        ),
+        React.createElement(
+          'section',
+          { className: 'MdMainSingle01' },
           React.createElement(
-            'main',
-            { className: 'mdMain' },
+            'div',
+            { className: 'mdContainer' },
             React.createElement(
-              'div',
-              { className: 'MdCntsData01' },
+              'main',
+              { className: 'mdMain' },
               React.createElement(
-                'p',
-                { className: 'mdDate' },
-                '2016/4/20'
-              ),
-              React.createElement(
-                'p',
-                { className: 'mdCat' },
-                ' ',
+                'div',
+                { className: 'MdCntsData01' },
                 React.createElement(
-                  'a',
-                  null,
-                  'camera'
-                )
-              )
-            ),
-            React.createElement(
-              'h1',
-              { className: 'MdTtlSingle01' },
-              'Focusing ZEISS DSLR Lenses For Peak Performance PART ONE: The Challenges'
-            ),
-            React.createElement(
-              'div',
-              { className: 'mdCms' },
-              React.createElement(
-                'h2',
-                null,
-                'Challenge #2: DSLR focus assist (“green dot”) is prone to error'
-              ),
-              React.createElement(
-                'p',
-                null,
-                'Alignment: there are two light paths and two sensors in a DSLR: the light path straight to the imaging sensor, and the twist and turns of the light path to the focusing sensor along the path to the optical viewfinder. If the two light paths are not exactly the same distance (more than 0.02 mm is a significant error), then focus will be skewed even if the user has perfect vision and focuses the image perfectly (as perceived). The camera manufacturer may be able to adjust the camera to fix such alignment issues.'
-              ),
-              React.createElement(
-                'p',
-                null,
-                'Focusing screen: even with a perfectly adjusted viewfinder, the surface structure of modern focusing screens makes it difficult for the eye to distinguish between in-focus and out-of-focus, particularly off-center. In effect, the focusing screen doesn’t allow focus discrimination much better than f/2.8, so f/1.4 and f/2 lenses tend to be hit and miss for focus. Also, f/1.4 and f/2 lenses are generally not much brighter than f/2.8 lenses with these modern screens. The traditional split image and microprism focusing aids have disappeared from Canon and Nikon DSLRs. There may also be markings that overlay the screen and obstruct the view for manual focus, though some camera models have options to hide these markings.'
-              ),
-              React.createElement(
-                'h2',
-                null,
-                'Make the project kick-off the first iteration'
-              ),
-              React.createElement(
-                'p',
-                null,
-                'Alignment: there are two light paths and two sensors in a DSLR: the light path straight to the imaging sensor, and the twist and turns of the light path to the focusing sensor along the path to the optical viewfinder. If the two light paths are not exactly the same distance (more than 0.02 mm is a significant error), then focus will be skewed even if the user has perfect vision and focuses the image perfectly (as perceived). The camera manufacturer may be able to adjust the camera to fix such alignment issues.'
-              ),
-              React.createElement(
-                'h2',
-                null,
-                'Challenge #2: DSLR focus assist (“green dot”) is prone to error'
-              ),
-              React.createElement(
-                'p',
-                null,
-                'Alignment: there are two light paths and two sensors in a DSLR: the light path straight to the imaging sensor, and the twist and turns of the light path to the focusing sensor along the path to the optical viewfinder. If the two light paths are not exactly the same distance (more than 0.02 mm is a significant error), then focus will be skewed even if the user has perfect vision and focuses the image perfectly (as perceived). The camera manufacturer may be able to adjust the camera to fix such alignment issues.'
-              ),
-              React.createElement(
-                'p',
-                null,
-                'Focusing screen: even with a perfectly adjusted viewfinder, the surface structure of modern focusing screens makes it difficult for the eye to distinguish between in-focus and out-of-focus, particularly off-center. In effect, the focusing screen doesn’t allow focus discrimination much better than f/2.8, so f/1.4 and f/2 lenses tend to be hit and miss for focus. Also, f/1.4 and f/2 lenses are generally not much brighter than f/2.8 lenses with these modern screens. The traditional split image and microprism focusing aids have disappeared from Canon and Nikon DSLRs. There may also be markings that overlay the screen and obstruct the view for manual focus, though some camera models have options to hide these markings.'
-              )
-            )
-          ),
-          React.createElement(
-            'aside',
-            { className: 'mdAside' },
-            React.createElement(
-              'p',
-              { className: 'MdTtlOutline' },
-              'Outline'
-            ),
-            React.createElement(
-              'ul',
-              { className: 'MdListAnc01' },
-              React.createElement(
-                'li',
-                { className: 'icon-icon04' },
+                  'p',
+                  { className: 'mdDate' },
+                  this.state.data.date
+                ),
                 React.createElement(
-                  'a',
-                  { href: '#' },
-                  'Challenge #2: DSLR focus assist (“green dot”) is prone to error'
+                  'p',
+                  { className: 'mdCat' },
+                  ' ',
+                  React.createElement(
+                    'a',
+                    null,
+                    this.state.data.catName
+                  )
                 )
               ),
               React.createElement(
-                'li',
-                { className: 'icon-icon04' },
-                React.createElement(
-                  'a',
-                  { href: '#' },
-                  'Make the project kick-off the first iteration'
-                )
+                'h1',
+                { className: 'MdTtlSingle01' },
+                this.state.data.title
+              ),
+              React.createElement('div', { className: 'mdCms', dangerouslySetInnerHTML: { __html: this.state.data.contents } })
+            ),
+            React.createElement(
+              'aside',
+              { className: 'mdAside' },
+              React.createElement(
+                'p',
+                { className: 'MdTtlOutline' },
+                'Outline'
+              ),
+              React.createElement(
+                'ul',
+                { className: 'MdListAnc01' },
+                heading2
               )
             )
           )
@@ -1188,10 +1261,9 @@ Store.PageControl = {
 };
 
 Store.PageControl.getParam();
-$(window).on('popstate', function () {
 
+$(window).on('popstate', function () {
   Store.PageControl.getParam();
-  console.log(Store.PageControl.paramObjs);
 });
 
 /*===========================
@@ -1264,7 +1336,6 @@ Store.dispatcher.action = {
           break;
         case 'list':
           url = 'http://beautifulday.sakura.tv/wp/page/' + payload.page + '/';
-          console.log(payload.page);
           data = { paged: payload.page };
           break;
         case 'pager':
@@ -1283,19 +1354,18 @@ Store.dispatcher.action = {
 
       //loadStatusをtrueにする
       //loadStatus = true;
-
-      console.log(_this.xhr);
-
       _this.xhr = $.ajax({
         url: url,
         //data: data,
         type: 'GET',
         crossDomain: true,
-        cache: false,
+        cache: true,
         dataType: 'json'
       });
 
       _this.xhr.done(function (data) {
+
+        console.log(data);
 
         _this.counter = _this.counter + 1;
         _this.resData[payload.actionType] = data;
@@ -1331,7 +1401,10 @@ Store.dispatcher.action = {
 
     this.queue.push(payload);
 
+    console.log(payload.requireComps);
+
     if (this.queue.length === this.compArray.length) {
+
       var doPromise = this.getData();
       for (var i = 0; i < this.queue.length - 1; i++) {
         doPromise = doPromise.then(function (data) {
@@ -1395,6 +1468,7 @@ listのdispatchToken
 
 Store.list.dispatchToken = Store.dispatcher.register(function (res) {
   if (res['list']) {
+
     Store.dispatcher.waitFor([Store.mainvisual.dispatchToken]);
     Store.list.data = res['list'];
     Store.publish();
@@ -1411,7 +1485,6 @@ Store.gnav.dispatchToken = Store.dispatcher.register(function (res) {
   if (res['gnav']) {
     Store.gnav.data = res['gnav'];
   } else {
-    Store.gnav.data = false;
     return true;
   }
 });
@@ -1428,7 +1501,6 @@ Store.mainvisual.dispatchToken = Store.dispatcher.register(function (res) {
     Store.dispatcher.waitFor([Store.gnav.dispatchToken]);
     Store.mainvisual.data = res['mainvisual'];
   } else {
-    Store.mainvisual.data = false;
     return true;
   }
 });
@@ -1440,7 +1512,6 @@ singleのdispatchToken
 ===========================*/
 
 Store.single.dispatchToken = Store.dispatcher.register(function (res) {
-  console.log(Store.dispatcher.subscriber);
   if (res['single']) {
     Store.single.data = res['single'];
     Store.publish();

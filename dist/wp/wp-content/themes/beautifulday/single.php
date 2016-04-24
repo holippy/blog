@@ -26,11 +26,26 @@ $catName = $category[0] -> name;
 //スラッグ
 $catSlug = $category[0] -> slug;
 
+//アイキャッチ画像
+$imgPath = '';
+
+if (has_post_thumbnail() )  {
+
+  //アイキャッチ IDを取得して画像の「URL,横幅,高さ」を取得。
+  //画像サイズは medium で出力しています。
+  $image_url = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'large');
+
+  
+  //URLを返す
+  $imgPath = $image_url[0];
+  
+}
+
 //コンテンツ
 $contents = get_the_content();
 
 //コンテンツからh2を抽出
-preg_match_all('/<h2>(.+)<\/h2>/', $contents, $match);
+preg_match_all('/<h2>(.+?)<\/h2>/', $contents, $match);
 
 //h2タグを除去
 strip_tags($match);
@@ -55,7 +70,9 @@ for ($i=0; $i < count($match[1]); $i++) {
   "date": "<?php echo $date; ?>",
   "catName": "<?php echo $catName; ?>",
   "catSlug": "<?php echo $catSlug; ?>",
+  "visual": "<?php echo $imgPath; ?>",
   "contents": <?php echo json_encode( get_the_content() ) ; ?>,
   "hdg2": [<?php echo $hdg2; ?>]
 
 }
+
