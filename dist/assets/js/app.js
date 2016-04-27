@@ -40,7 +40,7 @@ cntsThumb
 
 var cntsThumb = require('./pageFncs/cntsThumb.js');
 
-},{"./pageFncs/cntsThumb.js":2,"./pageFncs/header.js":3,"./react/comp-page.jsx":8,"./react/store-article.js":11}],2:[function(require,module,exports){
+},{"./pageFncs/cntsThumb.js":2,"./pageFncs/header.js":3,"./react/comp-page.jsx":8,"./react/store-article.js":12}],2:[function(require,module,exports){
 'use strict';
 
 var app = app || {};
@@ -638,7 +638,7 @@ var ArticleList = React.createClass({
 
 module.exports = ArticleList;
 
-},{"../pageFncs/cntsThumb.js":2,"./comp-pager.jsx":9,"./store-article":11}],6:[function(require,module,exports){
+},{"../pageFncs/cntsThumb.js":2,"./comp-pager.jsx":9,"./store-article":12}],6:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
@@ -761,7 +761,7 @@ var Gnav = React.createClass({
 
 module.exports = Gnav;
 
-},{"../pageFncs/header.js":3,"./store-article":11}],7:[function(require,module,exports){
+},{"../pageFncs/header.js":3,"./store-article":12}],7:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
@@ -935,7 +935,7 @@ var Mainvisual = React.createClass({
 
 module.exports = Mainvisual;
 
-},{"../pageFncs/slider.js":4,"./store-article":11}],8:[function(require,module,exports){
+},{"../pageFncs/slider.js":4,"./store-article":12}],8:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
@@ -951,7 +951,8 @@ var Page = React.createClass({
   },
   getInitialState: function getInitialState() {
     return {
-      pageType: 'index'
+      pageType: 'index',
+      pageID: null
     };
   },
   componentWillMount: function componentWillMount() {
@@ -991,13 +992,16 @@ var Page = React.createClass({
   },
   thumbClick: function thumbClick(ID) {
 
+    console.log(ID);
+
     this.articleID = ID;
 
     history.pushState(null, null, '/index_react.html?type=' + 'single' + '&paged=' + ID);
     Store.PageControl.getParam();
 
     this.replaceState({
-      pageType: 'single'
+      pageType: 'single',
+      pageID: ID
     });
   },
   backTop: function backTop() {
@@ -1008,6 +1012,7 @@ var Page = React.createClass({
     Store.PageControl.getParam();
   },
   render: function render() {
+    console.log(this.state.pageType);
     if (this.state.pageType == 'index') {
       return React.createElement(
         'div',
@@ -1021,7 +1026,7 @@ var Page = React.createClass({
         'div',
         null,
         React.createElement(Gnav, { pageType: this.state.pageType, backTop: this.backTop }),
-        React.createElement(Single, { articleID: this.articleID })
+        React.createElement(Single, { articleID: this.articleID, thumbClick: this.thumbClick })
       );
     } else {
       return false;
@@ -1033,7 +1038,7 @@ ReactDOM.render(React.createElement(Page, null), document.getElementById('Main')
 
 module.exports = ArticleList;
 
-},{"./comp-articleList.jsx":5,"./comp-gnav.jsx":6,"./comp-mainvisual.jsx":7,"./comp-single.jsx":10,"./store-article":11}],9:[function(require,module,exports){
+},{"./comp-articleList.jsx":5,"./comp-gnav.jsx":6,"./comp-mainvisual.jsx":7,"./comp-single.jsx":11,"./store-article":12}],9:[function(require,module,exports){
 "use strict";
 
 var Pager = React.createClass({
@@ -1087,9 +1092,110 @@ var Pager = React.createClass({
 module.exports = Pager;
 
 },{}],10:[function(require,module,exports){
+"use strict";
+
+var Related = React.createClass({
+  displayName: "Related",
+  thumbClick: function thumbClick(ID) {
+    this.props.thumbClick(ID);
+  },
+  render: function render() {
+    var _this = this;
+
+    var article = this.props.article.map(function (res, i) {
+      return React.createElement(
+        "section",
+        { key: i, className: "MdCntsThumb01" },
+        React.createElement(
+          "a",
+          { onClick: _this.thumbClick.bind(_this, res.ID), href: res.ID },
+          React.createElement(
+            "p",
+            { className: "mdCntsThumb01Img" },
+            React.createElement("img", { src: res.thumb })
+          ),
+          React.createElement(
+            "div",
+            { className: "mdCntsThumb01InfoClm" },
+            React.createElement(
+              "div",
+              { className: "mdCntsThumb01Clm01" },
+              React.createElement(
+                "p",
+                { className: "mdCntsThumb01Cat" },
+                res.category
+              )
+            ),
+            React.createElement(
+              "div",
+              { className: "mdCntsThumb01Clm02" },
+              React.createElement(
+                "p",
+                { className: "mdCntsThumb01Date" },
+                res.date
+              )
+            )
+          ),
+          React.createElement(
+            "div",
+            { className: "mdCntsThumb01InfoInBox" },
+            React.createElement(
+              "h2",
+              { className: "mdCntsThumb01Ttl" },
+              "タイトルタイトルタイトルタイトルタイトル"
+            ),
+            React.createElement(
+              "p",
+              { className: "mdCntsThumb01Txt" },
+              "テキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト"
+            )
+          ),
+          React.createElement(
+            "p",
+            { className: "mdCntsThumb01Icn" },
+            React.createElement("span", { className: "icon-icon04" })
+          ),
+          React.createElement(
+            "div",
+            { className: "mdCntsThumb01Cover" },
+            React.createElement(
+              "p",
+              { className: "mdCntsThumb01Txt" },
+              "Read More"
+            )
+          )
+        )
+      );
+    });
+
+    return React.createElement(
+      "section",
+      null,
+      React.createElement(
+        "h2",
+        { className: "MdHdgCmn01" },
+        React.createElement(
+          "span",
+          null,
+          "Related Contents"
+        )
+      ),
+      React.createElement(
+        "div",
+        { className: "LyCntsList" },
+        article
+      )
+    );
+  }
+});
+
+module.exports = Related;
+
+},{}],11:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
+var Related = require('./comp-related.jsx');
 
 var Single = React.createClass({
   displayName: 'Single',
@@ -1104,7 +1210,6 @@ var Single = React.createClass({
     };
   },
   componentWillMount: function componentWillMount() {
-    console.log(this.props.articleID);
 
     Store.addSubscribe({
       actionType: this.props.actionType,
@@ -1119,6 +1224,7 @@ var Single = React.createClass({
   },
   events: function events() {},
   actionCreator: function actionCreator(page, comps) {
+    console.log(comps);
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
       page: page,
@@ -1136,7 +1242,29 @@ var Single = React.createClass({
       data: Store.single.data
     });
   },
-  componentDidUpdate: function componentDidUpdate() {},
+  componentDidUpdate: function componentDidUpdate(e) {
+    console.log('singleLoad');
+
+    Store.addSubscribe({
+      actionType: this.props.actionType,
+      callback: this.dataloaded
+    });
+
+    if (Store.gnav.data === null) {
+      this.actionCreator(this.props.articleID, [this.props.actionType, 'gnav']);
+    } else {
+      this.actionCreator(this.props.articleID, [this.props.actionType]);
+    }
+
+    console.log(this.props.actionType);
+
+    $('.MdCntsThumb01 a').on('click', function (e) {
+      e.preventDefault();
+    });
+  },
+  thumbClick: function thumbClick(ID) {
+    this.props.thumbClick(ID);
+  },
   render: function render() {
     if (this.state.data === null) {
       return false;
@@ -1212,7 +1340,8 @@ var Single = React.createClass({
               )
             )
           )
-        )
+        ),
+        React.createElement(Related, { article: this.state.data.related, thumbClick: this.thumbClick })
       );
     }
   }
@@ -1220,7 +1349,7 @@ var Single = React.createClass({
 
 module.exports = Single;
 
-},{"./store-article":11}],11:[function(require,module,exports){
+},{"./comp-related.jsx":10,"./store-article":12}],12:[function(require,module,exports){
 'use strict';
 
 var Dispatcher = require('flux').Dispatcher;
@@ -1328,6 +1457,8 @@ Store.dispatcher.action = {
       var payload = _this.queue[_this.counter],
           url,
           data;
+
+      console.log(payload);
 
       switch (payload.actionType) {
         case 'gnav':
@@ -1523,7 +1654,7 @@ Store.single.dispatchToken = Store.dispatcher.register(function (res) {
 
 module.exports = Store;
 
-},{"flux":13}],12:[function(require,module,exports){
+},{"flux":14}],13:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -1575,7 +1706,7 @@ var invariant = function (condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 }).call(this,require('_process'))
-},{"_process":15}],13:[function(require,module,exports){
+},{"_process":16}],14:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1587,7 +1718,7 @@ module.exports = invariant;
 
 module.exports.Dispatcher = require('./lib/Dispatcher');
 
-},{"./lib/Dispatcher":14}],14:[function(require,module,exports){
+},{"./lib/Dispatcher":15}],15:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
@@ -1821,7 +1952,7 @@ var Dispatcher = (function () {
 
 module.exports = Dispatcher;
 }).call(this,require('_process'))
-},{"_process":15,"fbjs/lib/invariant":12}],15:[function(require,module,exports){
+},{"_process":16,"fbjs/lib/invariant":13}],16:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};

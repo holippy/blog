@@ -108,6 +108,8 @@ Store.dispatcher.action = {
           url,
           data;
 
+      console.log(payload);
+
       switch ( payload.actionType ){
         case 'gnav':
           url = 'http://beautifulday.sakura.tv/wp/catlist/';

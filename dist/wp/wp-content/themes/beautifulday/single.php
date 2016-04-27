@@ -72,7 +72,66 @@ for ($i=0; $i < count($match[1]); $i++) {
   "catSlug": "<?php echo $catSlug; ?>",
   "visual": "<?php echo $imgPath; ?>",
   "contents": <?php echo json_encode( get_the_content() ) ; ?>,
-  "hdg2": [<?php echo $hdg2; ?>]
+  "hdg2": [<?php echo $hdg2; ?>],
+  "related": [
 
+<?php
+  $args = array(
+    'category' => $catName,
+    'posts_per_page' => 8,
+    'post__not_in'=> array(get_the_ID())
+  );
+  $the_query = get_posts( $args );
+
+  $articleCount = count($the_query);
+  $num = 0;
+
+
+  foreach ( $the_query as $post ) : setup_postdata( $post );
+?>
+
+<?php
+
+  $num = $num + 1;
+
+  //カテゴリ情報
+  $cat = get_the_category( $post->ID);
+
+  $imgPath = '';
+
+  if (has_post_thumbnail() )  {
+
+    //アイキャッチ IDを取得して画像の「URL,横幅,高さ」を取得。
+    //画像サイズは medium で出力しています。
+    $image_url = wp_get_attachment_image_src(get_post_thumbnail_id($post->ID), 'medium');
+
+    
+    //URLを返す
+    $imgPath = $image_url[0];
+    
+  }
+?>
+
+  {
+    "ID": "<?php echo ($post->ID); ?>",
+    "title": <?php echo json_encode($post->post_title); ?>,
+    "content": <?php echo json_encode(strip_tags( $post->post_content )); ?>,
+    "category": "<?php echo $cat[0]->name; ?>",
+    "url": "<?php echo get_permalink(); ?>",
+    "date": "<?php the_time('Y.m.d'); ?>",
+    "thumb": "<?php echo $imgPath; ?>"
+
+  <?php if($num < $articleCount): ?>
+  },
+  <?php else: ?>
+  }
+  <?php endif; ?>
+
+<?php 
+  endforeach;
+  wp_reset_postdata();
+?>
+
+  ]
 }
 

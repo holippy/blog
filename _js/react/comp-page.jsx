@@ -11,7 +11,8 @@ var Page = React.createClass({
   },
   getInitialState(){
     return {
-      pageType: 'index'
+      pageType: 'index',
+      pageID: null
     }
   },
   componentWillMount(){
@@ -52,13 +53,16 @@ var Page = React.createClass({
   },
   thumbClick( ID ){
 
+    console.log(ID);
+
     this.articleID = ID;
 
     history.pushState(null,null,'/index_react.html?type=' + 'single' + '&paged=' + ID);
     Store.PageControl.getParam();
 
     this.replaceState({
-      pageType: 'single'
+      pageType: 'single',
+      pageID: ID
     });
 
 
@@ -71,6 +75,7 @@ var Page = React.createClass({
     Store.PageControl.getParam();
   },
   render(){
+    console.log(this.state.pageType);
       if( this.state.pageType == 'index' ){
         return (
           <div>
@@ -83,7 +88,7 @@ var Page = React.createClass({
         return (
           <div>
           <Gnav pageType={this.state.pageType} backTop={this.backTop} />
-          <Single articleID={this.articleID} />
+          <Single articleID={this.articleID} thumbClick={this.thumbClick} />
           </div>
         )
       }else{

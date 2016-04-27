@@ -1,4 +1,5 @@
 var Store = require('./store-article');
+var Related = require('./comp-related.jsx');
 
 var Single = React.createClass({
   getDefaultProps(){
@@ -12,13 +13,11 @@ var Single = React.createClass({
     }
   },
   componentWillMount(){
-    console.log(this.props.articleID);
-
+  
     Store.addSubscribe({
       actionType: this.props.actionType,
       callback: this.dataloaded
     });
-
 
     if( Store.gnav.data === null ){
       this.actionCreator( this.props.articleID, [ this.props.actionType, 'gnav' ]);
@@ -31,6 +30,7 @@ var Single = React.createClass({
 
   },
   actionCreator( page, comps ){
+    console.log(comps);
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
       page: page,
@@ -48,10 +48,29 @@ var Single = React.createClass({
       data: Store.single.data
     });
   },
-  componentDidUpdate(){
+  componentDidUpdate(e){
+    console.log('singleLoad');
 
+    Store.addSubscribe({
+      actionType: this.props.actionType,
+      callback: this.dataloaded
+    });
+
+    if( Store.gnav.data === null ){
+      this.actionCreator( this.props.articleID, [ this.props.actionType, 'gnav' ]);
+    }else{
+      this.actionCreator( this.props.articleID, [ this.props.actionType ]);
+    }
+
+    console.log(this.props.actionType);
+
+    $('.MdCntsThumb01 a').on('click', (e)=>{
+      e.preventDefault();
+    });
   },
-
+  thumbClick( ID ){
+    this.props.thumbClick(ID);
+  },
   render(){
     if( this.state.data === null ){
       return false;
@@ -86,6 +105,8 @@ var Single = React.createClass({
             </aside>
           </div>
         </section>
+        <Related article={this.state.data.related} thumbClick={this.thumbClick} />
+
         </div>
       )
 
