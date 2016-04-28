@@ -991,7 +991,6 @@ var Page = React.createClass({
     });
   },
   thumbClick: function thumbClick(ID) {
-
     console.log(ID);
 
     this.articleID = ID;
@@ -1012,7 +1011,7 @@ var Page = React.createClass({
     Store.PageControl.getParam();
   },
   render: function render() {
-    console.log(this.state.pageType);
+    console.log('render');
     if (this.state.pageType == 'index') {
       return React.createElement(
         'div',
@@ -1199,6 +1198,9 @@ var Related = require('./comp-related.jsx');
 
 var Single = React.createClass({
   displayName: 'Single',
+
+  first: false,
+  loading: false,
   getDefaultProps: function getDefaultProps() {
     return {
       actionType: "single"
@@ -1210,7 +1212,13 @@ var Single = React.createClass({
     };
   },
   componentWillMount: function componentWillMount() {
-
+    console.log('componentWillMount');
+    this.loadAction();
+  },
+  events: function events() {},
+  loadAction: function loadAction() {
+    console.log('loadAction');
+    this.loading = true;
     Store.addSubscribe({
       actionType: this.props.actionType,
       callback: this.dataloaded
@@ -1222,9 +1230,9 @@ var Single = React.createClass({
       this.actionCreator(this.props.articleID, [this.props.actionType]);
     }
   },
-  events: function events() {},
   actionCreator: function actionCreator(page, comps) {
-    console.log(comps);
+    console.log('actionCreator');
+
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
       page: page,
@@ -1233,42 +1241,58 @@ var Single = React.createClass({
     });
   },
   dataloaded: function dataloaded() {
+    console.log('single loaded');
+
+    this.loading = false;
 
     Store.removeSubscribe({
       actionType: this.props.actionType
     });
 
+    console.log(this.store.data);
+
     this.replaceState({
       data: Store.single.data
     });
   },
-  componentDidUpdate: function componentDidUpdate(e) {
-    console.log('singleLoad');
+  shouldComponentUpdate: function shouldComponentUpdate() {
+    console.log('shouldComponentUpdate');
+    //console.log(Store.single.data);
 
-    Store.addSubscribe({
-      actionType: this.props.actionType,
-      callback: this.dataloaded
-    });
-
-    if (Store.gnav.data === null) {
-      this.actionCreator(this.props.articleID, [this.props.actionType, 'gnav']);
+    if (this.state.data === null) {
+      console.log('null');
+      this.loadAction();
+      return false;
+    } else if (!this.loading) {
+      console.log('this.loading');
+      return true;
     } else {
-      this.actionCreator(this.props.articleID, [this.props.actionType]);
+      console.log('else');
+      return true;
     }
+  },
+  componentDidUpdate: function componentDidUpdate() {
 
-    console.log(this.props.actionType);
+    console.log('componentDidUpdate');
 
-    $('.MdCntsThumb01 a').on('click', function (e) {
-      e.preventDefault();
-    });
+    if (!this.first) {
+
+      this.first = true;
+
+      $('.MdCntsThumb01 a').on('click', function (e) {
+        e.preventDefault();
+      });
+
+      return false;
+    }
   },
   thumbClick: function thumbClick(ID) {
     this.props.thumbClick(ID);
   },
   render: function render() {
-    if (this.state.data === null) {
-      return false;
-    } else {
+    console.log('single render');
+
+    if (this.state.data !== null) {
 
       var heading2 = this.state.data.hdg2.map(function (res, i) {
         return React.createElement(
@@ -1343,6 +1367,8 @@ var Single = React.createClass({
         ),
         React.createElement(Related, { article: this.state.data.related, thumbClick: this.thumbClick })
       );
+    } else {
+      return false;
     }
   }
 });
@@ -1457,8 +1483,6 @@ Store.dispatcher.action = {
       var payload = _this.queue[_this.counter],
           url,
           data;
-
-      console.log(payload);
 
       switch (payload.actionType) {
         case 'gnav':

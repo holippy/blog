@@ -44,6 +44,7 @@ Layout
       height: 70px;
       background: url( "/assets/svg/logo.svg" ) no-repeat;
       background-size: 100% 100%;
+      visibility: hidden;
       a{
         display: block;
         width: 100%;
@@ -60,6 +61,7 @@ Layout
         @include animation-iteration-count(1);
         @include animation-fill-mode(forwards);
         @include position(absolute, 0 null null 0);
+        visibility: hidden;
       }
     }
 

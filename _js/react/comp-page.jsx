@@ -34,8 +34,6 @@ var Page = React.createClass({
   event(){
     $(window).on('popstate', ()=>{
 
-
-
       if( Store.PageControl.paramObjs.type === 'single' ){
 
         this.articleID = Store.PageControl.paramObjs.paged;
@@ -52,7 +50,6 @@ var Page = React.createClass({
     });
   },
   thumbClick( ID ){
-
     console.log(ID);
 
     this.articleID = ID;
@@ -65,7 +62,6 @@ var Page = React.createClass({
       pageID: ID
     });
 
-
   },
   backTop(){
     this.replaceState({
@@ -75,7 +71,7 @@ var Page = React.createClass({
     Store.PageControl.getParam();
   },
   render(){
-    console.log(this.state.pageType);
+    console.log('render');
       if( this.state.pageType == 'index' ){
         return (
           <div>
