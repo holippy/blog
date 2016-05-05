@@ -26,6 +26,7 @@ single page
     @include clearfix;
 
     .mdContainer{
+      @include clearfix;
       margin: 0 auto;
       padding: 0 20px;
       width: 960px;
@@ -116,6 +117,8 @@ single page
       position: relative;
       line-height: 1.6;
       color: $color-main;
+      line-height: 1.4;
+      font-style: italic;
 
       &:before{
         @include position(absolute, 0 null null 0);

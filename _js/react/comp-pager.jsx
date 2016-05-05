@@ -1,4 +1,6 @@
 var Pager = React.createClass({
+  componentDidUpdate(){
+  },
   render(){
     var stay = this.props.stay
 
@@ -8,7 +10,7 @@ var Pager = React.createClass({
 
     var pager = this.props.max.map((index)=>{
       if( index === stay ){
-        return (<li key={index}><a href="#" data-num={index + 1} onClick={this.props.pagerClick} className="stay">{index + 1}</a></li>);
+        return (<li key={index} className="ExStay"><a href="#" data-num={index + 1} onClick={this.props.pagerClick}>{index + 1}</a></li>);
 
       }else{
         return (<li key={index}><a href="#" data-num={index + 1} onClick={this.props.pagerClick}>{index + 1}</a></li>);

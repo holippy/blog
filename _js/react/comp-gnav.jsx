@@ -14,31 +14,54 @@ var Gnav = React.createClass({
     }
   },
   componentWillMount(){
+    //console.log('GNcomponentWillMount');
+    this.loadAction();
+  },
+  loadAction(){
+    //console.log('GNloadAction');
 
+    if( this.props.pageType === 'single' ){
+      if( Store.gnav.data === null ){
+        this.actionCreator( [ this.props.actionType, 'single'] );
+      }else if( Store.gnav.data !== null ){
+        this.actionCreator( ['single'] );
+      }
+    }else if( this.props.pageType === 'index' ){
+      if( Store.mainvisual.data === null && Store.gnav.data === null ){
+        this.actionCreator( [ this.props.actionType, 'list', 'mainvisual'] );
+      }else if( Store.mainvisual.data == null && Store.gnav.data !== null ){
+        this.actionCreator( [ 'mainvisual', 'list'] );
+      }else{
+        this.actionCreator( ['list'] );
+      }
+    }else if( this.props.pageType === 'category' ){
+      if( Store.gnav.data === null ){
+        this.actionCreator( [ this.props.actionType, 'category'] );
+      }else if( Store.gnav.data !== null ){
+        this.actionCreator( ['category'] );
+      }
+    }
+
+  },
+  componentDidUpdate(){
+    if( $('.LyHead.FncStart').length === 0 ){
+      console.log('headerinit');
+      Header.init();
+    }
+
+    $('#Gnav li').on('click', (e)=>{
+      e.preventDefault();
+    });
+  },
+  componentDidMount(){
+
+  },
+  actionCreator( comps ){
     Store.addSubscribe({
       actionType: this.props.actionType,
       callback: this.dataloaded
     });
 
-    if( this.props.pageType === 'index' && Store.gnav.data === null ){
-      this.actionCreator( [ this.props.actionType, 'list', 'mainvisual'] );
-    }else if( this.props.pageType === 'single' && Store.gnav.data === null ){
-      this.actionCreator( [ this.props.actionType, 'single'] );
-    }
-  },
-  componentDidUpdate(){
-    //update後にグロナビとフッターを表示
-    $('.LyHead').css({display: 'block'});
-    $('.LyFtr').css({display: 'block'});
-    
-    if( $('.LyHead.FncStart').length === 0 ){
-      console.log('headerinit');
-      Header.init();
-    }
-  },
-  componentDidMount(){
-  },
-  actionCreator( comps ){
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
       page: 1,
@@ -61,15 +84,24 @@ var Gnav = React.createClass({
     e.preventDefault();
     this.props.backTop();
   },
+  navClick(cat){
+    //console.log(cat);
+
+    this.props.navClick(cat);
+
+  },
   render(){
 
-    if(this.state.gnav.length === 0){
+    //console.log('rendar gnav');
+    //console.log(Store.gnav.data);
+
+    if( Store.gnav.data === null ){
       return false;
     }else{
 
       let lists = this.state.gnav.map((res)=>{
       
-      return <li key={res.ID}><span className="icon-icon05"></span><a href={res.slug}>{res.catName}</a></li>;
+      return <li key={res.ID}><span className="icon-icon05"></span><a onClick={this.navClick.bind(this, res.slug)} href={res.slug}>{res.catName}</a></li>;
 
       });
       

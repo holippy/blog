@@ -5,11 +5,17 @@ setting
 =====================================*/
 
 @mixin Setting {
+
+  html {
+    overflow-y: scroll;
+  }
+
   body{
     font-family: 'noto-regular';
     font-size: 14px;
     line-height: 1.5;
     color: $color-default;
+
   }
 
   a{

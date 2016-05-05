@@ -77,7 +77,7 @@ for ($i=0; $i < count($match[1]); $i++) {
 
 <?php
   $args = array(
-    'category' => $catName,
+    'category_name' => $catName,
     'posts_per_page' => 8,
     'post__not_in'=> array(get_the_ID())
   );
@@ -115,7 +115,7 @@ for ($i=0; $i < count($match[1]); $i++) {
   {
     "ID": "<?php echo ($post->ID); ?>",
     "title": <?php echo json_encode($post->post_title); ?>,
-    "content": <?php echo json_encode(strip_tags( $post->post_content )); ?>,
+    "content": <?php echo json_encode(textCut(strip_tags( $post->post_content ))); ?>,
     "category": "<?php echo $cat[0]->name; ?>",
     "url": "<?php echo get_permalink(); ?>",
     "date": "<?php the_time('Y.m.d'); ?>",

@@ -1,9 +1,10 @@
 var Store = require('./store-article');
 var Related = require('./comp-related.jsx');
+var CntsThumb = require('../pageFncs/cntsThumb.js');
+var SingleFnc = require('../pageFncs/single.js');
 
 var Single = React.createClass({
-  first: false,
-  loading: false,
+  update: false,
   getDefaultProps(){
     return {
       actionType:"single"
@@ -16,24 +17,20 @@ var Single = React.createClass({
   },
   componentWillMount(){
     console.log('componentWillMount');
-    this.loadAction();
+    this.loadAction( this.props.articleID );
   },
-  events(){
-    
-
-  },
-  loadAction(){
+  loadAction( articleID ){
     console.log('loadAction');
-    this.loading = true;
+
     Store.addSubscribe({
       actionType: this.props.actionType,
       callback: this.dataloaded
     });
 
     if( Store.gnav.data === null ){
-      this.actionCreator( this.props.articleID, [ this.props.actionType, 'gnav' ]);
+      this.actionCreator( articleID, [ this.props.actionType, 'gnav' ]);
     }else{
-      this.actionCreator( this.props.articleID, [ this.props.actionType ]);
+      this.actionCreator( articleID, [ this.props.actionType ]);
     }
   },
   actionCreator( page, comps ){
@@ -49,58 +46,55 @@ var Single = React.createClass({
   dataloaded(){
     console.log('single loaded');
 
-    this.loading = false;
-
     Store.removeSubscribe({
       actionType: this.props.actionType
     });
 
-    console.log(this.store.data);
+    console.log(this.isMounted());
 
-    this.replaceState({
-      data: Store.single.data
-    });
-     
+    if( this.isMounted() ){
+      this.setState({
+        data: Store.single.data
+      });
+    }
+
   },
   shouldComponentUpdate(){
     console.log('shouldComponentUpdate');
-    //console.log(Store.single.data);
 
-    if( this.state.data === null ){
-      console.log('null');
-      this.loadAction();
-      return false;
-    }else if( !this.loading ){
-      console.log('this.loading');
-      return true;
-    }else{
-      console.log('else');
-      return true;
-    }
-    
-
+    return true;
   },
   componentDidUpdate(){
 
     console.log('componentDidUpdate');
 
-    if( !this.first ){
+    SingleFnc.init();
+    CntsThumb.init();
 
-      this.first = true;
-
-      $('.MdCntsThumb01 a').on('click', (e)=>{
-        e.preventDefault();
-      });
-
-      return false;
-    }
+    $('.MdCntsThumb01 a').on('click', (e)=>{
+      e.preventDefault();
+    });
 
   },
   thumbClick( ID ){
     this.props.thumbClick(ID);
   },
+  componentWillReceiveProps(nextProps){
+    console.log('componentWillReceiveProps');
+
+    this.first = true;
+
+    if( this.props.articleID === nextProps.articleID ){
+      this.update = false;
+    }else{
+      this.update = true;
+      this.loadAction( nextProps.articleID );
+    }
+
+  },
   render(){
     console.log('single render');
+    console.log(this.state.data);
 
     if( this.state.data !== null ){
 

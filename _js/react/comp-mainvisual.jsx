@@ -15,27 +15,29 @@ var Mainvisual = React.createClass({
     }
   },
   componentWillMount(){
+    console.log('MVcomponentWillMount');
+    this.loadAction();
+  },
 
-    if( Store.mainvisual.data === null ){
+  loadAction(){
+    console.log('MVloadAction');
+    if( Store.mainvisual.data === null && Store.gnav.data === null ){
+      console.log('mainvisual first load');
       this.actionCreator( [ this.props.actionType, 'list', 'gnav'] );
-    }else if( Store.mainvisual.data !== null ){
+    }else if( Store.mainvisual.data === null && Store.gnav.data !== null ){
+      console.log('mainvisual un load');
       this.actionCreator( [ this.props.actionType, 'list'] );
+    }else{
+      console.log('secound');
+      this.actionCreator( ['list'] );
     }
   },
 
   componentWillReceiveProps(){
-
-    if( !this.first ){
-      if( Store.mainvisual.data === null ){
-        console.log('re');
-        this.actionCreator( [ this.props.actionType, 'list', 'gnav'] );
-      }else if( Store.mainvisual.data !== null ){
-        this.actionCreator( [ this.props.actionType, 'list'] );
-      }
-    }
-
+    console.log('MVcomponentWillReceiveProps');
   },
   actionCreator( comps ){
+    console.log('MVactionCreator');
 
     Store.addSubscribe({
       actionType: this.props.actionType,
@@ -49,12 +51,14 @@ var Mainvisual = React.createClass({
     });
   },
   dataloaded(){
-
+    console.log('MVdataloaded');
     Store.removeSubscribe({
       actionType: this.props.actionType
     });
 
-    this.replaceState({ mainvisual: Store.mainvisual.data });
+    if( this.isMounted() ){
+      this.replaceState({ mainvisual: Store.mainvisual.data });
+    }
 
     if(Store.mainvisual.data){
       this.imgLoading( Store.mainvisual.data ).then((e)=>{
@@ -82,29 +86,55 @@ var Mainvisual = React.createClass({
     });
   },
   componentDidUpdate(){
-
-    this.first = false;
-
-    if( $('.MdSlideContianer.FncStart').length === 0 ){
-      console.log('start');
-      Slider.init();
-    }
+    console.log('MVcomponentDidUpdate');
+    Slider.unmount();
+    Slider.init();
+    $('.mdSlideListImg li').each((i, elm)=>{
+      $(elm).find('a').eq(0).on('click', (e)=>{
+        e.preventDefault();
+      });
+    });
   },
   componentWillUnmount(){
     console.log('unmount');
     Slider.unmount();
   },
-  componentDidMount(){
+  shouldComponentUpdate(){
 
+    if( $('.MdSlideContianer').length === 0 ){
+      return true;
+    }else{
+      return false;
+    }
+    
+  },
+  componentWillReceiveProps(nextProps){
+    console.log('MVcomponentWillReceiveProps');
+    console.log(nextProps);
+  },
+  componentDidMount(){
+    console.log('MVcomponentDidMount');
+  },
+  thumbClick( ID ){
+    console.log(ID);
+    this.props.thumbClick(ID);
   },
   render(){
+    console.log('MVrendar');
     if(this.state.mainvisual.length === 0){
       return false;
     }else{
-      var imgs = this.state.mainvisual.map((res, index)=>{
+      Slider.unmount();
+      var mvArray = [];
+      for (var i = 0; i < 3; i++) {
+        for (var j = 0; j < this.state.mainvisual.length; j++) {
+          mvArray.push(this.state.mainvisual[j]);
+        }
+      }
+      var imgs = mvArray.map((res, index)=>{
         return (
-          <li key={index}>
-            <a href={res.url}>
+          <li key={'thumb'+index}>
+            <a onClick={this.thumbClick.bind(this, res.ID)} href={res.ID}>
               <p className="mdSlideCat">{res.category}</p>
               <p className="mdSlideTtl"><span>{res.title}</span></p>
               <p className="mdSlideImg"><img src={res.thumb} /></p>

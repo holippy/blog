@@ -9,7 +9,7 @@ app.slider = {
     this.slide = $('.MdSlideContianer');
     this.slideList = $('.mdSlideListImg');
     this.slideImgs = $('.mdSlideListImg li');
-    this.slideSet = this.slideList.children().length;
+    this.slideSet = this.slideList.children().length / 3;
     this.slideImgWidth = this.slideList.children().eq(0).outerWidth();
     this.slideBtnBack = $('.mdSlideListBtnBack');
     this.slideBtnNext = $('.mdSlideListBtnNext');
@@ -20,15 +20,9 @@ app.slider = {
     this.slide.addClass("FncStart");
     this.slide.css({display: 'block'});
 
-    for (var i = 0; i < 3; i++) {
-      this.slideImgs.each((i,elm)=>{
-        this.slideList.append($(elm).clone());
-      });
-    }
-
     this.slideImgs = $('.mdSlideListImg li');
     this.slideImgsLength = this.slideImgs.length;
-    this.slideCurrentIndex = this.slideSet * 2;
+    this.slideCurrentIndex = this.slideSet;
     this.slidePager.eq( this.slideCurrent ).addClass('ExCurrent');
 
     this.slideImgs.eq( this.slideCurrentIndex ).addClass('ExCurrent');
@@ -47,6 +41,10 @@ app.slider = {
 
     $(window).off('resize');
 
+    if( this.slidePager === undefined ){
+      return false;
+    }
+
     this.slidePager.each((i, elm)=>{
       $(elm).off('click');
     });
@@ -58,17 +56,19 @@ app.slider = {
   },
   posSet(){
     this.slideList.css({
-      left: (- this.slideImgWidth * this.slideSet * 2) + ( $(window).width() / 2 - this.slideImgWidth / 2 ) - 5
+      left: (- this.slideImgWidth * this.slideSet) + ( $(window).width() / 2 - this.slideImgWidth / 2 ) - 5
     });
 
-    this.startPos = (- this.slideImgWidth * this.slideSet * 2) + ( $(window).width() / 2 - this.slideImgWidth / 2 ) - 5;
+    this.startPos = (- this.slideImgWidth * this.slideSet) + ( $(window).width() / 2 - this.slideImgWidth / 2 ) - 5;
   },
   reset(){
     this.slideList.css({left: this.startPos});
     this.slideCurrent = 0;
-    this.slideCurrentIndex = this.slideSet * 2;
+    this.slideCurrentIndex = this.slideSet;
     this.slideImgs.removeAttr('class');
     this.slideImgs.eq( this.slideCurrentIndex ).addClass('ExCurrent');
+    this.slidePager.removeClass('ExCurrent');
+    this.slidePager.eq( 0 ).addClass('ExCurrent');
   },
   infoShow(){
     this.slideImgs.eq( this.slideCurrentIndex ).removeClass('ExHide');
@@ -148,7 +148,7 @@ app.slider = {
     this.slideCurrent = i;
     this.slideImgs.eq( this.slideCurrentIndex ).removeClass('ExCurrent');
     this.slideImgs.eq( this.slideCurrentIndex ).addClass('ExHide');
-    this.slideCurrentIndex = this.slideSet * 2 + i;
+    this.slideCurrentIndex = this.slideSet + i;
     this.slideNext();
 
     this.timeoutTimer = setTimeout(()=>{

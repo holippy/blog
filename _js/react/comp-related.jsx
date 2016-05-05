@@ -18,8 +18,8 @@ var Related = React.createClass({
                 </div>
               </div>
               <div className="mdCntsThumb01InfoInBox">
-                <h2 className="mdCntsThumb01Ttl">タイトルタイトルタイトルタイトルタイトル</h2>
-                <p className="mdCntsThumb01Txt">テキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト</p>
+                <h2 className="mdCntsThumb01Ttl">{res.title}</h2>
+                <p className="mdCntsThumb01Txt">{res.content}</p>
               </div>
               <p className="mdCntsThumb01Icn"><span className="icon-icon04"></span></p>
               <div className="mdCntsThumb01Cover">

@@ -6,10 +6,14 @@ header("Access-Control-Allow-Origin: *");
 <?php 
 //ページ番号取得
 $paged = get_query_var( 'paged', 1 );
+$catInfo = get_category( $cat );
+$catSlug = $catInfo->slug;
+$catName = $catInfo->name;
 ?>
 
 {
-
+"slug": "<?php echo $catSlug; ?>",
+"name": "<?php echo $catName; ?>",
 "page": {
   "nowPage": <?php echo $paged; ?>,
   "maxPage": <?php echo max_show_page_number(); ?>
@@ -43,7 +47,7 @@ while(have_posts()): the_post(); ?>
   {
     "ID": "<?php echo ($post->ID); ?>",
     "title": <?php echo json_encode($post->post_title); ?>,
-    "content": <?php echo json_encode(strip_tags( $post->post_content )); ?>,
+    "content": <?php echo json_encode(textCut(strip_tags( $post->post_content ))); ?>,
     "category": "<?php echo $cat[0]->name; ?>",
     "url": "<?php echo get_permalink(); ?>",
     "date": "<?php the_time('Y.m.d'); ?>",
@@ -60,4 +64,3 @@ while(have_posts()): the_post(); ?>
 
 
 }
-

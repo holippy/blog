@@ -10,15 +10,10 @@
 =====================================*/
 
 $color-main: #ff533f;
-$color-main: #FFF;
 $color-default: #000;
 $color-gray: #666;
 $color-bg-gray: #f4f4f4;
 $path-svg:"/assets/svg/";
-
-img{
-  opacity:0 !important;
-}
 
 /*=====================================
 
@@ -85,3 +80,13 @@ img{
 @include MdTitleSingle01;
 @include MdCmsStyle;
 @include MdOutline;
+
+/*=====================================
+
+カテゴリリスト
+
+=====================================*/
+
+@import "mixins/_catList";
+
+@include MdCatImg01;

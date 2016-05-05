@@ -1,5 +1,46 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';
+(function (global){
+"use strict";
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+/*!
+ * VERSION: 1.7.6
+ * DATE: 2015-12-10
+ * UPDATES AND DOCS AT: http://greensock.com
+ *
+ * @license Copyright (c) 2008-2016, GreenSock. All rights reserved.
+ * This work is subject to the terms at http://greensock.com/standard-license or for
+ * Club GreenSock members, the software agreement that was issued with your membership.
+ * 
+ * @author: Jack Doyle, jack@greensock.com
+ **/
+var _gsScope = "undefined" != typeof module && module.exports && "undefined" != typeof global ? global : undefined || window;(_gsScope._gsQueue || (_gsScope._gsQueue = [])).push(function () {
+  "use strict";
+  var a = document.documentElement,
+      b = window,
+      c = function c(_c, d) {
+    var e = "x" === d ? "Width" : "Height",
+        f = "scroll" + e,
+        g = "client" + e,
+        h = document.body;return _c === b || _c === a || _c === h ? Math.max(a[f], h[f]) - (b["inner" + e] || a[g] || h[g]) : _c[f] - _c["offset" + e];
+  },
+      d = _gsScope._gsDefine.plugin({ propName: "scrollTo", API: 2, version: "1.7.6", init: function init(a, d, e) {
+      return this._wdw = a === b, this._target = a, this._tween = e, "object" != (typeof d === "undefined" ? "undefined" : _typeof(d)) && (d = { y: d }), this.vars = d, this._autoKill = d.autoKill !== !1, this.x = this.xPrev = this.getX(), this.y = this.yPrev = this.getY(), null != d.x ? (this._addTween(this, "x", this.x, "max" === d.x ? c(a, "x") : d.x, "scrollTo_x", !0), this._overwriteProps.push("scrollTo_x")) : this.skipX = !0, null != d.y ? (this._addTween(this, "y", this.y, "max" === d.y ? c(a, "y") : d.y, "scrollTo_y", !0), this._overwriteProps.push("scrollTo_y")) : this.skipY = !0, !0;
+    }, set: function set(a) {
+      this._super.setRatio.call(this, a);var d = this._wdw || !this.skipX ? this.getX() : this.xPrev,
+          e = this._wdw || !this.skipY ? this.getY() : this.yPrev,
+          f = e - this.yPrev,
+          g = d - this.xPrev;this.x < 0 && (this.x = 0), this.y < 0 && (this.y = 0), this._autoKill && (!this.skipX && (g > 7 || -7 > g) && d < c(this._target, "x") && (this.skipX = !0), !this.skipY && (f > 7 || -7 > f) && e < c(this._target, "y") && (this.skipY = !0), this.skipX && this.skipY && (this._tween.kill(), this.vars.onAutoKill && this.vars.onAutoKill.apply(this.vars.onAutoKillScope || this._tween, this.vars.onAutoKillParams || []))), this._wdw ? b.scrollTo(this.skipX ? d : this.x, this.skipY ? e : this.y) : (this.skipY || (this._target.scrollTop = this.y), this.skipX || (this._target.scrollLeft = this.x)), this.xPrev = this.x, this.yPrev = this.y;
+    } }),
+      e = d.prototype;d.max = c, e.getX = function () {
+    return this._wdw ? null != b.pageXOffset ? b.pageXOffset : null != a.scrollLeft ? a.scrollLeft : document.body.scrollLeft : this._target.scrollLeft;
+  }, e.getY = function () {
+    return this._wdw ? null != b.pageYOffset ? b.pageYOffset : null != a.scrollTop ? a.scrollTop : document.body.scrollTop : this._target.scrollTop;
+  }, e._kill = function (a) {
+    return a.scrollTo_x && (this.skipX = !0), a.scrollTo_y && (this.skipY = !0), this._super._kill.call(this, a);
+  };
+}), _gsScope._gsDefine && _gsScope._gsQueue.pop()();
 
 var app = app || {};
 
@@ -10,39 +51,13 @@ react
 ===========================*/
 
 var storeArticle = require('./react/store-article.js');
-
 var page = require('./react/comp-page.jsx');
 
-/*===========================
-
-slider
-
-===========================*/
-
-//var slider = require('./pageFncs/slider.js');
-//slider.init();
-
-/*===========================
-
-header
-
-===========================*/
-
-var header = require('./pageFncs/header.js');
-
-header.init();
-
-/*===========================
-
-cntsThumb
-
-===========================*/
-
-var cntsThumb = require('./pageFncs/cntsThumb.js');
-
-},{"./pageFncs/cntsThumb.js":2,"./pageFncs/header.js":3,"./react/comp-page.jsx":8,"./react/store-article.js":12}],2:[function(require,module,exports){
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./react/comp-page.jsx":11,"./react/store-article.js":15}],2:[function(require,module,exports){
 'use strict';
 
+var SetHeight = require('./setHeight.js');
 var app = app || {};
 
 app.cntsThumb = {
@@ -52,6 +67,21 @@ app.cntsThumb = {
     for (var i = 0; i < this.thumb.length; i++) {
       this.thumbShow(this.thumb[i], i);
     }
+
+    SetHeight.init({
+      Elem: '.mdCntsThumb01InfoInBox .mdCntsThumb01Ttl',
+      group: 4
+    });
+
+    SetHeight.init({
+      Elem: '.mdCntsThumb01InfoInBox .mdCntsThumb01Txt',
+      group: 4
+    });
+
+    SetHeight.init({
+      Elem: '.MdCntsThumb01',
+      group: 4
+    });
 
     this.setEvnt();
   },
@@ -81,7 +111,7 @@ app.cntsThumb = {
 
 module.exports = app.cntsThumb;
 
-},{}],3:[function(require,module,exports){
+},{"./setHeight.js":4}],3:[function(require,module,exports){
 'use strict';
 
 var app = app || {};
@@ -144,9 +174,151 @@ module.exports = app.header;
 
 var app = app || {};
 
-app.slider = {
+app.SetHeight = {
+  init: function init(options) {
+
+    var self = this;
+
+    console.log(options);
+
+    self.items = $(options.Elem);
+    self.heights = [];
+    self.group = options.group;
+
+    self.items.css({
+      height: ''
+    });
+
+    for (var i = 0; i < self.items.length; i++) {
+
+      self.heights.push(self.items.eq(i).height());
+
+      if ((i + 1) % self.group === 0) {
+        self.action({
+          start: i + 1 - this.group,
+          end: i + 1
+        });
+      } else if (i === self.items.length - 1) {
+        self.action({
+          start: self.items.length - self.items.length % self.group,
+          end: self.items.length
+        });
+      }
+    }
+  },
+  action: function action(options) {
+
+    var self = this;
+
+    self.sort();
+
+    self.setHeight({
+      start: options.start,
+      end: options.end,
+      height: self.heights[0]
+    });
+
+    self.heights = [];
+  },
+  sort: function sort() {
+    var self = this;
+
+    this.heights.sort(function (a, b) {
+      if (a > b) return -1;
+      if (a < b) return 1;
+      return 0;
+    });
+  },
+  setHeight: function setHeight(options) {
+    var self = this;
+
+    for (var i = options.start; i < options.end; i++) {
+      self.items.eq(i).css({
+        height: options.height
+      });
+    }
+  }
+};
+
+module.exports = app.SetHeight;
+
+},{}],5:[function(require,module,exports){
+'use strict';
+
+var app = app || {};
+
+app.single = {
   init: function init() {
     var _this = this;
+
+    this.hdg = $('.mdCms h2');
+    this.aside = $('.mdAside');
+    this.asideHeight = this.aside.height();
+    this.asideLink = $('.MdListAnc01 li');
+    this.mv = $('.MdMvSingle01');
+    this.cntsBody = $('.MdMainSingle01');
+    this.cntsBodyHeight = this.cntsBody.height();
+    this.mvTop = this.mv.height() - 40;
+    this.hdgPos = [];
+
+    this.hdg.each(function (i, elm) {
+      $(elm).attr('id', 'hdg' + (i + 1));
+      _this.hdgPos.push($(elm).position().top - 200);
+    });
+
+    this.eventSet();
+  },
+  headerControl: function headerControl(scrollTop) {},
+  eventSet: function eventSet() {
+    var _this2 = this;
+
+    this.asideLink.each(function (i, elm) {
+
+      $(elm).on('click', function (e) {
+        e.preventDefault();
+        TweenLite.to(window, 1, { scrollTo: { y: _this2.hdgPos[i] }, ease: Power2.easeOut });
+      });
+    });
+
+    $(window).on('scroll', function () {
+
+      if ($(window).scrollTop() > _this2.mvTop + _this2.cntsBodyHeight - _this2.asideHeight) {
+        _this2.aside.css({
+          position: 'absolute',
+          top: _this2.mvTop + 40 + _this2.cntsBodyHeight - _this2.asideHeight
+        });
+
+        _this2.aside.removeClass('FncFixed');
+
+        return true;
+      }
+
+      if ($(window).scrollTop() >= _this2.mvTop && !_this2.aside.hasClass('FncFixed')) {
+        _this2.aside.css({
+          position: 'fixed',
+          top: 80
+        });
+        _this2.aside.addClass('FncFixed');
+      } else if ($(window).scrollTop() <= _this2.mvTop && _this2.aside.hasClass('FncFixed')) {
+        _this2.aside.css({
+          position: 'static',
+          top: 'auto'
+        });
+        _this2.aside.removeClass('FncFixed');
+      }
+    });
+  }
+};
+
+module.exports = app.single;
+
+},{}],6:[function(require,module,exports){
+'use strict';
+
+var app = app || {};
+
+app.slider = {
+  init: function init() {
 
     this.slideCurrent = 0;
     this.targetPos = 0;
@@ -154,7 +326,7 @@ app.slider = {
     this.slide = $('.MdSlideContianer');
     this.slideList = $('.mdSlideListImg');
     this.slideImgs = $('.mdSlideListImg li');
-    this.slideSet = this.slideList.children().length;
+    this.slideSet = this.slideList.children().length / 3;
     this.slideImgWidth = this.slideList.children().eq(0).outerWidth();
     this.slideBtnBack = $('.mdSlideListBtnBack');
     this.slideBtnNext = $('.mdSlideListBtnNext');
@@ -165,15 +337,9 @@ app.slider = {
     this.slide.addClass("FncStart");
     this.slide.css({ display: 'block' });
 
-    for (var i = 0; i < 3; i++) {
-      this.slideImgs.each(function (i, elm) {
-        _this.slideList.append($(elm).clone());
-      });
-    }
-
     this.slideImgs = $('.mdSlideListImg li');
     this.slideImgsLength = this.slideImgs.length;
-    this.slideCurrentIndex = this.slideSet * 2;
+    this.slideCurrentIndex = this.slideSet;
     this.slidePager.eq(this.slideCurrent).addClass('ExCurrent');
 
     this.slideImgs.eq(this.slideCurrentIndex).addClass('ExCurrent');
@@ -191,6 +357,10 @@ app.slider = {
 
     $(window).off('resize');
 
+    if (this.slidePager === undefined) {
+      return false;
+    }
+
     this.slidePager.each(function (i, elm) {
       $(elm).off('click');
     });
@@ -201,23 +371,50 @@ app.slider = {
   },
   posSet: function posSet() {
     this.slideList.css({
-      left: -this.slideImgWidth * this.slideSet * 2 + ($(window).width() / 2 - this.slideImgWidth / 2) - 5
+      left: -this.slideImgWidth * this.slideSet + ($(window).width() / 2 - this.slideImgWidth / 2) - 5
     });
 
-    this.startPos = -this.slideImgWidth * this.slideSet * 2 + ($(window).width() / 2 - this.slideImgWidth / 2) - 5;
+    this.startPos = -this.slideImgWidth * this.slideSet + ($(window).width() / 2 - this.slideImgWidth / 2) - 5;
   },
   reset: function reset() {
     this.slideList.css({ left: this.startPos });
     this.slideCurrent = 0;
-    this.slideCurrentIndex = this.slideSet * 2;
+    this.slideCurrentIndex = this.slideSet;
     this.slideImgs.removeAttr('class');
     this.slideImgs.eq(this.slideCurrentIndex).addClass('ExCurrent');
+    this.slidePager.removeClass('ExCurrent');
+    this.slidePager.eq(0).addClass('ExCurrent');
   },
   infoShow: function infoShow() {
     this.slideImgs.eq(this.slideCurrentIndex).removeClass('ExHide');
     this.slideImgs.eq(this.slideCurrentIndex).addClass('ExCurrent');
   },
   slideBack: function slideBack() {
+    var _this = this;
+
+    this.targetPos = this.startPos - this.slideImgWidth * this.slideCurrent;
+
+    TweenMax.to(this.slideList, 1, {
+      left: this.targetPos,
+      ease: Power3.easeOut,
+      onUpdate: function onUpdate(tween) {
+        if (_this.slideList.position().left >= _this.startPos + _this.slideImgWidth * _this.slideSet) {
+
+          _this.reset();
+
+          if (_this.targetPos > _this.startPos + _this.slideImgWidth * _this.slideSet) {
+            TweenMax.killTweensOf(_this.slideList);
+            clearTimeout(_this.timeoutTimer);
+            _this.btnBackControl();
+          }
+        }
+      },
+      onComplete: function onComplete() {
+        _this.infoShow();
+      }
+    });
+  },
+  slideNext: function slideNext() {
     var _this2 = this;
 
     this.targetPos = this.startPos - this.slideImgWidth * this.slideCurrent;
@@ -226,14 +423,14 @@ app.slider = {
       left: this.targetPos,
       ease: Power3.easeOut,
       onUpdate: function onUpdate(tween) {
-        if (_this2.slideList.position().left >= _this2.startPos + _this2.slideImgWidth * _this2.slideSet) {
+        if (_this2.slideList.position().left <= _this2.startPos - _this2.slideImgWidth * _this2.slideSet) {
 
           _this2.reset();
 
-          if (_this2.targetPos > _this2.startPos + _this2.slideImgWidth * _this2.slideSet) {
+          if (_this2.targetPos < _this2.startPos - _this2.slideImgWidth * _this2.slideSet) {
             TweenMax.killTweensOf(_this2.slideList);
             clearTimeout(_this2.timeoutTimer);
-            _this2.btnBackControl();
+            _this2.btnNextControl();
           }
         }
       },
@@ -242,46 +439,21 @@ app.slider = {
       }
     });
   },
-  slideNext: function slideNext() {
-    var _this3 = this;
-
-    this.targetPos = this.startPos - this.slideImgWidth * this.slideCurrent;
-
-    TweenMax.to(this.slideList, 1, {
-      left: this.targetPos,
-      ease: Power3.easeOut,
-      onUpdate: function onUpdate(tween) {
-        if (_this3.slideList.position().left <= _this3.startPos - _this3.slideImgWidth * _this3.slideSet) {
-
-          _this3.reset();
-
-          if (_this3.targetPos < _this3.startPos - _this3.slideImgWidth * _this3.slideSet) {
-            TweenMax.killTweensOf(_this3.slideList);
-            clearTimeout(_this3.timeoutTimer);
-            _this3.btnNextControl();
-          }
-        }
-      },
-      onComplete: function onComplete() {
-        _this3.infoShow();
-      }
-    });
-  },
   autoPlay: function autoPlay() {
-    var _this4 = this;
+    var _this3 = this;
 
     this.timer;
 
     this.intervalTimer = setInterval(function () {
-      if (_this4.slideCurrent + 1 === _this4.slidePager.length) {
-        _this4.pagerControl(_this4.slideCurrent + 1, _this4.slidePager.eq(0));
+      if (_this3.slideCurrent + 1 === _this3.slidePager.length) {
+        _this3.pagerControl(_this3.slideCurrent + 1, _this3.slidePager.eq(0));
       } else {
-        _this4.pagerControl(_this4.slideCurrent + 1, _this4.slidePager.eq(_this4.slideCurrent + 1));
+        _this3.pagerControl(_this3.slideCurrent + 1, _this3.slidePager.eq(_this3.slideCurrent + 1));
       }
     }, 5000);
   },
   pagerControl: function pagerControl(i, elm) {
-    var _this5 = this;
+    var _this4 = this;
 
     clearInterval(this.intervalTimer);
     clearTimeout(this.timeoutTimer);
@@ -290,15 +462,15 @@ app.slider = {
     this.slideCurrent = i;
     this.slideImgs.eq(this.slideCurrentIndex).removeClass('ExCurrent');
     this.slideImgs.eq(this.slideCurrentIndex).addClass('ExHide');
-    this.slideCurrentIndex = this.slideSet * 2 + i;
+    this.slideCurrentIndex = this.slideSet + i;
     this.slideNext();
 
     this.timeoutTimer = setTimeout(function () {
-      _this5.autoPlay();
+      _this4.autoPlay();
     }, 5000);
   },
   btnNextControl: function btnNextControl() {
-    var _this6 = this;
+    var _this5 = this;
 
     clearInterval(this.intervalTimer);
     clearTimeout(this.timeoutTimer);
@@ -320,11 +492,11 @@ app.slider = {
     this.slideCurrentIndex = this.slideCurrentIndex + 1;
 
     this.timeoutTimer = setTimeout(function () {
-      _this6.autoPlay();
+      _this5.autoPlay();
     }, 5000);
   },
   btnBackControl: function btnBackControl() {
-    var _this7 = this;
+    var _this6 = this;
 
     clearInterval(this.intervalTimer);
     clearTimeout(this.timeoutTimer);
@@ -346,59 +518,59 @@ app.slider = {
     this.slideCurrentIndex = this.slideCurrentIndex - 1;
 
     this.timeoutTimer = setTimeout(function () {
-      _this7.autoPlay();
+      _this6.autoPlay();
     }, 5000);
   },
   evntSet: function evntSet() {
-    var _this8 = this;
+    var _this7 = this;
 
     $(window).on('resize', function () {
-      _this8.posSet();
-      _this8.reset();
+      _this7.posSet();
+      _this7.reset();
     });
 
     this.slidePager.each(function (i, elm) {
       $(elm).on('click', function (e) {
         e.preventDefault();
         if (!$(elm).hasClass('ExCurrent')) {
-          clearInterval(_this8.intervalTimer);
-          clearTimeout(_this8.timeoutTimer);
-          _this8.pagerControl(i, elm);
+          clearInterval(_this7.intervalTimer);
+          clearTimeout(_this7.timeoutTimer);
+          _this7.pagerControl(i, elm);
         }
       });
     });
 
     this.slideBtnBack.on('click', function (e) {
       e.preventDefault();
-      _this8.btnBackControl();
+      _this7.btnBackControl();
     });
 
     this.slideBtnNext.on('click', function (e) {
       e.preventDefault();
-      _this8.btnNextControl();
+      _this7.btnNextControl();
     });
 
     this.slideBtnNext.hover(function () {
-      _this8.slideBtnNext.addClass('ExHover01');
-      _this8.slideBtnNext.removeClass('ExHover02');
+      _this7.slideBtnNext.addClass('ExHover01');
+      _this7.slideBtnNext.removeClass('ExHover02');
     }, function () {
-      _this8.slideBtnNext.addClass('ExHover02');
-      _this8.slideBtnNext.removeClass('ExHover01');
+      _this7.slideBtnNext.addClass('ExHover02');
+      _this7.slideBtnNext.removeClass('ExHover01');
     });
 
     this.slideBtnBack.hover(function () {
-      _this8.slideBtnBack.addClass('ExHover01');
-      _this8.slideBtnBack.removeClass('ExHover02');
+      _this7.slideBtnBack.addClass('ExHover01');
+      _this7.slideBtnBack.removeClass('ExHover02');
     }, function () {
-      _this8.slideBtnBack.addClass('ExHover02');
-      _this8.slideBtnBack.removeClass('ExHover01');
+      _this7.slideBtnBack.addClass('ExHover02');
+      _this7.slideBtnBack.removeClass('ExHover01');
     });
   }
 };
 
 module.exports = app.slider;
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
@@ -422,26 +594,28 @@ var ArticleList = React.createClass({
     };
   },
   componentWillMount: function componentWillMount() {
-
-    if (Store.gnav.data === null && Store.mainvisual.data == null) {
-      this.actionCreator(Store.PageControl.paramObjs.paged, [this.props.actionType, 'gnav', 'mainvisual']);
-    } else {
+    //console.log('LIcomponentWillMount');
+    this.loadAction();
+  },
+  loadAction: function loadAction() {
+    //console.log('LIloadAction');
+    console.log(Store.PageControl.paramObjs.paged);
+    if (Store.mainvisual.data === null && Store.gnav.data === null) {
+      console.log('list first load');
+      this.actionCreator(Store.PageControl.paramObjs.paged, [this.props.actionType, 'mainvisual', 'gnav']);
+    } else if (Store.mainvisual.data === null && Store.gnav.data !== null) {
+      console.log('list un load');
       this.actionCreator(Store.PageControl.paramObjs.paged, [this.props.actionType, 'mainvisual']);
+    } else {
+      console.log('list secound');
+      this.actionCreator(Store.PageControl.paramObjs.paged, ['list']);
     }
   },
   componentWillReceiveProps: function componentWillReceiveProps() {
-
-    if (!this.first) {
-
-      if (Store.gnav.data === null && Store.mainvisual.data == null) {
-        this.actionCreator(Store.PageControl.paramObjs.paged, [this.props.actionType, 'gnav', 'mainvisual']);
-      } else {
-        console.log('re');
-        this.actionCreator(Store.PageControl.paramObjs.paged, [this.props.actionType, 'mainvisual']);
-      }
-    }
+    //console.log('LIcomponentWillReceiveProps');
   },
   actionCreator: function actionCreator(page, comps) {
+    //onsole.log('LIactionCreator');
 
     Store.addSubscribe({
       actionType: this.props.actionType,
@@ -458,29 +632,30 @@ var ArticleList = React.createClass({
   dataloaded: function dataloaded() {
     var _this = this;
 
+    //console.log('LIdataloaded');
+
     var _countArray = [];
 
     Store.removeSubscribe({
       actionType: this.props.actionType
     });
 
-    if (Store.list.data) {
+    for (var i = 0; i < Store.list.data.page.maxPage; i++) {
+      _countArray.push(i);
+    }
 
-      for (var i = 0; i < Store.list.data.page.maxPage; i++) {
-        _countArray.push(i);
-      }
-
-      this.imgLoading(Store.list.data.article).then(function (e) {
-
+    this.imgLoading(Store.list.data.article).then(function (e) {
+      if (_this.isMounted()) {
         _this.replaceState({
           nowPage: Store.list.data.page.nowPage,
           maxPage: _countArray,
           article: Store.list.data.article
         });
-      });
-    }
+      }
+    });
   },
   componentDidUpdate: function componentDidUpdate() {
+    //console.log('LIcomponentDidUpdate');
 
     this.first = false;
 
@@ -488,6 +663,24 @@ var ArticleList = React.createClass({
     $('.MdCntsThumb01 a').on('click', function (e) {
       e.preventDefault();
     });
+
+    $('.MdPager01 li').each(function (i, elm) {
+      $(elm).hover(function () {
+        if (!$(elm).hasClass('ExStay')) {
+          $(elm).addClass('ExHover01');
+          $(elm).removeClass('ExHover02');
+        }
+      }, function () {
+        if (!$(elm).hasClass('ExStay')) {
+          $(elm).addClass('ExHover02');
+          $(elm).removeClass('ExHover01');
+        }
+      });
+    });
+
+    if (Store.PageControl.paramObjs.pager) {
+      $(window).scrollTop($('#FncListTtl').position().top - 200);
+    }
   },
   pagerClick: function pagerClick(e) {
 
@@ -502,9 +695,9 @@ var ArticleList = React.createClass({
     if (this.state.nowPage === _num) {
       return false;
     } else {
-      this.actionCreator(_num, [this.props.actionType]);
-      history.pushState(null, null, '/index_react.html?type=' + Store.PageControl.paramObjs.type + '&paged=' + e.target.dataset.num);
+      history.pushState(null, null, '/?type=' + Store.PageControl.paramObjs.type + '&paged=' + e.target.dataset.num + '&pager=true');
       Store.PageControl.getParam();
+      this.actionCreator(_num, [this.props.actionType]);
     }
   },
   imgLoading: function imgLoading(data) {
@@ -531,6 +724,8 @@ var ArticleList = React.createClass({
   },
   render: function render() {
     var _this2 = this;
+
+    //console.log('LIrender');
 
     if (this.state.article.length === 0) {
       return false;
@@ -576,12 +771,12 @@ var ArticleList = React.createClass({
               React.createElement(
                 'h2',
                 { className: 'mdCntsThumb01Ttl' },
-                'タイトルタイトルタイトルタイトルタイトル'
+                res.title
               ),
               React.createElement(
                 'p',
                 { className: 'mdCntsThumb01Txt' },
-                'テキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト'
+                res.content
               )
             ),
             React.createElement(
@@ -602,18 +797,12 @@ var ArticleList = React.createClass({
         );
       });
 
-      // var pager = this.state.maxPage.map((index)=>{
-      //   return (
-      //       <Pager pagerClick={this.pagerClick} num={index} key={index} stay={this.state.nowPage} />
-      //     );
-      // });
-
       return React.createElement(
         'section',
         null,
         React.createElement(
           'h2',
-          { className: 'MdHdgCmn01' },
+          { id: 'FncListTtl', className: 'MdHdgCmn01' },
           React.createElement(
             'span',
             null,
@@ -631,14 +820,259 @@ var ArticleList = React.createClass({
   }
 });
 
-// ReactDOM.render(
-//   <ArticleList />,
-//   document.getElementById('Main')
-// );
+module.exports = ArticleList;
+
+},{"../pageFncs/cntsThumb.js":2,"./comp-pager.jsx":12,"./store-article":15}],8:[function(require,module,exports){
+'use strict';
+
+var Store = require('./store-article');
+var Pager = require('./comp-pager.jsx');
+var CntsThumb = require('../pageFncs/cntsThumb.js');
+
+var ArticleList = React.createClass({
+  displayName: 'ArticleList',
+
+  first: true,
+  getDefaultProps: function getDefaultProps() {
+    return {
+      actionType: "category"
+    };
+  },
+  getInitialState: function getInitialState() {
+    return {
+      nowPage: 0,
+      maxPage: [],
+      name: Store.PageControl.paramObjs.name,
+      article: [],
+      catSlug: '',
+      catName: ''
+    };
+  },
+  componentWillMount: function componentWillMount() {
+    console.log('CATcomponentWillMount');
+
+    this.loadAction();
+  },
+  loadAction: function loadAction() {
+    console.log('CATloadAction');
+    console.log(Store.PageControl.paramObjs.name);
+    if (Store.gnav.data === null) {
+      console.log('CAT first load');
+      this.actionCreator(Store.PageControl.paramObjs.paged, Store.PageControl.paramObjs.name, [this.props.actionType, 'gnav']);
+    } else {
+      console.log('CAT secound');
+      this.actionCreator(Store.PageControl.paramObjs.paged, Store.PageControl.paramObjs.name, [this.props.actionType]);
+    }
+  },
+  componentWillReceiveProps: function componentWillReceiveProps() {
+    console.log('CATcomponentWillReceiveProps');
+    this.loadAction();
+  },
+  actionCreator: function actionCreator(page, name, comps) {
+    console.log('CATactionCreator');
+
+    Store.addSubscribe({
+      actionType: this.props.actionType,
+      callback: this.dataloaded
+    });
+
+    Store.dispatcher.action.create({
+      actionType: this.props.actionType,
+      page: page,
+      name: name,
+      callback: this.dataloaded,
+      requireComps: comps
+    });
+  },
+  dataloaded: function dataloaded() {
+    var _this = this;
+
+    console.log('CATdataloaded');
+
+    console.log(Store.category.data);
+
+    var _countArray = [];
+
+    Store.removeSubscribe({
+      actionType: this.props.actionType
+    });
+
+    for (var i = 0; i < Store.category.data.page.maxPage; i++) {
+      _countArray.push(i);
+    }
+
+    this.imgLoading(Store.category.data.article).then(function (e) {
+      if (_this.isMounted()) {
+        _this.replaceState({
+          nowPage: Store.category.data.page.nowPage,
+          maxPage: _countArray,
+          article: Store.category.data.article,
+          catSlug: Store.category.data.slug,
+          catName: Store.category.data.name
+        });
+      }
+    });
+  },
+  componentDidUpdate: function componentDidUpdate() {
+    console.log('LIcomponentDidUpdate');
+
+    this.first = false;
+
+    CntsThumb.init();
+    $('.MdCntsThumb01 a').on('click', function (e) {
+      e.preventDefault();
+    });
+  },
+  pagerClick: function pagerClick(e) {
+
+    e.preventDefault();
+
+    var _num = e.target.dataset.num;
+
+    if (_num === '1') {
+      _num = 0;
+    }
+
+    if (this.state.nowPage === _num) {
+      return false;
+    } else {
+      this.actionCreator(_num, Store.PageControl.paramObjs.name, [this.props.actionType]);
+      history.pushState(null, null, '/?type=' + Store.PageControl.paramObjs.type + '&paged=' + e.target.dataset.num + '&name=' + Store.PageControl.paramObjs.name);
+      Store.PageControl.getParam();
+    }
+  },
+  imgLoading: function imgLoading(data) {
+    var counter = 0;
+
+    return new Promise(function (resolve, reject) {
+
+      data.map(function (res, index) {
+        var img = new Image();
+
+        $(img).on('load', function () {
+          counter = counter + 1;
+          if (counter == data.length) {
+            resolve(counter);
+          }
+        });
+
+        $(img).attr('src', res.thumb);
+      });
+    });
+  },
+  thumbClick: function thumbClick(ID) {
+    this.props.thumbClick(ID);
+  },
+  render: function render() {
+    var _this2 = this;
+
+    console.log('LIrender');
+
+    if (this.state.article.length === 0) {
+      return false;
+    } else {
+
+      var article = this.state.article.map(function (res, i) {
+        return React.createElement(
+          'section',
+          { key: i, className: 'MdCntsThumb01' },
+          React.createElement(
+            'a',
+            { onClick: _this2.thumbClick.bind(_this2, res.ID), href: res.ID },
+            React.createElement(
+              'p',
+              { className: 'mdCntsThumb01Img' },
+              React.createElement('img', { src: res.thumb })
+            ),
+            React.createElement(
+              'div',
+              { className: 'mdCntsThumb01InfoClm' },
+              React.createElement(
+                'div',
+                { className: 'mdCntsThumb01Clm01' },
+                React.createElement(
+                  'p',
+                  { className: 'mdCntsThumb01Cat' },
+                  res.category
+                )
+              ),
+              React.createElement(
+                'div',
+                { className: 'mdCntsThumb01Clm02' },
+                React.createElement(
+                  'p',
+                  { className: 'mdCntsThumb01Date' },
+                  res.date
+                )
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'mdCntsThumb01InfoInBox' },
+              React.createElement(
+                'h2',
+                { className: 'mdCntsThumb01Ttl' },
+                res.title
+              ),
+              React.createElement(
+                'p',
+                { className: 'mdCntsThumb01Txt' },
+                res.content
+              )
+            ),
+            React.createElement(
+              'p',
+              { className: 'mdCntsThumb01Icn' },
+              React.createElement('span', { className: 'icon-icon04' })
+            ),
+            React.createElement(
+              'div',
+              { className: 'mdCntsThumb01Cover' },
+              React.createElement(
+                'p',
+                { className: 'mdCntsThumb01Txt' },
+                'Read More'
+              )
+            )
+          )
+        );
+      });
+
+      return React.createElement(
+        'section',
+        null,
+        React.createElement(
+          'div',
+          { className: 'MdCatImg01' },
+          React.createElement(
+            'p',
+            { className: "mdImg Ex" + this.state.catName },
+            this.state.catName
+          )
+        ),
+        React.createElement(
+          'h1',
+          { className: 'MdHdgCmn01' },
+          React.createElement(
+            'span',
+            null,
+            this.state.catName
+          )
+        ),
+        React.createElement(
+          'div',
+          { className: 'LyCntsList' },
+          article
+        ),
+        React.createElement(Pager, { pagerClick: this.pagerClick, max: this.state.maxPage, stay: this.state.nowPage })
+      );
+    }
+  }
+});
 
 module.exports = ArticleList;
 
-},{"../pageFncs/cntsThumb.js":2,"./comp-pager.jsx":9,"./store-article":12}],6:[function(require,module,exports){
+},{"../pageFncs/cntsThumb.js":2,"./comp-pager.jsx":12,"./store-article":15}],9:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
@@ -658,30 +1092,51 @@ var Gnav = React.createClass({
     };
   },
   componentWillMount: function componentWillMount() {
+    //console.log('GNcomponentWillMount');
+    this.loadAction();
+  },
+  loadAction: function loadAction() {
+    //console.log('GNloadAction');
 
+    if (this.props.pageType === 'single') {
+      if (Store.gnav.data === null) {
+        this.actionCreator([this.props.actionType, 'single']);
+      } else if (Store.gnav.data !== null) {
+        this.actionCreator(['single']);
+      }
+    } else if (this.props.pageType === 'index') {
+      if (Store.mainvisual.data === null && Store.gnav.data === null) {
+        this.actionCreator([this.props.actionType, 'list', 'mainvisual']);
+      } else if (Store.mainvisual.data == null && Store.gnav.data !== null) {
+        this.actionCreator(['mainvisual', 'list']);
+      } else {
+        this.actionCreator(['list']);
+      }
+    } else if (this.props.pageType === 'category') {
+      if (Store.gnav.data === null) {
+        this.actionCreator([this.props.actionType, 'category']);
+      } else if (Store.gnav.data !== null) {
+        this.actionCreator(['category']);
+      }
+    }
+  },
+  componentDidUpdate: function componentDidUpdate() {
+    if ($('.LyHead.FncStart').length === 0) {
+      console.log('headerinit');
+      Header.init();
+    }
+
+    $('#Gnav li').on('click', function (e) {
+      e.preventDefault();
+    });
+  },
+  componentDidMount: function componentDidMount() {},
+  actionCreator: function actionCreator(comps) {
     Store.addSubscribe({
       actionType: this.props.actionType,
       callback: this.dataloaded
     });
 
-    if (this.props.pageType === 'index' && Store.gnav.data === null) {
-      this.actionCreator([this.props.actionType, 'list', 'mainvisual']);
-    } else if (this.props.pageType === 'single' && Store.gnav.data === null) {
-      this.actionCreator([this.props.actionType, 'single']);
-    }
-  },
-  componentDidUpdate: function componentDidUpdate() {
-    //update後にグロナビとフッターを表示
-    $('.LyHead').css({ display: 'block' });
-    $('.LyFtr').css({ display: 'block' });
-
-    if ($('.LyHead.FncStart').length === 0) {
-      console.log('headerinit');
-      Header.init();
-    }
-  },
-  componentDidMount: function componentDidMount() {},
-  actionCreator: function actionCreator(comps) {
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
       page: 1,
@@ -703,9 +1158,18 @@ var Gnav = React.createClass({
     e.preventDefault();
     this.props.backTop();
   },
-  render: function render() {
+  navClick: function navClick(cat) {
+    //console.log(cat);
 
-    if (this.state.gnav.length === 0) {
+    this.props.navClick(cat);
+  },
+  render: function render() {
+    var _this = this;
+
+    //console.log('rendar gnav');
+    //console.log(Store.gnav.data);
+
+    if (Store.gnav.data === null) {
       return false;
     } else {
 
@@ -717,7 +1181,7 @@ var Gnav = React.createClass({
           React.createElement('span', { className: 'icon-icon05' }),
           React.createElement(
             'a',
-            { href: res.slug },
+            { onClick: _this.navClick.bind(_this, res.slug), href: res.slug },
             res.catName
           )
         );
@@ -761,7 +1225,7 @@ var Gnav = React.createClass({
 
 module.exports = Gnav;
 
-},{"../pageFncs/header.js":3,"./store-article":12}],7:[function(require,module,exports){
+},{"../pageFncs/header.js":3,"./store-article":15}],10:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
@@ -783,25 +1247,27 @@ var Mainvisual = React.createClass({
     };
   },
   componentWillMount: function componentWillMount() {
-
-    if (Store.mainvisual.data === null) {
+    console.log('MVcomponentWillMount');
+    this.loadAction();
+  },
+  loadAction: function loadAction() {
+    console.log('MVloadAction');
+    if (Store.mainvisual.data === null && Store.gnav.data === null) {
+      console.log('mainvisual first load');
       this.actionCreator([this.props.actionType, 'list', 'gnav']);
-    } else if (Store.mainvisual.data !== null) {
+    } else if (Store.mainvisual.data === null && Store.gnav.data !== null) {
+      console.log('mainvisual un load');
       this.actionCreator([this.props.actionType, 'list']);
+    } else {
+      console.log('secound');
+      this.actionCreator(['list']);
     }
   },
   componentWillReceiveProps: function componentWillReceiveProps() {
-
-    if (!this.first) {
-      if (Store.mainvisual.data === null) {
-        console.log('re');
-        this.actionCreator([this.props.actionType, 'list', 'gnav']);
-      } else if (Store.mainvisual.data !== null) {
-        this.actionCreator([this.props.actionType, 'list']);
-      }
-    }
+    console.log('MVcomponentWillReceiveProps');
   },
   actionCreator: function actionCreator(comps) {
+    console.log('MVactionCreator');
 
     Store.addSubscribe({
       actionType: this.props.actionType,
@@ -815,12 +1281,14 @@ var Mainvisual = React.createClass({
     });
   },
   dataloaded: function dataloaded() {
-
+    console.log('MVdataloaded');
     Store.removeSubscribe({
       actionType: this.props.actionType
     });
 
-    this.replaceState({ mainvisual: Store.mainvisual.data });
+    if (this.isMounted()) {
+      this.replaceState({ mainvisual: Store.mainvisual.data });
+    }
 
     if (Store.mainvisual.data) {
       this.imgLoading(Store.mainvisual.data).then(function (e) {});
@@ -846,30 +1314,59 @@ var Mainvisual = React.createClass({
     });
   },
   componentDidUpdate: function componentDidUpdate() {
-
-    this.first = false;
-
-    if ($('.MdSlideContianer.FncStart').length === 0) {
-      console.log('start');
-      Slider.init();
-    }
+    console.log('MVcomponentDidUpdate');
+    Slider.unmount();
+    Slider.init();
+    $('.mdSlideListImg li').each(function (i, elm) {
+      $(elm).find('a').eq(0).on('click', function (e) {
+        e.preventDefault();
+      });
+    });
   },
   componentWillUnmount: function componentWillUnmount() {
     console.log('unmount');
     Slider.unmount();
   },
-  componentDidMount: function componentDidMount() {},
+  shouldComponentUpdate: function shouldComponentUpdate() {
+
+    if ($('.MdSlideContianer').length === 0) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+    console.log('MVcomponentWillReceiveProps');
+    console.log(nextProps);
+  },
+  componentDidMount: function componentDidMount() {
+    console.log('MVcomponentDidMount');
+  },
+  thumbClick: function thumbClick(ID) {
+    console.log(ID);
+    this.props.thumbClick(ID);
+  },
   render: function render() {
+    var _this = this;
+
+    console.log('MVrendar');
     if (this.state.mainvisual.length === 0) {
       return false;
     } else {
-      var imgs = this.state.mainvisual.map(function (res, index) {
+      Slider.unmount();
+      var mvArray = [];
+      for (var i = 0; i < 3; i++) {
+        for (var j = 0; j < this.state.mainvisual.length; j++) {
+          mvArray.push(this.state.mainvisual[j]);
+        }
+      }
+      var imgs = mvArray.map(function (res, index) {
         return React.createElement(
           'li',
-          { key: index },
+          { key: 'thumb' + index },
           React.createElement(
             'a',
-            { href: res.url },
+            { onClick: _this.thumbClick.bind(_this, res.ID), href: res.ID },
             React.createElement(
               'p',
               { className: 'mdSlideCat' },
@@ -935,11 +1432,12 @@ var Mainvisual = React.createClass({
 
 module.exports = Mainvisual;
 
-},{"../pageFncs/slider.js":4,"./store-article":12}],8:[function(require,module,exports){
+},{"../pageFncs/slider.js":6,"./store-article":15}],11:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
 var ArticleList = require('./comp-articleList.jsx');
+var CategoryList = require('./comp-categoryList.jsx');
 var Mainvisual = require('./comp-mainvisual.jsx');
 var Gnav = require('./comp-gnav.jsx');
 var Single = require('./comp-single.jsx');
@@ -952,16 +1450,28 @@ var Page = React.createClass({
   getInitialState: function getInitialState() {
     return {
       pageType: 'index',
-      pageID: null
+      pageID: null,
+      update: false
     };
   },
   componentWillMount: function componentWillMount() {
+
     if (Store.PageControl.paramObjs.type === 'single') {
 
       this.articleID = Store.PageControl.paramObjs.paged;
 
-      this.replaceState({
-        pageType: 'single'
+      this.setState({
+        pageType: 'single',
+        pageID: Store.PageControl.paramObjs.paged,
+        update: false
+      });
+    } else if (Store.PageControl.paramObjs.type === 'category') {
+      this.articleID = Store.PageControl.paramObjs.paged;
+
+      this.setState({
+        pageType: 'category',
+        pageID: Store.PageControl.paramObjs.paged,
+        update: false
       });
     }
 
@@ -975,15 +1485,27 @@ var Page = React.createClass({
 
     $(window).on('popstate', function () {
 
+      Store.PageControl.getParam();
+
       if (Store.PageControl.paramObjs.type === 'single') {
 
         _this.articleID = Store.PageControl.paramObjs.paged;
 
         _this.replaceState({
-          pageType: 'single'
+          pageType: 'single',
+          pageID: _this.articleID
+        });
+      } else if (Store.PageControl.paramObjs.type === 'category') {
+
+        console.log('category');
+
+        _this.articleID = Store.PageControl.paramObjs.paged;
+
+        _this.replaceState({
+          pageType: 'category',
+          pageID: _this.articleID
         });
       } else if (Store.PageControl.paramObjs.type === 'index') {
-
         _this.replaceState({
           pageType: 'index'
         });
@@ -993,39 +1515,62 @@ var Page = React.createClass({
   thumbClick: function thumbClick(ID) {
     console.log(ID);
 
+    $('.LyHead').css({ opacity: 0 });
+    $('.LyFtr').css({ opacity: 0 });
+
     this.articleID = ID;
 
-    history.pushState(null, null, '/index_react.html?type=' + 'single' + '&paged=' + ID);
+    history.pushState(null, null, '/?type=' + 'single' + '&paged=' + ID);
     Store.PageControl.getParam();
 
     this.replaceState({
       pageType: 'single',
-      pageID: ID
+      pageID: this.articleID
+    });
+  },
+  navClick: function navClick(cat) {
+    history.pushState(null, null, '/?type=' + 'category' + '&paged=' + cat);
+    Store.PageControl.getParam();
+
+    this.replaceState({
+      pageType: 'category',
+      pageID: cat
     });
   },
   backTop: function backTop() {
     this.replaceState({
       pageType: 'index'
     });
-    history.pushState(null, null, '/index_react.html');
+    history.pushState(null, null, '/');
     Store.PageControl.getParam();
   },
+  componentDidUpdate: function componentDidUpdate() {},
   render: function render() {
     console.log('render');
     if (this.state.pageType == 'index') {
+      //console.log('rendar index');
       return React.createElement(
         'div',
         null,
-        React.createElement(Gnav, { pageType: this.state.pageType, backTop: this.backTop }),
-        React.createElement(Mainvisual, null),
+        React.createElement(Gnav, { pageType: this.state.pageType, backTop: this.backTop, navClick: this.navClick }),
+        React.createElement(Mainvisual, { thumbClick: this.thumbClick }),
         React.createElement(ArticleList, { thumbClick: this.thumbClick })
       );
     } else if (this.state.pageType == 'single') {
+      //console.log('rendar single');
       return React.createElement(
         'div',
         null,
-        React.createElement(Gnav, { pageType: this.state.pageType, backTop: this.backTop }),
-        React.createElement(Single, { articleID: this.articleID, thumbClick: this.thumbClick })
+        React.createElement(Gnav, { pageType: this.state.pageType, backTop: this.backTop, navClick: this.navClick }),
+        React.createElement(Single, { update: this.state.update, articleID: this.state.pageID, thumbClick: this.thumbClick })
+      );
+    } else if (this.state.pageType == 'category') {
+      //console.log('rendar category');
+      return React.createElement(
+        'div',
+        null,
+        React.createElement(Gnav, { pageType: this.state.pageType, backTop: this.backTop, navClick: this.navClick }),
+        React.createElement(CategoryList, { thumbClick: this.thumbClick })
       );
     } else {
       return false;
@@ -1037,11 +1582,12 @@ ReactDOM.render(React.createElement(Page, null), document.getElementById('Main')
 
 module.exports = ArticleList;
 
-},{"./comp-articleList.jsx":5,"./comp-gnav.jsx":6,"./comp-mainvisual.jsx":7,"./comp-single.jsx":11,"./store-article":12}],9:[function(require,module,exports){
+},{"./comp-articleList.jsx":7,"./comp-categoryList.jsx":8,"./comp-gnav.jsx":9,"./comp-mainvisual.jsx":10,"./comp-single.jsx":14,"./store-article":15}],12:[function(require,module,exports){
 "use strict";
 
 var Pager = React.createClass({
   displayName: "Pager",
+  componentDidUpdate: function componentDidUpdate() {},
   render: function render() {
     var _this = this;
 
@@ -1055,10 +1601,10 @@ var Pager = React.createClass({
       if (index === stay) {
         return React.createElement(
           "li",
-          { key: index },
+          { key: index, className: "ExStay" },
           React.createElement(
             "a",
-            { href: "#", "data-num": index + 1, onClick: _this.props.pagerClick, className: "stay" },
+            { href: "#", "data-num": index + 1, onClick: _this.props.pagerClick },
             index + 1
           )
         );
@@ -1090,7 +1636,7 @@ var Pager = React.createClass({
 
 module.exports = Pager;
 
-},{}],10:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 
 var Related = React.createClass({
@@ -1141,12 +1687,12 @@ var Related = React.createClass({
             React.createElement(
               "h2",
               { className: "mdCntsThumb01Ttl" },
-              "タイトルタイトルタイトルタイトルタイトル"
+              res.title
             ),
             React.createElement(
               "p",
               { className: "mdCntsThumb01Txt" },
-              "テキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト"
+              res.content
             )
           ),
           React.createElement(
@@ -1190,17 +1736,18 @@ var Related = React.createClass({
 
 module.exports = Related;
 
-},{}],11:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
 var Related = require('./comp-related.jsx');
+var CntsThumb = require('../pageFncs/cntsThumb.js');
+var SingleFnc = require('../pageFncs/single.js');
 
 var Single = React.createClass({
   displayName: 'Single',
 
-  first: false,
-  loading: false,
+  update: false,
   getDefaultProps: function getDefaultProps() {
     return {
       actionType: "single"
@@ -1213,21 +1760,20 @@ var Single = React.createClass({
   },
   componentWillMount: function componentWillMount() {
     console.log('componentWillMount');
-    this.loadAction();
+    this.loadAction(this.props.articleID);
   },
-  events: function events() {},
-  loadAction: function loadAction() {
+  loadAction: function loadAction(articleID) {
     console.log('loadAction');
-    this.loading = true;
+
     Store.addSubscribe({
       actionType: this.props.actionType,
       callback: this.dataloaded
     });
 
     if (Store.gnav.data === null) {
-      this.actionCreator(this.props.articleID, [this.props.actionType, 'gnav']);
+      this.actionCreator(articleID, [this.props.actionType, 'gnav']);
     } else {
-      this.actionCreator(this.props.articleID, [this.props.actionType]);
+      this.actionCreator(articleID, [this.props.actionType]);
     }
   },
   actionCreator: function actionCreator(page, comps) {
@@ -1243,54 +1789,52 @@ var Single = React.createClass({
   dataloaded: function dataloaded() {
     console.log('single loaded');
 
-    this.loading = false;
-
     Store.removeSubscribe({
       actionType: this.props.actionType
     });
 
-    console.log(this.store.data);
+    console.log(this.isMounted());
 
-    this.replaceState({
-      data: Store.single.data
-    });
+    if (this.isMounted()) {
+      this.setState({
+        data: Store.single.data
+      });
+    }
   },
   shouldComponentUpdate: function shouldComponentUpdate() {
     console.log('shouldComponentUpdate');
-    //console.log(Store.single.data);
 
-    if (this.state.data === null) {
-      console.log('null');
-      this.loadAction();
-      return false;
-    } else if (!this.loading) {
-      console.log('this.loading');
-      return true;
-    } else {
-      console.log('else');
-      return true;
-    }
+    return true;
   },
   componentDidUpdate: function componentDidUpdate() {
 
     console.log('componentDidUpdate');
 
-    if (!this.first) {
+    SingleFnc.init();
+    CntsThumb.init();
 
-      this.first = true;
-
-      $('.MdCntsThumb01 a').on('click', function (e) {
-        e.preventDefault();
-      });
-
-      return false;
-    }
+    $('.MdCntsThumb01 a').on('click', function (e) {
+      e.preventDefault();
+    });
   },
   thumbClick: function thumbClick(ID) {
     this.props.thumbClick(ID);
   },
+  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+    console.log('componentWillReceiveProps');
+
+    this.first = true;
+
+    if (this.props.articleID === nextProps.articleID) {
+      this.update = false;
+    } else {
+      this.update = true;
+      this.loadAction(nextProps.articleID);
+    }
+  },
   render: function render() {
     console.log('single render');
+    console.log(this.state.data);
 
     if (this.state.data !== null) {
 
@@ -1375,12 +1919,13 @@ var Single = React.createClass({
 
 module.exports = Single;
 
-},{"./comp-related.jsx":10,"./store-article":12}],12:[function(require,module,exports){
+},{"../pageFncs/cntsThumb.js":2,"../pageFncs/single.js":5,"./comp-related.jsx":13,"./store-article":15}],15:[function(require,module,exports){
 'use strict';
 
 var Dispatcher = require('flux').Dispatcher;
 
 var Store = {};
+var domain = 'http://indoor-living.sakuraweb.com/wp/';
 
 /*===========================
 
@@ -1417,10 +1962,6 @@ Store.PageControl = {
 
 Store.PageControl.getParam();
 
-$(window).on('popstate', function () {
-  Store.PageControl.getParam();
-});
-
 /*===========================
 
 loading管理
@@ -1430,10 +1971,43 @@ loading管理
 Store.LoadControl = {
   loading: $('#MdLoading'),
   show: function show() {
+
+    $(window).scrollTop(0);
+
     this.loading.css({ display: 'block' });
+
+    TweenMax.to($('.LyHead'), 1, {
+      opacity: 0,
+      ease: Power3.easeOut
+    });
+
+    $('.LyFtr').css({
+      position: 'fixed',
+      bottom: 0
+    });
+
+    TweenMax.to($('.LyFtr'), 1, {
+      opacity: 0,
+      ease: Power3.easeOut
+    });
   },
   hidden: function hidden() {
     this.loading.css({ display: 'none' });
+
+    TweenMax.to($('.LyHead'), 1, {
+      opacity: 1,
+      ease: Power3.easeOut
+    });
+
+    $('.LyFtr').css({
+      position: 'static',
+      bottom: 0
+    });
+
+    TweenMax.to($('.LyFtr'), 1, {
+      opacity: 1,
+      ease: Power3.easeOut
+    });
   }
 };
 
@@ -1463,6 +2037,12 @@ Store.single = {
   subscriber: []
 };
 
+//category定義
+Store.category = {
+  data: null,
+  subscriber: []
+};
+
 //subscriber用配列定義
 Store.dispatcher.subscriber = [];
 
@@ -1486,23 +2066,27 @@ Store.dispatcher.action = {
 
       switch (payload.actionType) {
         case 'gnav':
-          url = 'http://beautifulday.sakura.tv/wp/catlist/';
+          url = domain + 'catlist/';
           data = {};
           break;
         case 'list':
-          url = 'http://beautifulday.sakura.tv/wp/page/' + payload.page + '/';
+          url = domain + 'page/' + payload.page + '/';
           data = { paged: payload.page };
           break;
         case 'pager':
-          url = 'http://beautifulday.sakura.tv/wp/dummy/';
+          url = domain + 'dummy/';
           data = {};
           break;
         case 'mainvisual':
-          url = 'http://beautifulday.sakura.tv/wp/mainvisual/';
+          url = domain + 'mainvisual/';
           data = {};
           break;
         case 'single':
-          url = 'http://beautifulday.sakura.tv/wp/' + payload.page + '/';
+          url = domain + '' + payload.page + '/';
+          data = {};
+          break;
+        case 'category':
+          url = domain + 'category/' + payload.name + '/page/' + payload.page + '/';
           data = {};
           break;
       }
@@ -1520,14 +2104,13 @@ Store.dispatcher.action = {
 
       _this.xhr.done(function (data) {
 
-        console.log(data);
-
         _this.counter = _this.counter + 1;
         _this.resData[payload.actionType] = data;
 
         if (_this.counter === _this.compArray.length) {
           Store.dispatcher.dispatch(_this.resData);
           _this.loadStatus = false;
+          console.log('load end');
           Store.LoadControl.hidden();
           _this.reset();
         } else {
@@ -1627,6 +2210,8 @@ Store.list.dispatchToken = Store.dispatcher.register(function (res) {
     Store.dispatcher.waitFor([Store.mainvisual.dispatchToken]);
     Store.list.data = res['list'];
     Store.publish();
+  } else {
+    Store.single.data = null;
   }
 });
 
@@ -1640,6 +2225,7 @@ Store.gnav.dispatchToken = Store.dispatcher.register(function (res) {
   if (res['gnav']) {
     Store.gnav.data = res['gnav'];
   } else {
+    Store.single.data = null;
     return true;
   }
 });
@@ -1656,6 +2242,7 @@ Store.mainvisual.dispatchToken = Store.dispatcher.register(function (res) {
     Store.dispatcher.waitFor([Store.gnav.dispatchToken]);
     Store.mainvisual.data = res['mainvisual'];
   } else {
+    Store.single.data = null;
     return true;
   }
 });
@@ -1671,14 +2258,30 @@ Store.single.dispatchToken = Store.dispatcher.register(function (res) {
     Store.single.data = res['single'];
     Store.publish();
   } else {
-    Store.single.data = false;
+    Store.single.data = null;
+    return true;
+  }
+});
+
+/*===========================
+
+categoryのdispatchToken
+
+===========================*/
+
+Store.category.dispatchToken = Store.dispatcher.register(function (res) {
+  if (res['category']) {
+    Store.category.data = res['category'];
+    Store.publish();
+  } else {
+    Store.category.data = null;
     return true;
   }
 });
 
 module.exports = Store;
 
-},{"flux":14}],13:[function(require,module,exports){
+},{"flux":17}],16:[function(require,module,exports){
 (function (process){
 /**
  * Copyright 2013-2015, Facebook, Inc.
@@ -1730,7 +2333,7 @@ var invariant = function (condition, format, a, b, c, d, e, f) {
 
 module.exports = invariant;
 }).call(this,require('_process'))
-},{"_process":16}],14:[function(require,module,exports){
+},{"_process":19}],17:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -1742,7 +2345,7 @@ module.exports = invariant;
 
 module.exports.Dispatcher = require('./lib/Dispatcher');
 
-},{"./lib/Dispatcher":15}],15:[function(require,module,exports){
+},{"./lib/Dispatcher":18}],18:[function(require,module,exports){
 (function (process){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
@@ -1976,7 +2579,7 @@ var Dispatcher = (function () {
 
 module.exports = Dispatcher;
 }).call(this,require('_process'))
-},{"_process":16,"fbjs/lib/invariant":13}],16:[function(require,module,exports){
+},{"_process":19,"fbjs/lib/invariant":16}],19:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};

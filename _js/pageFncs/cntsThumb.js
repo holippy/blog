@@ -1,14 +1,28 @@
+var SetHeight = require('./setHeight.js');
 var app = app || {};
 
 app.cntsThumb = {
   init(){
     this.thumb = $('.MdCntsThumb01');
 
-    
-
     for (var i = 0; i < this.thumb.length; i++) {
       this.thumbShow(this.thumb[i], i);
     }
+
+    SetHeight.init({
+      Elem: '.mdCntsThumb01InfoInBox .mdCntsThumb01Ttl',
+      group: 4
+    });
+
+    SetHeight.init({
+      Elem: '.mdCntsThumb01InfoInBox .mdCntsThumb01Txt',
+      group: 4
+    });
+
+    SetHeight.init({
+      Elem: '.MdCntsThumb01',
+      group: 4
+    });
 
     this.setEvnt();
   },

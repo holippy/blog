@@ -6,40 +6,42 @@ var ArticleList = React.createClass({
   first: true,
   getDefaultProps(){
     return {
-      actionType:"list"
+      actionType:"category"
     }
   },
   getInitialState(){
     return {
       nowPage: 0,
       maxPage: [],
-      article: []
+      name: Store.PageControl.paramObjs.name,
+      article: [],
+      catSlug: '',
+      catName: ''
     }
   },
   componentWillMount(){
-    //console.log('LIcomponentWillMount');
+    console.log('CATcomponentWillMount');
+
     this.loadAction();
   },
   loadAction(){
-    //console.log('LIloadAction');
-    console.log(Store.PageControl.paramObjs.paged);
-    if( Store.mainvisual.data === null && Store.gnav.data === null ){
-      console.log('list first load');
-      this.actionCreator( Store.PageControl.paramObjs.paged, [ this.props.actionType, 'mainvisual', 'gnav'] );
-    }else if( Store.mainvisual.data === null && Store.gnav.data !== null ){
-      console.log('list un load');
-      this.actionCreator( Store.PageControl.paramObjs.paged, [ this.props.actionType, 'mainvisual'] );
+    console.log('CATloadAction');
+    console.log(Store.PageControl.paramObjs.name);
+    if( Store.gnav.data === null ){
+      console.log('CAT first load');
+      this.actionCreator( Store.PageControl.paramObjs.paged, Store.PageControl.paramObjs.name, [ this.props.actionType, 'gnav'] );
     }else{
-      console.log('list secound');
-      this.actionCreator( Store.PageControl.paramObjs.paged, ['list'] );
+      console.log('CAT secound');
+      this.actionCreator( Store.PageControl.paramObjs.paged, Store.PageControl.paramObjs.name, [ this.props.actionType ] );
     }
 
   },
   componentWillReceiveProps(){
-    //console.log('LIcomponentWillReceiveProps');
+    console.log('CATcomponentWillReceiveProps');
+    this.loadAction();
   },
-  actionCreator( page, comps ){
-    //onsole.log('LIactionCreator');
+  actionCreator( page, name, comps ){
+    console.log('CATactionCreator');
 
     Store.addSubscribe({
       actionType: this.props.actionType,
@@ -49,12 +51,15 @@ var ArticleList = React.createClass({
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
       page: page,
+      name: name,
       callback: this.dataloaded,
       requireComps: comps
     });
   },
   dataloaded(){
-    //console.log('LIdataloaded');
+    console.log('CATdataloaded');
+
+    console.log(Store.category.data);
 
     var _countArray = [];
 
@@ -62,16 +67,19 @@ var ArticleList = React.createClass({
       actionType: this.props.actionType
     });
 
-    for (var i = 0; i < Store.list.data.page.maxPage; i++) {
+    
+    for (var i = 0; i < Store.category.data.page.maxPage; i++) {
       _countArray.push(i);
     }
 
-    this.imgLoading( Store.list.data.article ).then((e)=>{
+    this.imgLoading( Store.category.data.article ).then((e)=>{
       if( this.isMounted() ){
         this.replaceState({
-          nowPage: Store.list.data.page.nowPage,
+          nowPage: Store.category.data.page.nowPage,
           maxPage: _countArray,
-          article: Store.list.data.article
+          article: Store.category.data.article,
+          catSlug: Store.category.data.slug,
+          catName: Store.category.data.name
         });
       }
     });
@@ -79,7 +87,7 @@ var ArticleList = React.createClass({
   },
 
   componentDidUpdate(){
-    //console.log('LIcomponentDidUpdate');
+    console.log('LIcomponentDidUpdate');
 
     this.first = false;
 
@@ -87,27 +95,6 @@ var ArticleList = React.createClass({
     $('.MdCntsThumb01 a').on('click', (e)=>{
       e.preventDefault();
     });
-
-    $('.MdPager01 li').each(( i, elm)=>{
-      $(elm).hover(
-        ()=>{
-          if( !$(elm).hasClass('ExStay') ){
-            $(elm).addClass('ExHover01');
-            $(elm).removeClass('ExHover02');
-          }
-        },
-        ()=>{
-          if( !$(elm).hasClass('ExStay') ){
-            $(elm).addClass('ExHover02');
-            $(elm).removeClass('ExHover01');
-          }
-        }
-      );
-    });
-
-    if( Store.PageControl.paramObjs.pager ){
-      $(window).scrollTop( $('#FncListTtl').position().top - 200 );
-    }
   },
   pagerClick( e ){
 
@@ -122,9 +109,9 @@ var ArticleList = React.createClass({
     if( this.state.nowPage === _num ) {
       return false;
     }else{
-      history.pushState(null,null,'/?type=' + Store.PageControl.paramObjs.type + '&paged=' + e.target.dataset.num + '&pager=true');
+      this.actionCreator( _num, Store.PageControl.paramObjs.name, [ this.props.actionType ]);
+      history.pushState(null,null,'/?type=' + Store.PageControl.paramObjs.type + '&paged=' + e.target.dataset.num + '&name=' + Store.PageControl.paramObjs.name);
       Store.PageControl.getParam();
-      this.actionCreator( _num, [ this.props.actionType ]);
     }
 
   },
@@ -155,7 +142,7 @@ var ArticleList = React.createClass({
   },
   render(){
 
-    //console.log('LIrender');
+    console.log('LIrender');
 
     if(this.state.article.length === 0){
       return false;
@@ -187,7 +174,10 @@ var ArticleList = React.createClass({
 
       return (
         <section>
-        <h2 id="FncListTtl" className="MdHdgCmn01"><span>All Contents</span></h2>
+        <div className="MdCatImg01">
+          <p className={"mdImg Ex" + this.state.catName}>{this.state.catName}</p>
+        </div>
+        <h1 className="MdHdgCmn01"><span>{this.state.catName}</span></h1>
         <div className="LyCntsList">
         {article}
         </div>

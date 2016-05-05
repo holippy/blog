@@ -58,7 +58,7 @@ top page
 
           .mdSlideImg img{
             @include animation-name(bg01);
-            @include animation-duration(3s);
+            @include animation-duration(10s);
             @include animation-timing-function(linear);
             @include animation-iteration-count(1);
             @include animation-fill-mode(forwards);
@@ -165,23 +165,22 @@ top page
           @include hide-text;
           @include border-top-radius(50%);
           @include border-bottom-radius(50%);
-          padding: 1px;
-          color: #FFF;
-          background: $color-main;
-          font-size: 8px;
+          border: solid 5px $color-main;
+          background: #FFF;
+          font-size: 10px;
+          display: inline-block;
+          width: 5px;
+          height: 5px;
         }
 
         &:hover a{
-          text-decoration: none;
-          color: $color-main;
+          background: $color-main;
         }
       }
 
       .ExCurrent a{
-        color: $color-main;
+        background: $color-main;
       }
-
-
     }
 
     .mdSlideListBtn{

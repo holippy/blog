@@ -1,7 +1,7 @@
-var Dispatcher = require('flux').Dispatcher;
+const Dispatcher = require('flux').Dispatcher;
 
-var Store = {};
-
+const Store = {};
+const domain = 'http://indoor-living.sakuraweb.com/wp/';
 
 /*===========================
 
@@ -39,10 +39,6 @@ Store.PageControl = {
 
 Store.PageControl.getParam();
 
-$(window).on('popstate', ()=>{
-  Store.PageControl.getParam();
-});
-
 /*===========================
 
 loading管理
@@ -52,10 +48,51 @@ loading管理
 Store.LoadControl = {
   loading: $('#MdLoading'),
   show(){
+
+    $(window).scrollTop(0);
+
     this.loading.css({display: 'block'});
+
+    TweenMax.to($('.LyHead'), 1, 
+      {
+        opacity: 0, 
+        ease: Power3.easeOut,
+      }
+    );
+
+    $('.LyFtr').css({
+      position: 'fixed',
+      bottom: 0
+    });
+    
+    TweenMax.to($('.LyFtr'), 1, 
+      {
+        opacity: 0, 
+        ease: Power3.easeOut,
+      }
+    );
   },
   hidden(){
     this.loading.css({display: 'none'});
+
+    TweenMax.to($('.LyHead'), 1, 
+      {
+        opacity: 1, 
+        ease: Power3.easeOut,
+      }
+    );
+
+    $('.LyFtr').css({
+      position: 'static',
+      bottom: 0
+    });
+
+    TweenMax.to($('.LyFtr'), 1, 
+      {
+        opacity: 1, 
+        ease: Power3.easeOut,
+      }
+    );
   }
 }
 
@@ -85,6 +122,11 @@ Store.single = {
   subscriber: []
 };
 
+//category定義
+Store.category = {
+  data: null,
+  subscriber: []
+};
 
 //subscriber用配列定義
 Store.dispatcher.subscriber = [];
@@ -110,23 +152,27 @@ Store.dispatcher.action = {
 
       switch ( payload.actionType ){
         case 'gnav':
-          url = 'http://beautifulday.sakura.tv/wp/catlist/';
+          url = domain + 'catlist/';
           data = {};
           break;
         case 'list':
-          url = 'http://beautifulday.sakura.tv/wp/page/' + payload.page + '/';
+          url = domain + 'page/' + payload.page + '/';
           data = { paged: payload.page };
           break;
         case 'pager':
-          url = 'http://beautifulday.sakura.tv/wp/dummy/';
+          url = domain + 'dummy/';
           data = {};
           break;
         case 'mainvisual':
-          url = 'http://beautifulday.sakura.tv/wp/mainvisual/';
+          url = domain + 'mainvisual/';
           data = {};
           break;
         case 'single':
-          url = 'http://beautifulday.sakura.tv/wp/' + payload.page + '/';
+          url = domain + '' + payload.page + '/';
+          data = {};
+          break;
+        case 'category':
+          url = domain + 'category/' + payload.name + '/page/' + payload.page  + '/';
           data = {};
           break;
       }
@@ -145,14 +191,13 @@ Store.dispatcher.action = {
 
       this.xhr.done( ( data )=>{
 
-        console.log(data);
-
         this.counter = this.counter + 1;
         this.resData[payload.actionType] = data;
 
         if( this.counter === this.compArray.length ){
           Store.dispatcher.dispatch(this.resData);
           this.loadStatus = false;
+          console.log('load end');
           Store.LoadControl.hidden();
           this.reset();
         }else{
@@ -177,7 +222,6 @@ Store.dispatcher.action = {
       this.compArray = _.uniq(this.compArray);
       this.compArray = _.sortBy(this.compArray);
     });
-
     
 
     this.queue.push( payload );
@@ -255,6 +299,8 @@ Store.list.dispatchToken = Store.dispatcher.register(function( res ) {
     Store.dispatcher.waitFor([Store.mainvisual.dispatchToken]);
     Store.list.data = res['list'];
     Store.publish();
+  }else{
+    Store.single.data = null;
   }
 });
 
@@ -268,6 +314,7 @@ Store.gnav.dispatchToken = Store.dispatcher.register(function( res ) {
   if( res['gnav'] ){
     Store.gnav.data = res['gnav'];
   }else{
+    Store.single.data = null;
     return true;
   }
 });
@@ -284,6 +331,7 @@ Store.mainvisual.dispatchToken = Store.dispatcher.register(function( res ) {
     Store.dispatcher.waitFor([Store.gnav.dispatchToken]);
     Store.mainvisual.data = res['mainvisual'];
   }else{
+    Store.single.data = null;
     return true;
   }
 });
@@ -299,7 +347,23 @@ Store.single.dispatchToken = Store.dispatcher.register(function( res ) {
     Store.single.data = res['single'];
     Store.publish();
   }else{
-    Store.single.data = false;
+    Store.single.data = null;
+    return true;
+  }
+});
+
+/*===========================
+
+categoryのdispatchToken
+
+===========================*/
+
+Store.category.dispatchToken = Store.dispatcher.register(function( res ) {
+  if( res['category'] ){
+    Store.category.data = res['category'];
+    Store.publish();
+  }else{
+    Store.category.data = null;
     return true;
   }
 });

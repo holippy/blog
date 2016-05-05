@@ -28,16 +28,10 @@ animation
 
 @include keyframes(bg01) {
   from {
-    top: 0;
-    left: 0;
-    width: 810px;
-    height: 540px;
+    @include transform(scale(1));
   }
   to {
-    top: -30px;
-    left: -45px;
-    width: 900px;
-    height: 600px;
+    @include transform(scale(1.2));
   }
 }
 
@@ -54,16 +48,10 @@ animation
 
 @include keyframes(bg02) {
   from {
-    top: -30px;
-    left: -45px;
-    width: 900px;
-    height: 600px;
+    @include transform(scale(1.2));
   }
   to {
-    top: 0;
-    left: 0;
-    width: 810px;
-    height: 540px;
+    @include transform(scale(1));
   }
 }
 
