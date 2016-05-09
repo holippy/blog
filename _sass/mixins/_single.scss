@@ -85,14 +85,15 @@ single page
 
   .mdCms{
     h2{
-      margin-top: 40px;
-      margin-bottom: 20px;
-      font-size: 16px;
+      margin-top: 50px;
+      margin-bottom: 30px;
+      font-size: 18px;
       font-weight: bold;
     }
 
     p{
       margin-bottom: 20px;
+      line-height: 1.8;
     }
 
     img{
@@ -120,9 +121,8 @@ single page
       line-height: 1.4;
       font-style: italic;
 
-      &:before{
-        @include position(absolute, 0 null null 0);
-
+      .icon-icon04{
+        @include position(absolute, 0.3em null null 0);
       }
     }
     a{

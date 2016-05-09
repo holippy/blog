@@ -7,7 +7,7 @@ font
 @mixin WebFont {
   @font-face {
     font-family: 'noto-regular';
-    src: url('/assets/fonts/NotoSans-Regular.ttf') format('truetype');
+    src: url('/assets/fonts/NotoSansCJKjp-Regular.otf') format('truetype');
   }
   @font-face {
     font-family: 'noto-bold';

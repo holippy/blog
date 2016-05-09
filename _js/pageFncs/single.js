@@ -11,20 +11,42 @@ app.single = {
     this.cntsBodyHeight = this.cntsBody.height();
     this.mvTop = this.mv.height() - 40;
     this.hdgPos = [];
+    this.mainImgs = $('.mdMain img');
+    this.mainImgsLength = this.mainImgs.length;
+    this.imgCount = 0;
+    this.imgLoadFlag = false;
 
-    this.hdg.each(( i, elm )=>{
-      $(elm).attr('id', 'hdg' + ( i + 1) );
-      this.hdgPos.push($(elm).position().top - 200);
-    });
 
-    this.eventSet();
-
+    this.imgLoading();
   },
   headerControl(scrollTop){
 
 
   },
-  eventSet(){
+  imgLoading(){
+
+    this.mainImgs.each((i, elm)=>{
+        let _img = $('<img>');
+
+        _img.load(()=>{
+          this.imgCount = this.imgCount + 1;
+
+          if( this.imgCount === this.mainImgsLength ){
+
+            this.hdg.each(( i, elm )=>{
+              $(elm).attr('id', 'hdg' + ( i + 1) );
+              this.hdgPos.push($(elm).position().top - 200);
+            });
+
+            this.setEvnt();
+          }
+        });
+
+        _img.attr('src',$(elm).attr('src'));
+    });
+
+  },
+  setEvnt(){
     this.asideLink.each(( i, elm )=>{
 
       $(elm).on('click', (e)=>{

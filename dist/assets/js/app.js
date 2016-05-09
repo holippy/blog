@@ -63,11 +63,15 @@ var app = app || {};
 app.cntsThumb = {
   init: function init() {
     this.thumb = $('.MdCntsThumb01');
+    this.thumbImgs = $('.MdCntsThumb01 img');
+    this.thumbImgsLength = this.thumbImgs.length;
+    this.imgCount = 0;
 
-    for (var i = 0; i < this.thumb.length; i++) {
-      this.thumbShow(this.thumb[i], i);
-    }
+    console.log(this.thumbImgsLength);
 
+    this.imgLoading();
+  },
+  imgLoaded: function imgLoaded() {
     SetHeight.init({
       Elem: '.mdCntsThumb01InfoInBox .mdCntsThumb01Ttl',
       group: 4
@@ -83,7 +87,29 @@ app.cntsThumb = {
       group: 4
     });
 
+    for (var i = 0; i < this.thumb.length; i++) {
+      this.thumbShow(this.thumb[i], i);
+    }
+
     this.setEvnt();
+  },
+  imgLoading: function imgLoading() {
+    var _this = this;
+
+    this.thumbImgs.each(function (i, elm) {
+      var _img = $('<img>');
+
+      _img.load(function () {
+        _this.imgCount = _this.imgCount + 1;
+
+        if (_this.imgCount === _this.thumbImgsLength) {
+          console.log('thumb img loaded');
+          _this.imgLoaded();
+        }
+      });
+
+      _img.attr('src', $(elm).attr('src'));
+    });
   },
   thumbShow: function thumbShow(elm, index) {
     TweenMax.set(elm, { display: 'block', opacity: 0 });
@@ -175,69 +201,69 @@ module.exports = app.header;
 var app = app || {};
 
 app.SetHeight = {
-  init: function init(options) {
+    init: function init(options) {
 
-    var self = this;
+        var self = this;
 
-    console.log(options);
+        console.log(options);
 
-    self.items = $(options.Elem);
-    self.heights = [];
-    self.group = options.group;
+        self.items = $(options.Elem);
+        self.heights = [];
+        self.group = options.group;
 
-    self.items.css({
-      height: ''
-    });
-
-    for (var i = 0; i < self.items.length; i++) {
-
-      self.heights.push(self.items.eq(i).height());
-
-      if ((i + 1) % self.group === 0) {
-        self.action({
-          start: i + 1 - this.group,
-          end: i + 1
+        self.items.css({
+            height: ''
         });
-      } else if (i === self.items.length - 1) {
-        self.action({
-          start: self.items.length - self.items.length % self.group,
-          end: self.items.length
+
+        for (var i = 0; i < self.items.length; i++) {
+
+            self.heights.push(self.items.eq(i).height());
+
+            if ((i + 1) % self.group === 0) {
+                self.action({
+                    start: i + 1 - this.group,
+                    end: i + 1
+                });
+            } else if (i === self.items.length - 1) {
+                self.action({
+                    start: self.items.length - self.items.length % self.group,
+                    end: self.items.length
+                });
+            }
+        }
+    },
+    action: function action(options) {
+
+        var self = this;
+
+        self.sort();
+
+        self.setHeight({
+            start: options.start,
+            end: options.end,
+            height: self.heights[0]
         });
-      }
+
+        self.heights = [];
+    },
+    sort: function sort() {
+        var self = this;
+
+        this.heights.sort(function (a, b) {
+            if (a > b) return -1;
+            if (a < b) return 1;
+            return 0;
+        });
+    },
+    setHeight: function setHeight(options) {
+        var self = this;
+
+        for (var i = options.start; i < options.end; i++) {
+            self.items.eq(i).css({
+                height: options.height
+            });
+        }
     }
-  },
-  action: function action(options) {
-
-    var self = this;
-
-    self.sort();
-
-    self.setHeight({
-      start: options.start,
-      end: options.end,
-      height: self.heights[0]
-    });
-
-    self.heights = [];
-  },
-  sort: function sort() {
-    var self = this;
-
-    this.heights.sort(function (a, b) {
-      if (a > b) return -1;
-      if (a < b) return 1;
-      return 0;
-    });
-  },
-  setHeight: function setHeight(options) {
-    var self = this;
-
-    for (var i = options.start; i < options.end; i++) {
-      self.items.eq(i).css({
-        height: options.height
-      });
-    }
-  }
 };
 
 module.exports = app.SetHeight;
@@ -249,8 +275,6 @@ var app = app || {};
 
 app.single = {
   init: function init() {
-    var _this = this;
-
     this.hdg = $('.mdCms h2');
     this.aside = $('.mdAside');
     this.asideHeight = this.aside.height();
@@ -260,16 +284,38 @@ app.single = {
     this.cntsBodyHeight = this.cntsBody.height();
     this.mvTop = this.mv.height() - 40;
     this.hdgPos = [];
+    this.mainImgs = $('.mdMain img');
+    this.mainImgsLength = this.mainImgs.length;
+    this.imgCount = 0;
+    this.imgLoadFlag = false;
 
-    this.hdg.each(function (i, elm) {
-      $(elm).attr('id', 'hdg' + (i + 1));
-      _this.hdgPos.push($(elm).position().top - 200);
-    });
-
-    this.eventSet();
+    this.imgLoading();
   },
   headerControl: function headerControl(scrollTop) {},
-  eventSet: function eventSet() {
+  imgLoading: function imgLoading() {
+    var _this = this;
+
+    this.mainImgs.each(function (i, elm) {
+      var _img = $('<img>');
+
+      _img.load(function () {
+        _this.imgCount = _this.imgCount + 1;
+
+        if (_this.imgCount === _this.mainImgsLength) {
+
+          _this.hdg.each(function (i, elm) {
+            $(elm).attr('id', 'hdg' + (i + 1));
+            _this.hdgPos.push($(elm).position().top - 200);
+          });
+
+          _this.setEvnt();
+        }
+      });
+
+      _img.attr('src', $(elm).attr('src'));
+    });
+  },
+  setEvnt: function setEvnt() {
     var _this2 = this;
 
     this.asideLink.each(function (i, elm) {
@@ -1228,10 +1274,14 @@ module.exports = Gnav;
 },{"../pageFncs/header.js":3,"./store-article":15}],10:[function(require,module,exports){
 'use strict';
 
+var _React$createClass;
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 var Store = require('./store-article');
 var Slider = require('../pageFncs/slider.js');
 
-var Mainvisual = React.createClass({
+var Mainvisual = React.createClass((_React$createClass = {
   displayName: 'Mainvisual',
 
   first: true,
@@ -1334,101 +1384,97 @@ var Mainvisual = React.createClass({
     } else {
       return false;
     }
-  },
-  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-    console.log('MVcomponentWillReceiveProps');
-    console.log(nextProps);
-  },
-  componentDidMount: function componentDidMount() {
-    console.log('MVcomponentDidMount');
-  },
-  thumbClick: function thumbClick(ID) {
-    console.log(ID);
-    this.props.thumbClick(ID);
-  },
-  render: function render() {
-    var _this = this;
+  }
+}, _defineProperty(_React$createClass, 'componentWillReceiveProps', function componentWillReceiveProps(nextProps) {
+  console.log('MVcomponentWillReceiveProps');
+  console.log(nextProps);
+}), _defineProperty(_React$createClass, 'componentDidMount', function componentDidMount() {
+  console.log('MVcomponentDidMount');
+}), _defineProperty(_React$createClass, 'thumbClick', function thumbClick(ID) {
+  console.log(ID);
+  this.props.thumbClick(ID);
+}), _defineProperty(_React$createClass, 'render', function render() {
+  var _this = this;
 
-    console.log('MVrendar');
-    if (this.state.mainvisual.length === 0) {
-      return false;
-    } else {
-      Slider.unmount();
-      var mvArray = [];
-      for (var i = 0; i < 3; i++) {
-        for (var j = 0; j < this.state.mainvisual.length; j++) {
-          mvArray.push(this.state.mainvisual[j]);
-        }
+  console.log('MVrendar');
+  if (this.state.mainvisual.length === 0) {
+    return false;
+  } else {
+    Slider.unmount();
+    var mvArray = [];
+    for (var i = 0; i < 3; i++) {
+      for (var j = 0; j < this.state.mainvisual.length; j++) {
+        mvArray.push(this.state.mainvisual[j]);
       }
-      var imgs = mvArray.map(function (res, index) {
-        return React.createElement(
-          'li',
-          { key: 'thumb' + index },
-          React.createElement(
-            'a',
-            { onClick: _this.thumbClick.bind(_this, res.ID), href: res.ID },
-            React.createElement(
-              'p',
-              { className: 'mdSlideCat' },
-              res.category
-            ),
-            React.createElement(
-              'p',
-              { className: 'mdSlideTtl' },
-              React.createElement(
-                'span',
-                null,
-                res.title
-              )
-            ),
-            React.createElement(
-              'p',
-              { className: 'mdSlideImg' },
-              React.createElement('img', { src: res.thumb })
-            )
-          )
-        );
-      });
-
-      var pager = this.state.mainvisual.map(function (res, index) {
-        return React.createElement(
-          'li',
-          { key: index },
-          React.createElement('a', { href: '#', className: 'icon-icon01' })
-        );
-      });
-
+    }
+    var imgs = mvArray.map(function (res, index) {
       return React.createElement(
-        'div',
-        { key: this.mainvisualID, className: 'MdSlideContianer' },
+        'li',
+        { key: 'thumb' + index },
         React.createElement(
-          'ul',
-          { className: 'mdSlideListImg' },
-          imgs
-        ),
-        React.createElement(
-          'ul',
-          { className: 'mdSlideListPager' },
-          pager
-        ),
-        React.createElement(
-          'ul',
-          { className: 'mdSlideListBtn' },
+          'a',
+          { onClick: _this.thumbClick.bind(_this, res.ID), href: res.ID },
           React.createElement(
-            'li',
-            { className: 'mdSlideListBtnBack' },
-            React.createElement('a', { href: '#', className: 'icon-icon02' })
+            'p',
+            { className: 'mdSlideCat' },
+            res.category
           ),
           React.createElement(
-            'li',
-            { className: 'mdSlideListBtnNext' },
-            React.createElement('a', { href: '#', className: 'icon-icon04' })
+            'p',
+            { className: 'mdSlideTtl' },
+            React.createElement(
+              'span',
+              null,
+              res.title
+            )
+          ),
+          React.createElement(
+            'p',
+            { className: 'mdSlideImg' },
+            React.createElement('img', { src: res.thumb })
           )
         )
       );
-    }
+    });
+
+    var pager = this.state.mainvisual.map(function (res, index) {
+      return React.createElement(
+        'li',
+        { key: index },
+        React.createElement('a', { href: '#', className: 'icon-icon01' })
+      );
+    });
+
+    return React.createElement(
+      'div',
+      { key: this.mainvisualID, className: 'MdSlideContianer' },
+      React.createElement(
+        'ul',
+        { className: 'mdSlideListImg' },
+        imgs
+      ),
+      React.createElement(
+        'ul',
+        { className: 'mdSlideListPager' },
+        pager
+      ),
+      React.createElement(
+        'ul',
+        { className: 'mdSlideListBtn' },
+        React.createElement(
+          'li',
+          { className: 'mdSlideListBtnBack' },
+          React.createElement('a', { href: '#', className: 'icon-icon02' })
+        ),
+        React.createElement(
+          'li',
+          { className: 'mdSlideListBtnNext' },
+          React.createElement('a', { href: '#', className: 'icon-icon04' })
+        )
+      )
+    );
   }
-});
+}), _React$createClass));
 
 module.exports = Mainvisual;
 
@@ -1841,7 +1887,8 @@ var Single = React.createClass({
       var heading2 = this.state.data.hdg2.map(function (res, i) {
         return React.createElement(
           'li',
-          { className: 'icon-icon04', key: i },
+          { key: i },
+          React.createElement('span', { className: 'icon-icon04' }),
           React.createElement(
             'a',
             { href: '#' },
@@ -2282,58 +2329,102 @@ Store.category.dispatchToken = Store.dispatcher.register(function (res) {
 module.exports = Store;
 
 },{"flux":17}],16:[function(require,module,exports){
-(function (process){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule invariant
- */
+// shim for using process in browser
 
-"use strict";
+var process = module.exports = {};
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
 
-/**
- * Use invariant() to assert state which your program assumes to be true.
- *
- * Provide sprintf-style format (only %s is supported) and arguments
- * to provide information about what broke and what you were
- * expecting.
- *
- * The invariant message will be stripped in production, but the invariant
- * will remain to ensure logic does not differ in production.
- */
-
-var invariant = function (condition, format, a, b, c, d, e, f) {
-  if (process.env.NODE_ENV !== 'production') {
-    if (format === undefined) {
-      throw new Error('invariant requires an error message argument');
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
     }
-  }
-
-  if (!condition) {
-    var error;
-    if (format === undefined) {
-      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
     } else {
-      var args = [a, b, c, d, e, f];
-      var argIndex = 0;
-      error = new Error('Invariant Violation: ' + format.replace(/%s/g, function () {
-        return args[argIndex++];
-      }));
+        queueIndex = -1;
     }
+    if (queue.length) {
+        drainQueue();
+    }
+}
 
-    error.framesToPop = 1; // we don't care about invariant's own frame
-    throw error;
-  }
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = setTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    clearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        setTimeout(drainQueue, 0);
+    }
 };
 
-module.exports = invariant;
-}).call(this,require('_process'))
-},{"_process":19}],17:[function(require,module,exports){
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],17:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -2579,97 +2670,56 @@ var Dispatcher = (function () {
 
 module.exports = Dispatcher;
 }).call(this,require('_process'))
-},{"_process":19,"fbjs/lib/invariant":16}],19:[function(require,module,exports){
-// shim for using process in browser
+},{"_process":16,"fbjs/lib/invariant":19}],19:[function(require,module,exports){
+(function (process){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule invariant
+ */
 
-var process = module.exports = {};
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
+"use strict";
 
-function cleanUpNextTick() {
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
+/**
+ * Use invariant() to assert state which your program assumes to be true.
+ *
+ * Provide sprintf-style format (only %s is supported) and arguments
+ * to provide information about what broke and what you were
+ * expecting.
+ *
+ * The invariant message will be stripped in production, but the invariant
+ * will remain to ensure logic does not differ in production.
+ */
+
+var invariant = function (condition, format, a, b, c, d, e, f) {
+  if (process.env.NODE_ENV !== 'production') {
+    if (format === undefined) {
+      throw new Error('invariant requires an error message argument');
+    }
+  }
+
+  if (!condition) {
+    var error;
+    if (format === undefined) {
+      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
     } else {
-        queueIndex = -1;
+      var args = [a, b, c, d, e, f];
+      var argIndex = 0;
+      error = new Error('Invariant Violation: ' + format.replace(/%s/g, function () {
+        return args[argIndex++];
+      }));
     }
-    if (queue.length) {
-        drainQueue();
-    }
-}
 
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = setTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    clearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        setTimeout(drainQueue, 0);
-    }
+    error.framesToPop = 1; // we don't care about invariant's own frame
+    throw error;
+  }
 };
 
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}]},{},[1]);
+module.exports = invariant;
+}).call(this,require('_process'))
+},{"_process":16}]},{},[1]);

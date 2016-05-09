@@ -100,7 +100,7 @@ var Single = React.createClass({
 
       var heading2 = this.state.data.hdg2.map( (res, i)=>{
         return(
-          <li className="icon-icon04" key={i}><a href="#">{res}</a></li>
+          <li key={i}><span className="icon-icon04"></span><a href="#">{res}</a></li>
         );
       });
 
@@ -116,7 +116,7 @@ var Single = React.createClass({
               </div>
               <h1 className="MdTtlSingle01">{this.state.data.title}</h1>
               <div className="mdCms" dangerouslySetInnerHTML={{__html: this.state.data.contents}}>
-                
+
               </div>
             </main>
             <aside className="mdAside">
