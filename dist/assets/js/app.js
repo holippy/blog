@@ -281,8 +281,8 @@ app.single = {
     this.asideLink = $('.MdListAnc01 li');
     this.mv = $('.MdMvSingle01');
     this.cntsBody = $('.MdMainSingle01');
-    this.cntsBodyHeight = this.cntsBody.height();
-    this.mvTop = this.mv.height() - 40;
+    this.cntsBodyHeight;
+    this.mvTop;
     this.hdgPos = [];
     this.mainImgs = $('.mdMain img');
     this.mainImgsLength = this.mainImgs.length;
@@ -302,6 +302,9 @@ app.single = {
         _this.imgCount = _this.imgCount + 1;
 
         if (_this.imgCount === _this.mainImgsLength) {
+
+          _this.cntsBodyHeight = _this.cntsBody.height();
+          _this.mvTop = _this.mv.height() - 40;
 
           _this.hdg.each(function (i, elm) {
             $(elm).attr('id', 'hdg' + (i + 1));
