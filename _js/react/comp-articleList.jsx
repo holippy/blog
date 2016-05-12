@@ -81,6 +81,9 @@ var ArticleList = React.createClass({
   componentDidUpdate(){
     //console.log('LIcomponentDidUpdate');
 
+    //アップデート完了後にローディングを非表示
+    Store.LoadControl.hidden();
+
     this.first = false;
 
     CntsThumb.init();

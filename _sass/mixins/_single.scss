@@ -34,12 +34,12 @@ single page
 
     .mdMain{
       float: right;
-      width: 660px;
+      width: 700px;
     }
 
     .mdAside{
       float: left;
-      width: 240px;
+      width: 210px;
     }
   }
 }
@@ -93,12 +93,49 @@ single page
 
     p{
       margin-bottom: 20px;
-      line-height: 1.8;
+      line-height: 2;
+      letter-spacing: 2px;
     }
 
     img{
       width: 100%;
       height: auto;
+    }
+
+    blockquote{
+      margin-bottom: 20px;
+      padding: 30px 20px 1px 40px;
+      background: #efefef;
+      font-style: italic;
+      border-radius: 3px;
+      position: relative;
+
+      &:before{
+      content: "\201C";
+      font-size: 50px;
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      line-height: 1;
+      }
+    }
+
+    ul{
+      margin-bottom: 20px;
+      li{
+
+        margin-bottom: 10px;
+        position: relative;
+        padding-left: 15px;
+        &:before{
+          position: absolute;
+          content: "・";
+          font-size: 20px;
+          top: 0;
+          left: -5px;
+          line-height: 1;
+        }
+      }
     }
   }
 

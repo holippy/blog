@@ -68,6 +68,7 @@ for ($i=0; $i < count($match[1]); $i++) {
 {
   "title": "<?php echo $title; ?>",
   "date": "<?php echo $date; ?>",
+  "excerpt": <?php echo json_encode(get_the_excerpt()); ?>,
   "catName": "<?php echo $catName; ?>",
   "catSlug": "<?php echo $catSlug; ?>",
   "visual": "<?php echo $imgPath; ?>",

@@ -68,6 +68,11 @@ var Single = React.createClass({
 
     console.log('componentDidUpdate');
 
+    //アップデート完了後にローディングを非表示
+    Store.LoadControl.hidden();
+
+    this.changeMeta();
+
     SingleFnc.init();
     CntsThumb.init();
 
@@ -75,6 +80,10 @@ var Single = React.createClass({
       e.preventDefault();
     });
 
+  },
+  changeMeta(){
+    $('meta[name=description]').attr("content", this.state.data.excerpt);
+    $("title").text(this.state.data.title + ' | Indoor Linving');
   },
   thumbClick( ID ){
     this.props.thumbClick(ID);

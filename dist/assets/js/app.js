@@ -201,69 +201,69 @@ module.exports = app.header;
 var app = app || {};
 
 app.SetHeight = {
-    init: function init(options) {
+  init: function init(options) {
 
-        var self = this;
+    var self = this;
 
-        console.log(options);
+    console.log(options);
 
-        self.items = $(options.Elem);
-        self.heights = [];
-        self.group = options.group;
+    self.items = $(options.Elem);
+    self.heights = [];
+    self.group = options.group;
 
-        self.items.css({
-            height: ''
+    self.items.css({
+      height: ''
+    });
+
+    for (var i = 0; i < self.items.length; i++) {
+
+      self.heights.push(self.items.eq(i).height());
+
+      if ((i + 1) % self.group === 0) {
+        self.action({
+          start: i + 1 - this.group,
+          end: i + 1
         });
-
-        for (var i = 0; i < self.items.length; i++) {
-
-            self.heights.push(self.items.eq(i).height());
-
-            if ((i + 1) % self.group === 0) {
-                self.action({
-                    start: i + 1 - this.group,
-                    end: i + 1
-                });
-            } else if (i === self.items.length - 1) {
-                self.action({
-                    start: self.items.length - self.items.length % self.group,
-                    end: self.items.length
-                });
-            }
-        }
-    },
-    action: function action(options) {
-
-        var self = this;
-
-        self.sort();
-
-        self.setHeight({
-            start: options.start,
-            end: options.end,
-            height: self.heights[0]
+      } else if (i === self.items.length - 1) {
+        self.action({
+          start: self.items.length - self.items.length % self.group,
+          end: self.items.length
         });
-
-        self.heights = [];
-    },
-    sort: function sort() {
-        var self = this;
-
-        this.heights.sort(function (a, b) {
-            if (a > b) return -1;
-            if (a < b) return 1;
-            return 0;
-        });
-    },
-    setHeight: function setHeight(options) {
-        var self = this;
-
-        for (var i = options.start; i < options.end; i++) {
-            self.items.eq(i).css({
-                height: options.height
-            });
-        }
+      }
     }
+  },
+  action: function action(options) {
+
+    var self = this;
+
+    self.sort();
+
+    self.setHeight({
+      start: options.start,
+      end: options.end,
+      height: self.heights[0]
+    });
+
+    self.heights = [];
+  },
+  sort: function sort() {
+    var self = this;
+
+    this.heights.sort(function (a, b) {
+      if (a > b) return -1;
+      if (a < b) return 1;
+      return 0;
+    });
+  },
+  setHeight: function setHeight(options) {
+    var self = this;
+
+    for (var i = options.start; i < options.end; i++) {
+      self.items.eq(i).css({
+        height: options.height
+      });
+    }
+  }
 };
 
 module.exports = app.SetHeight;
@@ -706,6 +706,9 @@ var ArticleList = React.createClass({
   componentDidUpdate: function componentDidUpdate() {
     //console.log('LIcomponentDidUpdate');
 
+    //アップデート完了後にローディングを非表示
+    Store.LoadControl.hidden();
+
     this.first = false;
 
     CntsThumb.init();
@@ -965,12 +968,22 @@ var ArticleList = React.createClass({
   componentDidUpdate: function componentDidUpdate() {
     console.log('LIcomponentDidUpdate');
 
+    //アップデート完了後にローディングを非表示
+    Store.LoadControl.hidden();
+    console.log($('.MdHdgCmn01').text());
+
+    this.changeMeta();
+
     this.first = false;
 
     CntsThumb.init();
     $('.MdCntsThumb01 a').on('click', function (e) {
       e.preventDefault();
     });
+  },
+  changeMeta: function changeMeta() {
+    $('meta[name=description]').attr("content", this.state.catName + 'カテゴリの記事一覧です');
+    $("title").text(this.state.catName + ' | Indoor Linving');
   },
   pagerClick: function pagerClick(e) {
 
@@ -1277,14 +1290,10 @@ module.exports = Gnav;
 },{"../pageFncs/header.js":3,"./store-article":15}],10:[function(require,module,exports){
 'use strict';
 
-var _React$createClass;
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 var Store = require('./store-article');
 var Slider = require('../pageFncs/slider.js');
 
-var Mainvisual = React.createClass((_React$createClass = {
+var Mainvisual = React.createClass({
   displayName: 'Mainvisual',
 
   first: true,
@@ -1387,97 +1396,101 @@ var Mainvisual = React.createClass((_React$createClass = {
     } else {
       return false;
     }
-  }
-}, _defineProperty(_React$createClass, 'componentWillReceiveProps', function componentWillReceiveProps(nextProps) {
-  console.log('MVcomponentWillReceiveProps');
-  console.log(nextProps);
-}), _defineProperty(_React$createClass, 'componentDidMount', function componentDidMount() {
-  console.log('MVcomponentDidMount');
-}), _defineProperty(_React$createClass, 'thumbClick', function thumbClick(ID) {
-  console.log(ID);
-  this.props.thumbClick(ID);
-}), _defineProperty(_React$createClass, 'render', function render() {
-  var _this = this;
+  },
+  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+    console.log('MVcomponentWillReceiveProps');
+    console.log(nextProps);
+  },
+  componentDidMount: function componentDidMount() {
+    console.log('MVcomponentDidMount');
+  },
+  thumbClick: function thumbClick(ID) {
+    console.log(ID);
+    this.props.thumbClick(ID);
+  },
+  render: function render() {
+    var _this = this;
 
-  console.log('MVrendar');
-  if (this.state.mainvisual.length === 0) {
-    return false;
-  } else {
-    Slider.unmount();
-    var mvArray = [];
-    for (var i = 0; i < 3; i++) {
-      for (var j = 0; j < this.state.mainvisual.length; j++) {
-        mvArray.push(this.state.mainvisual[j]);
+    console.log('MVrendar');
+    if (this.state.mainvisual.length === 0) {
+      return false;
+    } else {
+      Slider.unmount();
+      var mvArray = [];
+      for (var i = 0; i < 3; i++) {
+        for (var j = 0; j < this.state.mainvisual.length; j++) {
+          mvArray.push(this.state.mainvisual[j]);
+        }
       }
-    }
-    var imgs = mvArray.map(function (res, index) {
-      return React.createElement(
-        'li',
-        { key: 'thumb' + index },
-        React.createElement(
-          'a',
-          { onClick: _this.thumbClick.bind(_this, res.ID), href: res.ID },
+      var imgs = mvArray.map(function (res, index) {
+        return React.createElement(
+          'li',
+          { key: 'thumb' + index },
           React.createElement(
-            'p',
-            { className: 'mdSlideCat' },
-            res.category
-          ),
-          React.createElement(
-            'p',
-            { className: 'mdSlideTtl' },
+            'a',
+            { onClick: _this.thumbClick.bind(_this, res.ID), href: res.ID },
             React.createElement(
-              'span',
-              null,
-              res.title
+              'p',
+              { className: 'mdSlideCat' },
+              res.category
+            ),
+            React.createElement(
+              'p',
+              { className: 'mdSlideTtl' },
+              React.createElement(
+                'span',
+                null,
+                res.title
+              )
+            ),
+            React.createElement(
+              'p',
+              { className: 'mdSlideImg' },
+              React.createElement('img', { src: res.thumb })
             )
+          )
+        );
+      });
+
+      var pager = this.state.mainvisual.map(function (res, index) {
+        return React.createElement(
+          'li',
+          { key: index },
+          React.createElement('a', { href: '#', className: 'icon-icon01' })
+        );
+      });
+
+      return React.createElement(
+        'div',
+        { key: this.mainvisualID, className: 'MdSlideContianer' },
+        React.createElement(
+          'ul',
+          { className: 'mdSlideListImg' },
+          imgs
+        ),
+        React.createElement(
+          'ul',
+          { className: 'mdSlideListPager' },
+          pager
+        ),
+        React.createElement(
+          'ul',
+          { className: 'mdSlideListBtn' },
+          React.createElement(
+            'li',
+            { className: 'mdSlideListBtnBack' },
+            React.createElement('a', { href: '#', className: 'icon-icon02' })
           ),
           React.createElement(
-            'p',
-            { className: 'mdSlideImg' },
-            React.createElement('img', { src: res.thumb })
+            'li',
+            { className: 'mdSlideListBtnNext' },
+            React.createElement('a', { href: '#', className: 'icon-icon04' })
           )
         )
       );
-    });
-
-    var pager = this.state.mainvisual.map(function (res, index) {
-      return React.createElement(
-        'li',
-        { key: index },
-        React.createElement('a', { href: '#', className: 'icon-icon01' })
-      );
-    });
-
-    return React.createElement(
-      'div',
-      { key: this.mainvisualID, className: 'MdSlideContianer' },
-      React.createElement(
-        'ul',
-        { className: 'mdSlideListImg' },
-        imgs
-      ),
-      React.createElement(
-        'ul',
-        { className: 'mdSlideListPager' },
-        pager
-      ),
-      React.createElement(
-        'ul',
-        { className: 'mdSlideListBtn' },
-        React.createElement(
-          'li',
-          { className: 'mdSlideListBtnBack' },
-          React.createElement('a', { href: '#', className: 'icon-icon02' })
-        ),
-        React.createElement(
-          'li',
-          { className: 'mdSlideListBtnNext' },
-          React.createElement('a', { href: '#', className: 'icon-icon04' })
-        )
-      )
-    );
+    }
   }
-}), _React$createClass));
+});
 
 module.exports = Mainvisual;
 
@@ -1593,11 +1606,17 @@ var Page = React.createClass({
     history.pushState(null, null, '/');
     Store.PageControl.getParam();
   },
-  componentDidUpdate: function componentDidUpdate() {},
+  componentDidUpdate: function componentDidUpdate() {
+    console.log("update!!!");
+  },
+  changeMeta: function changeMeta() {
+    $('meta[name=description]').attr("content", 'Indoor LinvingではArtek、広松木工、VitraなどのインテリアからFUJIFILM X-E1で撮影した写真までライフスタイルにスポットを当てたブログです');
+    $("title").text('Indoor Linving');
+  },
   render: function render() {
     console.log('render');
     if (this.state.pageType == 'index') {
-      //console.log('rendar index');
+      this.changeMeta();
       return React.createElement(
         'div',
         null,
@@ -1859,12 +1878,21 @@ var Single = React.createClass({
 
     console.log('componentDidUpdate');
 
+    //アップデート完了後にローディングを非表示
+    Store.LoadControl.hidden();
+
+    this.changeMeta();
+
     SingleFnc.init();
     CntsThumb.init();
 
     $('.MdCntsThumb01 a').on('click', function (e) {
       e.preventDefault();
     });
+  },
+  changeMeta: function changeMeta() {
+    $('meta[name=description]').attr("content", this.state.data.excerpt);
+    $("title").text(this.state.data.title + ' | Indoor Linving');
   },
   thumbClick: function thumbClick(ID) {
     this.props.thumbClick(ID);
@@ -2161,7 +2189,7 @@ Store.dispatcher.action = {
           Store.dispatcher.dispatch(_this.resData);
           _this.loadStatus = false;
           console.log('load end');
-          Store.LoadControl.hidden();
+
           _this.reset();
         } else {
           resolve(_this.counter);
@@ -2332,102 +2360,58 @@ Store.category.dispatchToken = Store.dispatcher.register(function (res) {
 module.exports = Store;
 
 },{"flux":17}],16:[function(require,module,exports){
-// shim for using process in browser
+(function (process){
+/**
+ * Copyright 2013-2015, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule invariant
+ */
 
-var process = module.exports = {};
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
+"use strict";
 
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
+/**
+ * Use invariant() to assert state which your program assumes to be true.
+ *
+ * Provide sprintf-style format (only %s is supported) and arguments
+ * to provide information about what broke and what you were
+ * expecting.
+ *
+ * The invariant message will be stripped in production, but the invariant
+ * will remain to ensure logic does not differ in production.
+ */
+
+var invariant = function (condition, format, a, b, c, d, e, f) {
+  if (process.env.NODE_ENV !== 'production') {
+    if (format === undefined) {
+      throw new Error('invariant requires an error message argument');
     }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
+  }
+
+  if (!condition) {
+    var error;
+    if (format === undefined) {
+      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
     } else {
-        queueIndex = -1;
+      var args = [a, b, c, d, e, f];
+      var argIndex = 0;
+      error = new Error('Invariant Violation: ' + format.replace(/%s/g, function () {
+        return args[argIndex++];
+      }));
     }
-    if (queue.length) {
-        drainQueue();
-    }
-}
 
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = setTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    clearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        setTimeout(drainQueue, 0);
-    }
+    error.framesToPop = 1; // we don't care about invariant's own frame
+    throw error;
+  }
 };
 
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}],17:[function(require,module,exports){
+module.exports = invariant;
+}).call(this,require('_process'))
+},{"_process":19}],17:[function(require,module,exports){
 /**
  * Copyright (c) 2014-2015, Facebook, Inc.
  * All rights reserved.
@@ -2673,56 +2657,97 @@ var Dispatcher = (function () {
 
 module.exports = Dispatcher;
 }).call(this,require('_process'))
-},{"_process":16,"fbjs/lib/invariant":19}],19:[function(require,module,exports){
-(function (process){
-/**
- * Copyright 2013-2015, Facebook, Inc.
- * All rights reserved.
- *
- * This source code is licensed under the BSD-style license found in the
- * LICENSE file in the root directory of this source tree. An additional grant
- * of patent rights can be found in the PATENTS file in the same directory.
- *
- * @providesModule invariant
- */
+},{"_process":19,"fbjs/lib/invariant":16}],19:[function(require,module,exports){
+// shim for using process in browser
 
-"use strict";
+var process = module.exports = {};
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
 
-/**
- * Use invariant() to assert state which your program assumes to be true.
- *
- * Provide sprintf-style format (only %s is supported) and arguments
- * to provide information about what broke and what you were
- * expecting.
- *
- * The invariant message will be stripped in production, but the invariant
- * will remain to ensure logic does not differ in production.
- */
-
-var invariant = function (condition, format, a, b, c, d, e, f) {
-  if (process.env.NODE_ENV !== 'production') {
-    if (format === undefined) {
-      throw new Error('invariant requires an error message argument');
-    }
-  }
-
-  if (!condition) {
-    var error;
-    if (format === undefined) {
-      error = new Error('Minified exception occurred; use the non-minified dev environment ' + 'for the full error message and additional helpful warnings.');
+function cleanUpNextTick() {
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
     } else {
-      var args = [a, b, c, d, e, f];
-      var argIndex = 0;
-      error = new Error('Invariant Violation: ' + format.replace(/%s/g, function () {
-        return args[argIndex++];
-      }));
+        queueIndex = -1;
     }
+    if (queue.length) {
+        drainQueue();
+    }
+}
 
-    error.framesToPop = 1; // we don't care about invariant's own frame
-    throw error;
-  }
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = setTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    clearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        setTimeout(drainQueue, 0);
+    }
 };
 
-module.exports = invariant;
-}).call(this,require('_process'))
-},{"_process":16}]},{},[1]);
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}]},{},[1]);

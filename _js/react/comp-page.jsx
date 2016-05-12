@@ -108,12 +108,17 @@ var Page = React.createClass({
     Store.PageControl.getParam();
   },
   componentDidUpdate(){
+    console.log("update!!!");
 
+  },
+  changeMeta(){
+    $('meta[name=description]').attr("content", 'Indoor LinvingではArtek、広松木工、VitraなどのインテリアからFUJIFILM X-E1で撮影した写真までライフスタイルにスポットを当てたブログです');
+    $("title").text('Indoor Linving');
   },
   render(){
     console.log('render');
       if( this.state.pageType == 'index' ){
-        //console.log('rendar index');
+        this.changeMeta();
         return (
           <div>
           <Gnav pageType={this.state.pageType} backTop={this.backTop} navClick={this.navClick} />

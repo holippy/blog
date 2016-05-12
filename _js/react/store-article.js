@@ -198,7 +198,7 @@ Store.dispatcher.action = {
           Store.dispatcher.dispatch(this.resData);
           this.loadStatus = false;
           console.log('load end');
-          Store.LoadControl.hidden();
+          
           this.reset();
         }else{
           resolve( this.counter );

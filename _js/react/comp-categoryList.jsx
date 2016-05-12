@@ -85,9 +85,14 @@ var ArticleList = React.createClass({
     });
 
   },
-
   componentDidUpdate(){
     console.log('LIcomponentDidUpdate');
+
+    //アップデート完了後にローディングを非表示
+    Store.LoadControl.hidden();
+    console.log($('.MdHdgCmn01').text());
+
+    this.changeMeta();
 
     this.first = false;
 
@@ -95,6 +100,10 @@ var ArticleList = React.createClass({
     $('.MdCntsThumb01 a').on('click', (e)=>{
       e.preventDefault();
     });
+  },
+  changeMeta(){
+    $('meta[name=description]').attr("content", this.state.catName + 'カテゴリの記事一覧です');
+    $("title").text(this.state.catName + ' | Indoor Linving');
   },
   pagerClick( e ){
 

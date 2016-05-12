@@ -21,7 +21,7 @@ $path-svg:"/assets/svg/";
 
 =====================================*/
 
-@import "mixins/_Font";
+@import "mixins/_font";
 
 @include WebFont;
 @include IconFont;
