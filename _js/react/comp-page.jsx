@@ -75,7 +75,7 @@ var Page = React.createClass({
     });
   },
   thumbClick( ID ){
-    console.log(ID);
+    console.log('page' +ID);
 
     $('.LyHead').css({opacity:0});
     $('.LyFtr').css({opacity:0});
@@ -109,7 +109,6 @@ var Page = React.createClass({
   },
   componentDidUpdate(){
     console.log("update!!!");
-
   },
   changeMeta(){
     $('meta[name=description]').attr("content", 'Indoor LinvingではArtek、広松木工、VitraなどのインテリアからFUJIFILM X-E1で撮影した写真までライフスタイルにスポットを当てたブログです');

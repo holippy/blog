@@ -50,8 +50,10 @@ react
 
 ===========================*/
 
-var storeArticle = require('./react/store-article.js');
-var page = require('./react/comp-page.jsx');
+$(window).on('load', function () {
+  var storeArticle = require('./react/store-article.js');
+  var page = require('./react/comp-page.jsx');
+});
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./react/comp-page.jsx":11,"./react/store-article.js":15}],2:[function(require,module,exports){
@@ -66,8 +68,6 @@ app.cntsThumb = {
     this.thumbImgs = $('.MdCntsThumb01 img');
     this.thumbImgsLength = this.thumbImgs.length;
     this.imgCount = 0;
-
-    console.log(this.thumbImgsLength);
 
     this.imgLoading();
   },
@@ -103,7 +103,6 @@ app.cntsThumb = {
         _this.imgCount = _this.imgCount + 1;
 
         if (_this.imgCount === _this.thumbImgsLength) {
-          console.log('thumb img loaded');
           _this.imgLoaded();
         }
       });
@@ -204,8 +203,6 @@ app.SetHeight = {
   init: function init(options) {
 
     var self = this;
-
-    console.log(options);
 
     self.items = $(options.Elem);
     self.heights = [];
@@ -629,7 +626,8 @@ var CntsThumb = require('../pageFncs/cntsThumb.js');
 var ArticleList = React.createClass({
   displayName: 'ArticleList',
 
-  first: true,
+  loadFlag: true,
+
   getDefaultProps: function getDefaultProps() {
     return {
       actionType: "list"
@@ -648,6 +646,9 @@ var ArticleList = React.createClass({
   },
   loadAction: function loadAction() {
     //console.log('LIloadAction');
+
+    this.loadFlag = false;
+
     console.log(Store.PageControl.paramObjs.paged);
     if (Store.mainvisual.data === null && Store.gnav.data === null) {
       console.log('list first load');
@@ -683,6 +684,8 @@ var ArticleList = React.createClass({
 
     //console.log('LIdataloaded');
 
+    this.loadFlag = true;
+
     var _countArray = [];
 
     Store.removeSubscribe({
@@ -703,13 +706,26 @@ var ArticleList = React.createClass({
       }
     });
   },
+  shouldComponentUpdate: function shouldComponentUpdate() {
+    console.log('shouldComponentUpdate');
+
+    if (this.loadFlag) {
+      return true;
+    } else {
+      return false;
+    }
+  },
   componentDidUpdate: function componentDidUpdate() {
     //console.log('LIcomponentDidUpdate');
+
+    if (!this.loadFlag) {
+      return false;
+    }
 
     //アップデート完了後にローディングを非表示
     Store.LoadControl.hidden();
 
-    this.first = false;
+    this.loadFlag = false;
 
     CntsThumb.init();
     $('.MdCntsThumb01 a').on('click', function (e) {
@@ -779,7 +795,7 @@ var ArticleList = React.createClass({
 
     //console.log('LIrender');
 
-    if (this.state.article.length === 0) {
+    if (!this.loadFlag) {
       return false;
     } else {
 
@@ -789,7 +805,7 @@ var ArticleList = React.createClass({
           { key: i, className: 'MdCntsThumb01' },
           React.createElement(
             'a',
-            { onClick: _this2.thumbClick.bind(_this2, res.ID), href: res.ID },
+            { onClick: _this2.thumbClick.bind(_this2, res.ID), href: '?type=single&paged=' + res.ID },
             React.createElement(
               'p',
               { className: 'mdCntsThumb01Img' },
@@ -884,7 +900,8 @@ var CntsThumb = require('../pageFncs/cntsThumb.js');
 var ArticleList = React.createClass({
   displayName: 'ArticleList',
 
-  first: true,
+  loadFlag: true,
+
   getDefaultProps: function getDefaultProps() {
     return {
       actionType: "category"
@@ -908,6 +925,9 @@ var ArticleList = React.createClass({
   loadAction: function loadAction() {
     console.log('CATloadAction');
     console.log(Store.PageControl.paramObjs.name);
+
+    this.loadFlag = false;
+
     if (Store.gnav.data === null) {
       console.log('CAT first load');
       this.actionCreator(Store.PageControl.paramObjs.paged, Store.PageControl.paramObjs.name, [this.props.actionType, 'gnav']);
@@ -943,6 +963,8 @@ var ArticleList = React.createClass({
 
     console.log(Store.category.data);
 
+    this.loadFlag = true;
+
     var _countArray = [];
 
     Store.removeSubscribe({
@@ -965,11 +987,34 @@ var ArticleList = React.createClass({
       }
     });
   },
+  shouldComponentUpdate: function shouldComponentUpdate() {
+    console.log('shouldComponentUpdate');
+
+    if (this.loadFlag) {
+      return true;
+    } else {
+      return false;
+    }
+  },
   componentDidUpdate: function componentDidUpdate() {
     console.log('LIcomponentDidUpdate');
 
+    if (!this.loadFlag) {
+      return false;
+    }
+
+    //GAにpageviewを送信
+    ga('send', {
+      hitType: 'pageview',
+      page: location.href.split('?')[1],
+      title: this.state.catName + 'カテゴリ一覧'
+    });
+
     //アップデート完了後にローディングを非表示
     Store.LoadControl.hidden();
+
+    this.loadFlag = false;
+
     console.log($('.MdHdgCmn01').text());
 
     this.changeMeta();
@@ -1030,7 +1075,7 @@ var ArticleList = React.createClass({
 
     console.log('LIrender');
 
-    if (this.state.article.length === 0) {
+    if (!this.loadFlag) {
       return false;
     } else {
 
@@ -1040,7 +1085,7 @@ var ArticleList = React.createClass({
           { key: i, className: 'MdCntsThumb01' },
           React.createElement(
             'a',
-            { onClick: _this2.thumbClick.bind(_this2, res.ID), href: res.ID },
+            { onClick: _this2.thumbClick.bind(_this2, res.ID), href: '?type=single&paged=' + res.ID },
             React.createElement(
               'p',
               { className: 'mdCntsThumb01Img' },
@@ -1243,7 +1288,7 @@ var Gnav = React.createClass({
           React.createElement('span', { className: 'icon-icon05' }),
           React.createElement(
             'a',
-            { onClick: _this.navClick.bind(_this, res.slug), href: res.slug },
+            { onClick: _this.navClick.bind(_this, res.slug), href: '?type=category&paged=' + res.slug },
             res.catName
           )
         );
@@ -1575,7 +1620,7 @@ var Page = React.createClass({
     });
   },
   thumbClick: function thumbClick(ID) {
-    console.log(ID);
+    console.log('page' + ID);
 
     $('.LyHead').css({ opacity: 0 });
     $('.LyFtr').css({ opacity: 0 });
@@ -1705,11 +1750,12 @@ var Pager = React.createClass({
 module.exports = Pager;
 
 },{}],13:[function(require,module,exports){
-"use strict";
+'use strict';
 
 var Related = React.createClass({
-  displayName: "Related",
+  displayName: 'Related',
   thumbClick: function thumbClick(ID) {
+    console.log('related' + ID);
     this.props.thumbClick(ID);
   },
   render: function render() {
@@ -1717,64 +1763,64 @@ var Related = React.createClass({
 
     var article = this.props.article.map(function (res, i) {
       return React.createElement(
-        "section",
-        { key: i, className: "MdCntsThumb01" },
+        'section',
+        { key: i, className: 'MdCntsThumb01' },
         React.createElement(
-          "a",
-          { onClick: _this.thumbClick.bind(_this, res.ID), href: res.ID },
+          'a',
+          { onClick: _this.thumbClick.bind(_this, res.ID), href: '?type=single&paged=' + res.ID },
           React.createElement(
-            "p",
-            { className: "mdCntsThumb01Img" },
-            React.createElement("img", { src: res.thumb })
+            'p',
+            { className: 'mdCntsThumb01Img' },
+            React.createElement('img', { src: res.thumb })
           ),
           React.createElement(
-            "div",
-            { className: "mdCntsThumb01InfoClm" },
+            'div',
+            { className: 'mdCntsThumb01InfoClm' },
             React.createElement(
-              "div",
-              { className: "mdCntsThumb01Clm01" },
+              'div',
+              { className: 'mdCntsThumb01Clm01' },
               React.createElement(
-                "p",
-                { className: "mdCntsThumb01Cat" },
+                'p',
+                { className: 'mdCntsThumb01Cat' },
                 res.category
               )
             ),
             React.createElement(
-              "div",
-              { className: "mdCntsThumb01Clm02" },
+              'div',
+              { className: 'mdCntsThumb01Clm02' },
               React.createElement(
-                "p",
-                { className: "mdCntsThumb01Date" },
+                'p',
+                { className: 'mdCntsThumb01Date' },
                 res.date
               )
             )
           ),
           React.createElement(
-            "div",
-            { className: "mdCntsThumb01InfoInBox" },
+            'div',
+            { className: 'mdCntsThumb01InfoInBox' },
             React.createElement(
-              "h2",
-              { className: "mdCntsThumb01Ttl" },
+              'h2',
+              { className: 'mdCntsThumb01Ttl' },
               res.title
             ),
             React.createElement(
-              "p",
-              { className: "mdCntsThumb01Txt" },
+              'p',
+              { className: 'mdCntsThumb01Txt' },
               res.content
             )
           ),
           React.createElement(
-            "p",
-            { className: "mdCntsThumb01Icn" },
-            React.createElement("span", { className: "icon-icon04" })
+            'p',
+            { className: 'mdCntsThumb01Icn' },
+            React.createElement('span', { className: 'icon-icon04' })
           ),
           React.createElement(
-            "div",
-            { className: "mdCntsThumb01Cover" },
+            'div',
+            { className: 'mdCntsThumb01Cover' },
             React.createElement(
-              "p",
-              { className: "mdCntsThumb01Txt" },
-              "Read More"
+              'p',
+              { className: 'mdCntsThumb01Txt' },
+              'Read More'
             )
           )
         )
@@ -1782,20 +1828,20 @@ var Related = React.createClass({
     });
 
     return React.createElement(
-      "section",
+      'section',
       null,
       React.createElement(
-        "h2",
-        { className: "MdHdgCmn01" },
+        'h2',
+        { className: 'MdHdgCmn01' },
         React.createElement(
-          "span",
+          'span',
           null,
-          "Related Contents"
+          'Related Contents'
         )
       ),
       React.createElement(
-        "div",
-        { className: "LyCntsList" },
+        'div',
+        { className: 'LyCntsList' },
         article
       )
     );
@@ -1815,7 +1861,8 @@ var SingleFnc = require('../pageFncs/single.js');
 var Single = React.createClass({
   displayName: 'Single',
 
-  update: false,
+  loadFlag: true,
+
   getDefaultProps: function getDefaultProps() {
     return {
       actionType: "single"
@@ -1827,11 +1874,14 @@ var Single = React.createClass({
     };
   },
   componentWillMount: function componentWillMount() {
-    console.log('componentWillMount');
+    //console.log('componentWillMount');
+    this.loadFlag = true;
     this.loadAction(this.props.articleID);
   },
   loadAction: function loadAction(articleID) {
-    console.log('loadAction');
+    //console.log('loadAction');
+
+    this.loadFlag = false;
 
     Store.addSubscribe({
       actionType: this.props.actionType,
@@ -1845,7 +1895,7 @@ var Single = React.createClass({
     }
   },
   actionCreator: function actionCreator(page, comps) {
-    console.log('actionCreator');
+    //console.log('actionCreator');
 
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
@@ -1856,6 +1906,8 @@ var Single = React.createClass({
   },
   dataloaded: function dataloaded() {
     console.log('single loaded');
+
+    this.loadFlag = true;
 
     Store.removeSubscribe({
       actionType: this.props.actionType
@@ -1872,14 +1924,31 @@ var Single = React.createClass({
   shouldComponentUpdate: function shouldComponentUpdate() {
     console.log('shouldComponentUpdate');
 
-    return true;
+    if (this.loadFlag) {
+      return true;
+    } else {
+      return false;
+    }
   },
   componentDidUpdate: function componentDidUpdate() {
 
-    console.log('componentDidUpdate');
+    console.log('single componentDidUpdate');
+
+    if (!this.loadFlag) {
+      return false;
+    }
+
+    //GAにpageviewを送信
+    ga('send', {
+      hitType: 'pageview',
+      page: location.href.split('?')[1],
+      title: this.state.data.title
+    });
 
     //アップデート完了後にローディングを非表示
     Store.LoadControl.hidden();
+
+    this.loadFlag = false;
 
     this.changeMeta();
 
@@ -1895,25 +1964,21 @@ var Single = React.createClass({
     $("title").text(this.state.data.title + ' | Indoor Linving');
   },
   thumbClick: function thumbClick(ID) {
+    console.log('single' + ID);
     this.props.thumbClick(ID);
   },
   componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
     console.log('componentWillReceiveProps');
 
-    this.first = true;
-
-    if (this.props.articleID === nextProps.articleID) {
-      this.update = false;
-    } else {
-      this.update = true;
+    if (this.props.articleID === nextProps.articleID) {} else {
       this.loadAction(nextProps.articleID);
     }
   },
   render: function render() {
     console.log('single render');
-    console.log(this.state.data);
+    //console.log(this.state.data);
 
-    if (this.state.data !== null) {
+    if (this.loadFlag) {
 
       var heading2 = this.state.data.hdg2.map(function (res, i) {
         return React.createElement(
@@ -2188,7 +2253,7 @@ Store.dispatcher.action = {
         if (_this.counter === _this.compArray.length) {
           Store.dispatcher.dispatch(_this.resData);
           _this.loadStatus = false;
-          console.log('load end');
+          //console.log('load end');
 
           _this.reset();
         } else {
@@ -2217,7 +2282,7 @@ Store.dispatcher.action = {
 
     this.queue.push(payload);
 
-    console.log(payload.requireComps);
+    //console.log(payload.requireComps);
 
     if (this.queue.length === this.compArray.length) {
 

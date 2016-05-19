@@ -100,6 +100,7 @@ single page
     img{
       width: 100%;
       height: auto;
+      vertical-align: bottom;
     }
 
     blockquote{
@@ -136,6 +137,11 @@ single page
           line-height: 1;
         }
       }
+    }
+
+    .mdCaption{
+      display: block;
+      font-size: 12px;
     }
   }
 

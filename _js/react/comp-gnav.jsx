@@ -101,7 +101,7 @@ var Gnav = React.createClass({
 
       let lists = this.state.gnav.map((res)=>{
       
-      return <li key={res.ID}><span className="icon-icon05"></span><a onClick={this.navClick.bind(this, res.slug)} href={res.slug}>{res.catName}</a></li>;
+      return <li key={res.ID}><span className="icon-icon05"></span><a onClick={this.navClick.bind(this, res.slug)} href={'?type=category&paged=' + res.slug}>{res.catName}</a></li>;
 
       });
       

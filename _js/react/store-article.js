@@ -197,7 +197,7 @@ Store.dispatcher.action = {
         if( this.counter === this.compArray.length ){
           Store.dispatcher.dispatch(this.resData);
           this.loadStatus = false;
-          console.log('load end');
+          //console.log('load end');
           
           this.reset();
         }else{
@@ -226,7 +226,7 @@ Store.dispatcher.action = {
 
     this.queue.push( payload );
 
-    console.log(payload.requireComps);
+    //console.log(payload.requireComps);
 
     if( this.queue.length === this.compArray.length ){
 

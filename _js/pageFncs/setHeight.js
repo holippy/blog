@@ -5,8 +5,6 @@ app.SetHeight = {
 
     var self = this;
 
-    console.log(options);
-
     self.items = $(options.Elem);
     self.heights = [];
     self.group = options.group;

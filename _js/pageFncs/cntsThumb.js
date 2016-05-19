@@ -8,8 +8,6 @@ app.cntsThumb = {
     this.thumbImgsLength = this.thumbImgs.length;
     this.imgCount  = 0;
 
-    console.log(this.thumbImgsLength);
-
     this.imgLoading();
 
   },
@@ -46,7 +44,6 @@ app.cntsThumb = {
           this.imgCount = this.imgCount + 1;
 
           if( this.imgCount === this.thumbImgsLength ){
-            console.log('thumb img loaded');
             this.imgLoaded();
           }
         });

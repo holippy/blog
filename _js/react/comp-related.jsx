@@ -1,5 +1,6 @@
 var Related = React.createClass({
   thumbClick( ID ){
+    console.log('related' + ID);
     this.props.thumbClick(ID);
   },
 
@@ -7,7 +8,7 @@ var Related = React.createClass({
 
     var article = this.props.article.map((res, i)=>{
       return (
-          <section key={i} className="MdCntsThumb01"><a onClick={this.thumbClick.bind(this, res.ID)} href={res.ID}>
+          <section key={i} className="MdCntsThumb01"><a onClick={this.thumbClick.bind(this, res.ID)} href={'?type=single&paged=' + res.ID}>
               <p className="mdCntsThumb01Img"><img src={res.thumb} /></p>
               <div className="mdCntsThumb01InfoClm">
                 <div className="mdCntsThumb01Clm01">

@@ -4,7 +4,9 @@ var CntsThumb = require('../pageFncs/cntsThumb.js');
 var SingleFnc = require('../pageFncs/single.js');
 
 var Single = React.createClass({
-  update: false,
+  loadFlag: true,
+
+
   getDefaultProps(){
     return {
       actionType:"single"
@@ -16,11 +18,14 @@ var Single = React.createClass({
     }
   },
   componentWillMount(){
-    console.log('componentWillMount');
+    //console.log('componentWillMount');
+    this.loadFlag = true;
     this.loadAction( this.props.articleID );
   },
   loadAction( articleID ){
-    console.log('loadAction');
+    //console.log('loadAction');
+
+    this.loadFlag = false;
 
     Store.addSubscribe({
       actionType: this.props.actionType,
@@ -34,7 +39,7 @@ var Single = React.createClass({
     }
   },
   actionCreator( page, comps ){
-    console.log('actionCreator');
+    //console.log('actionCreator');
 
     Store.dispatcher.action.create({
       actionType: this.props.actionType,
@@ -45,6 +50,8 @@ var Single = React.createClass({
   },
   dataloaded(){
     console.log('single loaded');
+
+    this.loadFlag = true;
 
     Store.removeSubscribe({
       actionType: this.props.actionType
@@ -62,14 +69,32 @@ var Single = React.createClass({
   shouldComponentUpdate(){
     console.log('shouldComponentUpdate');
 
-    return true;
+    if( this.loadFlag ){
+      return true;
+    }else{
+      return false;
+    }
+
   },
   componentDidUpdate(){
 
-    console.log('componentDidUpdate');
+    console.log('single componentDidUpdate');
+
+    if( !this.loadFlag ){
+      return false;
+    }
+
+    //GAにpageviewを送信
+    ga('send', {
+      hitType: 'pageview',
+      page: location.href.split('?')[1],
+      title: this.state.data.title
+    });
 
     //アップデート完了後にローディングを非表示
     Store.LoadControl.hidden();
+
+    this.loadFlag = false;
 
     this.changeMeta();
 
@@ -86,26 +111,23 @@ var Single = React.createClass({
     $("title").text(this.state.data.title + ' | Indoor Linving');
   },
   thumbClick( ID ){
+    console.log('single' + ID);
     this.props.thumbClick(ID);
   },
   componentWillReceiveProps(nextProps){
     console.log('componentWillReceiveProps');
 
-    this.first = true;
-
     if( this.props.articleID === nextProps.articleID ){
-      this.update = false;
     }else{
-      this.update = true;
       this.loadAction( nextProps.articleID );
     }
 
   },
   render(){
     console.log('single render');
-    console.log(this.state.data);
+    //console.log(this.state.data);
 
-    if( this.state.data !== null ){
+    if( this.loadFlag ){
 
       var heading2 = this.state.data.hdg2.map( (res, i)=>{
         return(

@@ -51,12 +51,12 @@
 
   gulp.task('babelify', function() {
     return browserify({
-      entries: "_js/app.js",
+      entries: "_js/ajax.js",
       extensions: [".js"]
     }).transform(babelify).bundle().on("error", function(err) {
       console.log("Error : " + err.message);
       return this.emit("end");
-    }).pipe(source("app.js")).pipe(gulp.dest("./dist/assets/js/"));
+    }).pipe(source("ajax.js")).pipe(gulp.dest("./dist/assets/js/"));
   });
 
 

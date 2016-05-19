@@ -3,7 +3,10 @@ var Pager = require('./comp-pager.jsx');
 var CntsThumb = require('../pageFncs/cntsThumb.js');
 
 var ArticleList = React.createClass({
-  first: true,
+  loadFlag: true,
+
+
+
   getDefaultProps(){
     return {
       actionType:"category"
@@ -27,6 +30,9 @@ var ArticleList = React.createClass({
   loadAction(){
     console.log('CATloadAction');
     console.log(Store.PageControl.paramObjs.name);
+
+    this.loadFlag = false;
+
     if( Store.gnav.data === null ){
       console.log('CAT first load');
       this.actionCreator( Store.PageControl.paramObjs.paged, Store.PageControl.paramObjs.name, [ this.props.actionType, 'gnav'] );
@@ -61,6 +67,8 @@ var ArticleList = React.createClass({
 
     console.log(Store.category.data);
 
+    this.loadFlag = true;
+
     var _countArray = [];
 
     Store.removeSubscribe({
@@ -85,11 +93,37 @@ var ArticleList = React.createClass({
     });
 
   },
+
+  shouldComponentUpdate(){
+    console.log('shouldComponentUpdate');
+
+    if( this.loadFlag ){
+      return true;
+    }else{
+      return false;
+    }
+
+  },
+
   componentDidUpdate(){
     console.log('LIcomponentDidUpdate');
 
+    if( !this.loadFlag ){
+      return false;
+    }
+
+    //GAにpageviewを送信
+    ga('send', {
+      hitType: 'pageview',
+      page: location.href.split('?')[1],
+      title: this.state.catName + 'カテゴリ一覧'
+    });
+
     //アップデート完了後にローディングを非表示
     Store.LoadControl.hidden();
+
+    this.loadFlag = false;
+
     console.log($('.MdHdgCmn01').text());
 
     this.changeMeta();
@@ -153,13 +187,13 @@ var ArticleList = React.createClass({
 
     console.log('LIrender');
 
-    if(this.state.article.length === 0){
+    if( !this.loadFlag ){
       return false;
     }else{
       
       var article = this.state.article.map((res, i)=>{
         return (
-            <section key={i} className="MdCntsThumb01"><a onClick={this.thumbClick.bind(this, res.ID)} href={res.ID}>
+            <section key={i} className="MdCntsThumb01"><a onClick={this.thumbClick.bind(this, res.ID)} href={'?type=single&paged=' + res.ID}>
                 <p className="mdCntsThumb01Img"><img src={res.thumb} /></p>
                 <div className="mdCntsThumb01InfoClm">
                   <div className="mdCntsThumb01Clm01">
