@@ -2,7 +2,7 @@ var Store = require('./store-article');
 var Pager = require('./comp-pager.jsx');
 var CntsThumb = require('../pageFncs/cntsThumb.js');
 
-var ArticleList = React.createClass({
+var CategolyList = React.createClass({
   loadFlag: true,
 
 
@@ -231,4 +231,4 @@ var ArticleList = React.createClass({
   }
 });
 
-module.exports = ArticleList;
+module.exports = CategolyList;

@@ -34,6 +34,7 @@ Store.PageControl = {
     }else{
       this.paramObjs = { 'type': 'index', 'paged': '0' };
     }
+
   }
 }
 
@@ -140,71 +141,72 @@ Store.dispatcher.action = {
   loadStatus: false,
   getData( num ){
 
-
-
     this.loadStatus = true;
 
-    return new Promise( (resolve, reject )=> {
+    var d = new $.Deferred,
+        payload = this.queue[ this.counter ],
+        url,
+        data;
 
-      var payload = this.queue[ this.counter ],
-          url,
-          data;
-
-      switch ( payload.actionType ){
-        case 'gnav':
-          url = domain + 'catlist/';
-          data = {};
-          break;
-        case 'list':
-          url = domain + 'page/' + payload.page + '/';
-          data = { paged: payload.page };
-          break;
-        case 'pager':
-          url = domain + 'dummy/';
-          data = {};
-          break;
-        case 'mainvisual':
-          url = domain + 'mainvisual/';
-          data = {};
-          break;
-        case 'single':
-          url = domain + '' + payload.page + '/';
-          data = {};
-          break;
-        case 'category':
-          url = domain + 'category/' + payload.name + '/page/' + payload.page  + '/';
-          data = {};
-          break;
-      }
+    switch ( payload.actionType ){
+      case 'gnav':
+        url = domain + 'catlist/';
+        data = {};
+        break;
+      case 'list':
+        url = domain + 'page/' + payload.page + '/';
+        data = { paged: payload.page };
+        break;
+      case 'pager':
+        url = domain + 'dummy/';
+        data = {};
+        break;
+      case 'mainvisual':
+        url = domain + 'mainvisual/';
+        data = {};
+        break;
+      case 'single':
+        url = domain + '' + payload.page + '/';
+        data = {};
+        break;
+      case 'category':
+        url = domain + 'category/' + payload.name + '/page/' + payload.page  + '/';
+        data = {};
+        break;
+    }
 
 
-      //loadStatusをtrueにする
-      //loadStatus = true;
-      this.xhr = $.ajax({
-          url: url,
-          //data: data,
-          type: 'GET',
-          crossDomain: true,
-          cache: true,
-          dataType: 'json'
-      });
-
-      this.xhr.done( ( data )=>{
-
-        this.counter = this.counter + 1;
-        this.resData[payload.actionType] = data;
-
-        if( this.counter === this.compArray.length ){
-          Store.dispatcher.dispatch(this.resData);
-          this.loadStatus = false;
-          //console.log('load end');
-          
-          this.reset();
-        }else{
-          resolve( this.counter );
-        }
-      });
+    //loadStatusをtrueにする
+    //loadStatus = true;
+    this.xhr = $.ajax({
+        url: url,
+        //data: data,
+        type: 'GET',
+        crossDomain: true,
+        cache: true,
+        dataType: 'json'
     });
+
+    this.xhr.done( ( data )=>{
+
+      this.counter = this.counter + 1;
+      this.resData[payload.actionType] = data;
+
+      if( this.counter === this.compArray.length ){
+
+        Store.dispatcher.dispatch(this.resData);
+        this.loadStatus = false;
+
+        //console.log('load end');
+        
+        this.reset();
+      }else{
+        console.log(d);
+        d.resolve(this.counter);
+      }
+    });
+
+    return d.promise();
   },
   create(payload){
 
@@ -226,7 +228,6 @@ Store.dispatcher.action = {
 
     this.queue.push( payload );
 
-    //console.log(payload.requireComps);
 
     if( this.queue.length === this.compArray.length ){
 
@@ -311,8 +312,11 @@ gnavのdispatchToken
 ===========================*/
 
 Store.gnav.dispatchToken = Store.dispatcher.register(function( res ) {
+
   if( res['gnav'] ){
+    console.log(res);
     Store.gnav.data = res['gnav'];
+    
   }else{
     Store.single.data = null;
     return true;

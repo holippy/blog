@@ -40,7 +40,7 @@ browserify
 
 gulp.task 'babelify', ()->
 	browserify(
-			entries: "_js/ajax.js"
+			entries: "_js/app.js"
 			extensions: [".js"]
 		)
 		.transform(babelify)
@@ -49,7 +49,7 @@ gulp.task 'babelify', ()->
 			console.log("Error : " + err.message);
 			this.emit("end");
 		)
-		.pipe(source("ajax.js"))
+		.pipe(source("app.js"))
 		.pipe(gulp.dest("./dist/assets/js/"));
 
 ###

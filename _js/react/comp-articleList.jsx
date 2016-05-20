@@ -59,7 +59,9 @@ var ArticleList = React.createClass({
     });
   },
   dataloaded(){
-    //console.log('LIdataloaded');
+    console.log('LIdataloaded');
+
+    console.log(Store.list.data);
 
     this.loadFlag = true;
 
@@ -83,6 +85,10 @@ var ArticleList = React.createClass({
       }
     });
 
+  },
+  componentDidMount(){
+    console.log('article mounted');
+    
   },
   shouldComponentUpdate(){
     console.log('shouldComponentUpdate');
@@ -153,24 +159,25 @@ var ArticleList = React.createClass({
   },
 
   imgLoading( data ){
-    var counter = 0;
+    var counter = 0,
+        d = new $.Deferred;
 
-    return new Promise( (resolve, reject )=> {
+    data.map((res, index)=>{
+      let img = new Image();
 
-      data.map((res, index)=>{
-        let img = new Image();
-
-        $(img).on('load', ()=>{
-          counter = counter + 1;
-          if( counter == data.length ){
-            resolve( counter );
-          }
-        });
-
-        $(img).attr('src', res.thumb);
-
+      $(img).on('load', ()=>{
+        counter = counter + 1;
+        if( counter == data.length ){
+          d.resolve(counter);
+        }
       });
+
+      $(img).attr('src', res.thumb);
+
     });
+
+    return d.promise();
+
   },
 
   thumbClick( ID ){

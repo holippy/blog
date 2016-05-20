@@ -78,6 +78,11 @@ var TEST = React.createClass({
 
     gethtml().then( function(html){
       $('#loaded').append(html);
+      
+      return gethtml();
+    }).then( function(html){
+      console.log(html);
+      $('#loaded2').append(html);
     });
 
     // function gethtml(){

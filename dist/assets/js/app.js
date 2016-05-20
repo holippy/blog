@@ -682,7 +682,9 @@ var ArticleList = React.createClass({
   dataloaded: function dataloaded() {
     var _this = this;
 
-    //console.log('LIdataloaded');
+    console.log('LIdataloaded');
+
+    console.log(Store.list.data);
 
     this.loadFlag = true;
 
@@ -705,6 +707,9 @@ var ArticleList = React.createClass({
         });
       }
     });
+  },
+  componentDidMount: function componentDidMount() {
+    console.log('article mounted');
   },
   shouldComponentUpdate: function shouldComponentUpdate() {
     console.log('shouldComponentUpdate');
@@ -769,23 +774,23 @@ var ArticleList = React.createClass({
     }
   },
   imgLoading: function imgLoading(data) {
-    var counter = 0;
+    var counter = 0,
+        d = new $.Deferred();
 
-    return new Promise(function (resolve, reject) {
+    data.map(function (res, index) {
+      var img = new Image();
 
-      data.map(function (res, index) {
-        var img = new Image();
-
-        $(img).on('load', function () {
-          counter = counter + 1;
-          if (counter == data.length) {
-            resolve(counter);
-          }
-        });
-
-        $(img).attr('src', res.thumb);
+      $(img).on('load', function () {
+        counter = counter + 1;
+        if (counter == data.length) {
+          d.resolve(counter);
+        }
       });
+
+      $(img).attr('src', res.thumb);
     });
+
+    return d.promise();
   },
   thumbClick: function thumbClick(ID) {
     this.props.thumbClick(ID);
@@ -897,8 +902,8 @@ var Store = require('./store-article');
 var Pager = require('./comp-pager.jsx');
 var CntsThumb = require('../pageFncs/cntsThumb.js');
 
-var ArticleList = React.createClass({
-  displayName: 'ArticleList',
+var CategolyList = React.createClass({
+  displayName: 'CategolyList',
 
   loadFlag: true,
 
@@ -1177,14 +1182,13 @@ var ArticleList = React.createClass({
   }
 });
 
-module.exports = ArticleList;
+module.exports = CategolyList;
 
 },{"../pageFncs/cntsThumb.js":2,"./comp-pager.jsx":12,"./store-article":15}],9:[function(require,module,exports){
 'use strict';
 
 var Store = require('./store-article');
 var Header = require('../pageFncs/header.js');
-
 var Gnav = React.createClass({
   displayName: 'Gnav',
   getDefaultProps: function getDefaultProps() {
@@ -1203,7 +1207,7 @@ var Gnav = React.createClass({
     this.loadAction();
   },
   loadAction: function loadAction() {
-    //console.log('GNloadAction');
+    console.log('GNloadAction');
 
     if (this.props.pageType === 'single') {
       if (Store.gnav.data === null) {
@@ -1227,7 +1231,11 @@ var Gnav = React.createClass({
       }
     }
   },
+  componentDidMount: function componentDidMount() {
+    console.log('gnav mounted');
+  },
   componentDidUpdate: function componentDidUpdate() {
+
     if ($('.LyHead.FncStart').length === 0) {
       console.log('headerinit');
       Header.init();
@@ -1237,7 +1245,6 @@ var Gnav = React.createClass({
       e.preventDefault();
     });
   },
-  componentDidMount: function componentDidMount() {},
   actionCreator: function actionCreator(comps) {
     Store.addSubscribe({
       actionType: this.props.actionType,
@@ -1252,6 +1259,8 @@ var Gnav = React.createClass({
     });
   },
   dataloaded: function dataloaded() {
+
+    console.log(Store.gnav.data);
 
     this.replaceState({
       gnav: Store.gnav.data
@@ -1273,7 +1282,7 @@ var Gnav = React.createClass({
   render: function render() {
     var _this = this;
 
-    //console.log('rendar gnav');
+    console.log('rendar gnav');
     //console.log(Store.gnav.data);
 
     if (Store.gnav.data === null) {
@@ -1370,9 +1379,11 @@ var Mainvisual = React.createClass({
       this.actionCreator(['list']);
     }
   },
-  componentWillReceiveProps: function componentWillReceiveProps() {
-    console.log('MVcomponentWillReceiveProps');
-  },
+
+
+  // componentWillReceiveProps(){
+  //   console.log('MVcomponentWillReceiveProps');
+  // },
   actionCreator: function actionCreator(comps) {
     console.log('MVactionCreator');
 
@@ -1402,23 +1413,23 @@ var Mainvisual = React.createClass({
     }
   },
   imgLoading: function imgLoading(data) {
-    var counter = 0;
+    var counter = 0,
+        d = new $.Deferred();;
 
-    return new Promise(function (resolve, reject) {
+    data.map(function (res, index) {
+      var img = new Image();
 
-      data.map(function (res, index) {
-        var img = new Image();
-
-        $(img).on('load', function () {
-          counter = counter + 1;
-          if (counter == data.length) {
-            resolve(counter);
-          }
-        });
-
-        $(img).attr('src', res.thumb);
+      $(img).on('load', function () {
+        counter = counter + 1;
+        if (counter == data.length) {
+          d.resolve(counter);
+        }
       });
+
+      $(img).attr('src', res.thumb);
     });
+
+    return d.promise();
   },
   componentDidUpdate: function componentDidUpdate() {
     console.log('MVcomponentDidUpdate');
@@ -1442,12 +1453,16 @@ var Mainvisual = React.createClass({
       return false;
     }
   },
-  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-    console.log('MVcomponentWillReceiveProps');
-    console.log(nextProps);
-  },
   componentDidMount: function componentDidMount() {
     console.log('MVcomponentDidMount');
+    console.log('MVcomponentDidUpdate');
+    Slider.unmount();
+    Slider.init();
+    $('.mdSlideListImg li').each(function (i, elm) {
+      $(elm).find('a').eq(0).on('click', function (e) {
+        e.preventDefault();
+      });
+    });
   },
   thumbClick: function thumbClick(ID) {
     console.log(ID);
@@ -1659,8 +1674,9 @@ var Page = React.createClass({
     $("title").text('Indoor Linving');
   },
   render: function render() {
-    console.log('render');
+
     if (this.state.pageType == 'index') {
+      console.log('render');
       this.changeMeta();
       return React.createElement(
         'div',
@@ -1693,7 +1709,7 @@ var Page = React.createClass({
 
 ReactDOM.render(React.createElement(Page, null), document.getElementById('Main'));
 
-module.exports = ArticleList;
+module.exports = Page;
 
 },{"./comp-articleList.jsx":7,"./comp-categoryList.jsx":8,"./comp-gnav.jsx":9,"./comp-mainvisual.jsx":10,"./comp-single.jsx":14,"./store-article":15}],12:[function(require,module,exports){
 "use strict";
@@ -2201,66 +2217,69 @@ Store.dispatcher.action = {
 
     this.loadStatus = true;
 
-    return new Promise(function (resolve, reject) {
+    var d = new $.Deferred(),
+        payload = this.queue[this.counter],
+        url,
+        data;
 
-      var payload = _this.queue[_this.counter],
-          url,
-          data;
+    switch (payload.actionType) {
+      case 'gnav':
+        url = domain + 'catlist/';
+        data = {};
+        break;
+      case 'list':
+        url = domain + 'page/' + payload.page + '/';
+        data = { paged: payload.page };
+        break;
+      case 'pager':
+        url = domain + 'dummy/';
+        data = {};
+        break;
+      case 'mainvisual':
+        url = domain + 'mainvisual/';
+        data = {};
+        break;
+      case 'single':
+        url = domain + '' + payload.page + '/';
+        data = {};
+        break;
+      case 'category':
+        url = domain + 'category/' + payload.name + '/page/' + payload.page + '/';
+        data = {};
+        break;
+    }
 
-      switch (payload.actionType) {
-        case 'gnav':
-          url = domain + 'catlist/';
-          data = {};
-          break;
-        case 'list':
-          url = domain + 'page/' + payload.page + '/';
-          data = { paged: payload.page };
-          break;
-        case 'pager':
-          url = domain + 'dummy/';
-          data = {};
-          break;
-        case 'mainvisual':
-          url = domain + 'mainvisual/';
-          data = {};
-          break;
-        case 'single':
-          url = domain + '' + payload.page + '/';
-          data = {};
-          break;
-        case 'category':
-          url = domain + 'category/' + payload.name + '/page/' + payload.page + '/';
-          data = {};
-          break;
-      }
-
-      //loadStatusをtrueにする
-      //loadStatus = true;
-      _this.xhr = $.ajax({
-        url: url,
-        //data: data,
-        type: 'GET',
-        crossDomain: true,
-        cache: true,
-        dataType: 'json'
-      });
-
-      _this.xhr.done(function (data) {
-
-        _this.counter = _this.counter + 1;
-        _this.resData[payload.actionType] = data;
-
-        if (_this.counter === _this.compArray.length) {
-          Store.dispatcher.dispatch(_this.resData);
-          _this.loadStatus = false;
-          //console.log('load end');
-
-          _this.reset();
-        } else {
-          resolve(_this.counter);
-        }
-      });
+    //loadStatusをtrueにする
+    //loadStatus = true;
+    this.xhr = $.ajax({
+      url: url,
+      //data: data,
+      type: 'GET',
+      crossDomain: true,
+      cache: true,
+      dataType: 'json'
     });
+
+    this.xhr.done(function (data) {
+
+      _this.counter = _this.counter + 1;
+      _this.resData[payload.actionType] = data;
+
+      if (_this.counter === _this.compArray.length) {
+
+        Store.dispatcher.dispatch(_this.resData);
+        _this.loadStatus = false;
+
+        //console.log('load end');
+
+        _this.reset();
+      } else {
+        console.log(d);
+        d.resolve(_this.counter);
+      }
+    });
+
+    return d.promise();
   },
   create: function create(payload) {
     var _this2 = this;
@@ -2281,8 +2300,6 @@ Store.dispatcher.action = {
     });
 
     this.queue.push(payload);
-
-    //console.log(payload.requireComps);
 
     if (this.queue.length === this.compArray.length) {
 
@@ -2365,7 +2382,9 @@ gnavのdispatchToken
 ===========================*/
 
 Store.gnav.dispatchToken = Store.dispatcher.register(function (res) {
+
   if (res['gnav']) {
+    console.log(res);
     Store.gnav.data = res['gnav'];
   } else {
     Store.single.data = null;

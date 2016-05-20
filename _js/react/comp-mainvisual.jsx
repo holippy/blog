@@ -17,6 +17,7 @@ var Mainvisual = React.createClass({
   componentWillMount(){
     console.log('MVcomponentWillMount');
     this.loadAction();
+    
   },
 
   loadAction(){
@@ -33,9 +34,9 @@ var Mainvisual = React.createClass({
     }
   },
 
-  componentWillReceiveProps(){
-    console.log('MVcomponentWillReceiveProps');
-  },
+  // componentWillReceiveProps(){
+  //   console.log('MVcomponentWillReceiveProps');
+  // },
   actionCreator( comps ){
     console.log('MVactionCreator');
 
@@ -66,25 +67,27 @@ var Mainvisual = React.createClass({
     }
   },
   imgLoading( data ){
-    var counter = 0;
+    var counter = 0,
+        d = new $.Deferred;;
 
-    return new Promise( (resolve, reject )=> {
+    data.map((res, index)=>{
+      let img = new Image();
 
-      data.map((res, index)=>{
-        let img = new Image();
-
-        $(img).on('load', ()=>{
-          counter = counter + 1;
-          if( counter == data.length ){
-            resolve( counter );
-          }
-        });
-
-        $(img).attr('src', res.thumb);
-
+      $(img).on('load', ()=>{
+        counter = counter + 1;
+        if( counter == data.length ){
+          d.resolve(counter);
+        }
       });
+
+      $(img).attr('src', res.thumb);
+
     });
+
+    return d.promise();
+
   },
+
   componentDidUpdate(){
     console.log('MVcomponentDidUpdate');
     Slider.unmount();
@@ -108,12 +111,16 @@ var Mainvisual = React.createClass({
     }
     
   },
-  componentWillReceiveProps(nextProps){
-    console.log('MVcomponentWillReceiveProps');
-    console.log(nextProps);
-  },
   componentDidMount(){
     console.log('MVcomponentDidMount');
+    console.log('MVcomponentDidUpdate');
+    Slider.unmount();
+    Slider.init();
+    $('.mdSlideListImg li').each((i, elm)=>{
+      $(elm).find('a').eq(0).on('click', (e)=>{
+        e.preventDefault();
+      });
+    });
   },
   thumbClick( ID ){
     console.log(ID);

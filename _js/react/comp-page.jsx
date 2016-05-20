@@ -5,6 +5,7 @@ var Mainvisual = require('./comp-mainvisual.jsx');
 var Gnav = require('./comp-gnav.jsx');
 var Single = require('./comp-single.jsx');
 
+
 var Page = React.createClass({
   getDefaultProps(){
     return {
@@ -115,11 +116,14 @@ var Page = React.createClass({
     $("title").text('Indoor Linving');
   },
   render(){
-    console.log('render');
+    
+
       if( this.state.pageType == 'index' ){
+        console.log('render');
         this.changeMeta();
         return (
           <div>
+
           <Gnav pageType={this.state.pageType} backTop={this.backTop} navClick={this.navClick} />
           <Mainvisual thumbClick={this.thumbClick} />
           <ArticleList thumbClick={this.thumbClick}/>
@@ -155,4 +159,4 @@ ReactDOM.render(
   document.getElementById('Main')
 );
 
-module.exports = ArticleList;
+module.exports = Page;

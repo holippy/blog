@@ -1,6 +1,5 @@
 var Store = require('./store-article');
 var Header = require('../pageFncs/header.js');
-
 var Gnav = React.createClass({
   getDefaultProps(){
     return {
@@ -18,7 +17,7 @@ var Gnav = React.createClass({
     this.loadAction();
   },
   loadAction(){
-    //console.log('GNloadAction');
+    console.log('GNloadAction');
 
     if( this.props.pageType === 'single' ){
       if( Store.gnav.data === null ){
@@ -43,7 +42,12 @@ var Gnav = React.createClass({
     }
 
   },
+  componentDidMount(){
+    console.log('gnav mounted');
+    
+  },
   componentDidUpdate(){
+
     if( $('.LyHead.FncStart').length === 0 ){
       console.log('headerinit');
       Header.init();
@@ -52,9 +56,6 @@ var Gnav = React.createClass({
     $('#Gnav li').on('click', (e)=>{
       e.preventDefault();
     });
-  },
-  componentDidMount(){
-
   },
   actionCreator( comps ){
     Store.addSubscribe({
@@ -70,6 +71,8 @@ var Gnav = React.createClass({
     });
   },
   dataloaded(){
+
+    console.log(Store.gnav.data);
 
     this.replaceState({ 
       gnav: Store.gnav.data
@@ -92,7 +95,7 @@ var Gnav = React.createClass({
   },
   render(){
 
-    //console.log('rendar gnav');
+    console.log('rendar gnav');
     //console.log(Store.gnav.data);
 
     if( Store.gnav.data === null ){
