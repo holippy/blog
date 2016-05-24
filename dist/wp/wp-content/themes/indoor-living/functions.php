@@ -18,12 +18,12 @@ function change_posts_per_page($query) {
  }
  
   if ( $query->is_home() ) {
-     $query->set( 'posts_per_page', '8' );
+     $query->set( 'posts_per_page', '2' );
      return;
  }
 
  if ( $query->is_category() ) {
-     $query->set( 'posts_per_page', '8' );
+     $query->set( 'posts_per_page', '2' );
      return;
  }
  
