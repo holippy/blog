@@ -50,10 +50,8 @@ react
 
 ===========================*/
 
-$(window).on('load', function () {
-  var storeArticle = require('./react/store-article.js');
-  var page = require('./react/comp-page.jsx');
-});
+var storeArticle = require('./react/store-article.js');
+var page = require('./react/comp-page.jsx');
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./react/comp-page.jsx":11,"./react/store-article.js":15}],2:[function(require,module,exports){
@@ -63,28 +61,36 @@ var SetHeight = require('./setHeight.js');
 var app = app || {};
 
 app.cntsThumb = {
-  init: function init() {
+  init: function init(type) {
     this.thumb = $('.MdCntsThumb01');
     this.thumbImgs = $('.MdCntsThumb01 img');
     this.thumbImgsLength = this.thumbImgs.length;
+    this.layoutType = type;
+    this.perSet = 0;
     this.imgCount = 0;
+
+    if (this.layoutType == 'PC') {
+      this.perSet = 4;
+    } else if (this.layoutType == 'SP') {
+      this.perSet = 2;
+    }
 
     this.imgLoading();
   },
   imgLoaded: function imgLoaded() {
     SetHeight.init({
       Elem: '.mdCntsThumb01InfoInBox .mdCntsThumb01Ttl',
-      group: 4
+      group: this.perSet
     });
 
     SetHeight.init({
       Elem: '.mdCntsThumb01InfoInBox .mdCntsThumb01Txt',
-      group: 4
+      group: this.perSet
     });
 
     SetHeight.init({
       Elem: '.MdCntsThumb01',
-      group: 4
+      group: this.perSet
     });
 
     for (var i = 0; i < this.thumb.length; i++) {
@@ -142,15 +148,28 @@ module.exports = app.cntsThumb;
 var app = app || {};
 
 app.header = {
-  init: function init() {
-    this.header = $('.LyHead');
-    this.logo = $('.mdLogo');
-    this.logoWidth = 90;
-    this.logoHeight = 70;
+  init: function init(type) {
 
-    this.header.addClass('FncStart');
+    if (type == 'PC') {
+      this.header = $('.LyHead');
+      this.logo = $('.mdLogo');
+      this.logoWidth = 90;
+      this.logoHeight = 70;
 
-    this.eventSet();
+      this.header.addClass('FncStart');
+
+      this.eventSetPC();
+    } else if (type == 'SP') {
+
+      this.menuBtnOpen = $('#BtnMenu');
+      this.menuBtnClose = $('#BtnMenuClose');
+      this.menuBody = $('.MdMenu');
+      this.mdListCat = $('.mdListCat li');
+
+      this.menuContainer = $('.LyMenu');
+
+      this.eventSetSP();
+    }
   },
   headerControl: function headerControl(scrollTop) {
 
@@ -183,11 +202,40 @@ app.header = {
       this.header.removeClass('ExFixed');
     }
   },
-  eventSet: function eventSet() {
+  spMenuControl: function spMenuControl(type) {
+
+    if (type == 'open') {
+
+      this.menuContainer.addClass('ExView');
+    }
+
+    if (type == 'close') {
+      this.menuContainer.removeClass('ExView');
+    }
+  },
+  eventSetPC: function eventSetPC() {
     var _this = this;
 
     $(window).on('scroll', function () {
       _this.headerControl($(window).scrollTop());
+    });
+  },
+  eventSetSP: function eventSetSP() {
+    var _this2 = this;
+
+    this.menuBtnOpen.on('click', function (e) {
+      e.preventDefault();
+      _this2.spMenuControl('open');
+    });
+
+    this.menuBtnClose.on('click', function (e) {
+      e.preventDefault();
+      _this2.spMenuControl('close');
+    });
+
+    this.mdListCat.on('click', function (e) {
+      e.preventDefault();
+      _this2.spMenuControl('close');
     });
   }
 };
@@ -286,7 +334,11 @@ app.single = {
     this.imgCount = 0;
     this.imgLoadFlag = false;
 
-    this.imgLoading();
+    if (this.mainImgs.length > 0) {
+      this.imgLoading();
+    } else {
+      this.setEvnt();
+    }
   },
   headerControl: function headerControl(scrollTop) {},
   imgLoading: function imgLoading() {
@@ -300,14 +352,6 @@ app.single = {
 
         if (_this.imgCount === _this.mainImgsLength) {
 
-          _this.cntsBodyHeight = _this.cntsBody.height();
-          _this.mvTop = _this.mv.height() - 40;
-
-          _this.hdg.each(function (i, elm) {
-            $(elm).attr('id', 'hdg' + (i + 1));
-            _this.hdgPos.push($(elm).position().top - 200);
-          });
-
           _this.setEvnt();
         }
       });
@@ -317,6 +361,14 @@ app.single = {
   },
   setEvnt: function setEvnt() {
     var _this2 = this;
+
+    this.cntsBodyHeight = this.cntsBody.height();
+    this.mvTop = this.mv.height() - 40;
+
+    this.hdg.each(function (i, elm) {
+      $(elm).attr('id', 'hdg' + (i + 1));
+      _this2.hdgPos.push($(elm).position().top - 200);
+    });
 
     this.asideLink.each(function (i, elm) {
 
@@ -732,7 +784,9 @@ var ArticleList = React.createClass({
 
     this.loadFlag = false;
 
-    CntsThumb.init();
+    //高さ揃え
+    CntsThumb.init(Store.Layout);
+
     $('.MdCntsThumb01 a').on('click', function (e) {
       e.preventDefault();
     });
@@ -1026,7 +1080,8 @@ var CategolyList = React.createClass({
 
     this.first = false;
 
-    CntsThumb.init();
+    CntsThumb.init(Store.Layout);
+
     $('.MdCntsThumb01 a').on('click', function (e) {
       e.preventDefault();
     });
@@ -1236,14 +1291,23 @@ var Gnav = React.createClass({
   },
   componentDidUpdate: function componentDidUpdate() {
 
-    if ($('.LyHead.FncStart').length === 0) {
-      console.log('headerinit');
-      Header.init();
+    if (Store.Layout == 'PC') {
+      if ($('.LyHead.FncStart').length === 0) {
+        console.log('headerinit');
+        Header.init(Store.Layout);
+      }
+
+      $('#Gnav li').on('click', function (e) {
+        e.preventDefault();
+      });
     }
 
-    $('#Gnav li').on('click', function (e) {
-      e.preventDefault();
-    });
+    if (Store.Layout == 'SP') {
+      Header.init(Store.Layout);
+      $('.LyMenu .mdListCat li').on('click', function (e) {
+        e.preventDefault();
+      });
+    }
   },
   actionCreator: function actionCreator(comps) {
     Store.addSubscribe({
@@ -1288,53 +1352,129 @@ var Gnav = React.createClass({
     if (Store.gnav.data === null) {
       return false;
     } else {
+      if (Store.Layout == 'SP') {
 
-      var lists = this.state.gnav.map(function (res) {
+        var lists = this.state.gnav.map(function (res) {
 
-        return React.createElement(
-          'li',
-          { key: res.ID },
-          React.createElement('span', { className: 'icon-icon05' }),
-          React.createElement(
-            'a',
-            { onClick: _this.navClick.bind(_this, res.slug), href: '?type=category&paged=' + res.slug },
-            res.catName
-          )
-        );
-      });
-
-      return React.createElement(
-        'div',
-        { className: 'LyHead' },
-        React.createElement(
-          'header',
-          { className: 'MdHead' },
-          React.createElement(
-            'p',
-            { className: 'mdLogo' },
+          return React.createElement(
+            'li',
+            { key: res.ID },
             React.createElement(
               'a',
-              { href: '#', onClick: this.backTop },
-              'Indoor Living'
+              { onClick: _this.navClick.bind(_this, res.slug), href: '?type=category&paged=' + res.slug },
+              res.catName,
+              React.createElement('span', { className: 'icon-icon04' })
             )
-          ),
+          );
+        });
+        return React.createElement(
+          'div',
+          null,
           React.createElement(
-            'nav',
-            { id: 'Gnav', className: 'MdGNV' },
+            'div',
+            { className: 'LyHead' },
             React.createElement(
-              'ul',
-              null,
-              lists
+              'header',
+              { className: 'MdHead' },
+              React.createElement(
+                'p',
+                { className: 'mdLogo' },
+                React.createElement(
+                  'a',
+                  { href: '#', onClick: this.backTop },
+                  'Indoor Living'
+                )
+              ),
+              React.createElement(
+                'p',
+                { id: 'BtnMenu', className: 'mdBtnMenu' },
+                React.createElement('a', { href: '#' })
+              )
             )
           ),
           React.createElement(
-            'form',
-            { method: 'post', action: '#', className: 'MdSearch' },
-            React.createElement('input', { type: 'text' }),
-            React.createElement('button', { type: 'submit', className: 'icon-icon_search' })
+            'div',
+            { className: 'LyMenu' },
+            React.createElement(
+              'div',
+              { className: 'MdMenu' },
+              React.createElement(
+                'p',
+                { id: 'BtnMenuClose', className: 'mdBtnClose' },
+                React.createElement(
+                  'a',
+                  { href: '#' },
+                  'CLOSE'
+                )
+              ),
+              React.createElement(
+                'p',
+                { className: 'MdHdgCmn01' },
+                React.createElement(
+                  'span',
+                  null,
+                  'Categories'
+                )
+              ),
+              React.createElement(
+                'ul',
+                { className: 'mdListCat' },
+                lists
+              )
+            )
           )
-        )
-      );
+        );
+      }
+
+      if (Store.Layout == 'PC') {
+
+        var lists = this.state.gnav.map(function (res) {
+
+          return React.createElement(
+            'li',
+            { key: res.ID },
+            React.createElement('span', { className: 'icon-icon05' }),
+            React.createElement(
+              'a',
+              { onClick: _this.navClick.bind(_this, res.slug), href: '?type=category&paged=' + res.slug },
+              res.catName
+            )
+          );
+        });
+
+        return React.createElement(
+          'div',
+          { className: 'LyHead' },
+          React.createElement(
+            'header',
+            { className: 'MdHead' },
+            React.createElement(
+              'p',
+              { className: 'mdLogo' },
+              React.createElement(
+                'a',
+                { href: '#', onClick: this.backTop },
+                'Indoor Living'
+              )
+            ),
+            React.createElement(
+              'nav',
+              { id: 'Gnav', className: 'MdGNV' },
+              React.createElement(
+                'ul',
+                null,
+                lists
+              )
+            ),
+            React.createElement(
+              'form',
+              { method: 'post', action: '#', className: 'MdSearch' },
+              React.createElement('input', { type: 'text' }),
+              React.createElement('button', { type: 'submit', className: 'icon-icon_search' })
+            )
+          )
+        );
+      }
     }
   }
 });
@@ -1433,13 +1573,26 @@ var Mainvisual = React.createClass({
   },
   componentDidUpdate: function componentDidUpdate() {
     console.log('MVcomponentDidUpdate');
-    Slider.unmount();
-    Slider.init();
-    $('.mdSlideListImg li').each(function (i, elm) {
-      $(elm).find('a').eq(0).on('click', function (e) {
-        e.preventDefault();
+
+    if (Store.Layout == 'PC') {
+      Slider.unmount();
+      Slider.init();
+      $('.mdSlideListImg li').each(function (i, elm) {
+        $(elm).find('a').eq(0).on('click', function (e) {
+          e.preventDefault();
+        });
       });
-    });
+    }
+
+    if (Store.Layout == 'SP') {
+      $('.mdSlideListImg').slick({
+        infinite: true,
+        arrows: false,
+        dots: true,
+        slidesToShow: 1,
+        slidesToScroll: 1
+      });
+    }
   },
   componentWillUnmount: function componentWillUnmount() {
     console.log('unmount');
@@ -1454,15 +1607,25 @@ var Mainvisual = React.createClass({
     }
   },
   componentDidMount: function componentDidMount() {
-    console.log('MVcomponentDidMount');
-    console.log('MVcomponentDidUpdate');
-    Slider.unmount();
-    Slider.init();
-    $('.mdSlideListImg li').each(function (i, elm) {
-      $(elm).find('a').eq(0).on('click', function (e) {
-        e.preventDefault();
+
+    if (Store.Layout == 'PC') {
+      console.log('MVcomponentDidMount');
+      console.log('MVcomponentDidUpdate');
+      Slider.unmount();
+      Slider.init();
+      $('.mdSlideListImg li').each(function (i, elm) {
+        $(elm).find('a').eq(0).on('click', function (e) {
+          e.preventDefault();
+        });
       });
-    });
+    }
+    if (Store.Layout == 'SP') {
+      $('.mdSlideListImg li').each(function (i, elm) {
+        $(elm).find('a').eq(0).on('click', function (e) {
+          e.preventDefault();
+        });
+      });
+    }
   },
   thumbClick: function thumbClick(ID) {
     console.log(ID);
@@ -1475,79 +1638,134 @@ var Mainvisual = React.createClass({
     if (this.state.mainvisual.length === 0) {
       return false;
     } else {
-      Slider.unmount();
-      var mvArray = [];
-      for (var i = 0; i < 3; i++) {
-        for (var j = 0; j < this.state.mainvisual.length; j++) {
-          mvArray.push(this.state.mainvisual[j]);
+
+      if (Store.Layout == 'PC') {
+        Slider.unmount();
+
+        var mvArray = [];
+        for (var i = 0; i < 3; i++) {
+          for (var j = 0; j < this.state.mainvisual.length; j++) {
+            mvArray.push(this.state.mainvisual[j]);
+          }
         }
-      }
-      var imgs = mvArray.map(function (res, index) {
-        return React.createElement(
-          'li',
-          { key: 'thumb' + index },
-          React.createElement(
-            'a',
-            { onClick: _this.thumbClick.bind(_this, res.ID), href: res.ID },
+
+        var imgs = mvArray.map(function (res, index) {
+          return React.createElement(
+            'li',
+            { key: 'thumb' + index },
             React.createElement(
-              'p',
-              { className: 'mdSlideCat' },
-              res.category
-            ),
-            React.createElement(
-              'p',
-              { className: 'mdSlideTtl' },
+              'a',
+              { onClick: _this.thumbClick.bind(_this, res.ID), href: '?type=single&paged=' + res.ID },
               React.createElement(
-                'span',
-                null,
-                res.title
+                'p',
+                { className: 'mdSlideCat' },
+                res.category
+              ),
+              React.createElement(
+                'p',
+                { className: 'mdSlideTtl' },
+                React.createElement(
+                  'span',
+                  null,
+                  res.title
+                )
+              ),
+              React.createElement(
+                'p',
+                { className: 'mdSlideImg' },
+                React.createElement('img', { src: res.thumb })
               )
+            )
+          );
+        });
+
+        var pager = this.state.mainvisual.map(function (res, index) {
+          return React.createElement(
+            'li',
+            { key: index },
+            React.createElement('a', { href: '#', className: 'icon-icon01' })
+          );
+        });
+
+        return React.createElement(
+          'div',
+          { key: this.mainvisualID, className: 'MdSlideContianer' },
+          React.createElement(
+            'ul',
+            { className: 'mdSlideListImg' },
+            imgs
+          ),
+          React.createElement(
+            'ul',
+            { className: 'mdSlideListPager' },
+            pager
+          ),
+          React.createElement(
+            'ul',
+            { className: 'mdSlideListBtn' },
+            React.createElement(
+              'li',
+              { className: 'mdSlideListBtnBack' },
+              React.createElement('a', { href: '#', className: 'icon-icon02' })
             ),
             React.createElement(
-              'p',
-              { className: 'mdSlideImg' },
-              React.createElement('img', { src: res.thumb })
+              'li',
+              { className: 'mdSlideListBtnNext' },
+              React.createElement('a', { href: '#', className: 'icon-icon04' })
             )
           )
         );
-      });
+      }
 
-      var pager = this.state.mainvisual.map(function (res, index) {
+      if (Store.Layout == 'SP') {
+
+        var mvArray = [];
+        for (var i = 0; i < 1; i++) {
+          for (var j = 0; j < this.state.mainvisual.length; j++) {
+            mvArray.push(this.state.mainvisual[j]);
+          }
+        }
+
+        var imgs = mvArray.map(function (res, index) {
+          return React.createElement(
+            'li',
+            { className: 'mdList', key: 'thumb' + index },
+            React.createElement(
+              'a',
+              { onClick: _this.thumbClick.bind(_this, res.ID), href: '?type=single&paged=' + res.ID },
+              React.createElement(
+                'p',
+                { className: 'mdSlideCat' },
+                res.category
+              ),
+              React.createElement(
+                'p',
+                { className: 'mdSlideTtl' },
+                React.createElement(
+                  'span',
+                  null,
+                  res.title
+                )
+              ),
+              React.createElement(
+                'p',
+                { className: 'mdSlideImg' },
+                React.createElement('img', { src: res.thumb })
+              )
+            )
+          );
+        });
+
         return React.createElement(
-          'li',
-          { key: index },
-          React.createElement('a', { href: '#', className: 'icon-icon01' })
-        );
-      });
-
-      return React.createElement(
-        'div',
-        { key: this.mainvisualID, className: 'MdSlideContianer' },
-        React.createElement(
-          'ul',
-          { className: 'mdSlideListImg' },
-          imgs
-        ),
-        React.createElement(
-          'ul',
-          { className: 'mdSlideListPager' },
-          pager
-        ),
-        React.createElement(
-          'ul',
-          { className: 'mdSlideListBtn' },
+          'div',
+          { className: 'MdSlideContianerSP' },
           React.createElement(
-            'li',
-            { className: 'mdSlideListBtnBack' },
-            React.createElement('a', { href: '#', className: 'icon-icon02' })
-          ),
-          React.createElement(
-            'li',
-            { className: 'mdSlideListBtnNext' },
-            React.createElement('a', { href: '#', className: 'icon-icon04' })
+            'ul',
+            { className: 'mdSlideListImg' },
+            imgs
           )
-        )
-      );
+        );
+      }
     }
   }
 });
@@ -1969,7 +2187,7 @@ var Single = React.createClass({
     this.changeMeta();
 
     SingleFnc.init();
-    CntsThumb.init();
+    CntsThumb.init(Store.Layout);
 
     $('.MdCntsThumb01 a').on('click', function (e) {
       e.preventDefault();
@@ -2015,7 +2233,7 @@ var Single = React.createClass({
         React.createElement(
           'div',
           { className: 'MdMvSingle01' },
-          React.createElement('img', { src: this.state.data.visual })
+          React.createElement('img', { src: this.state.data.visual, alt: this.state.data.title })
         ),
         React.createElement(
           'section',
@@ -2085,6 +2303,14 @@ var Dispatcher = require('flux').Dispatcher;
 
 var Store = {};
 var domain = 'http://indoor-living.sakuraweb.com/wp/';
+
+//PC or SP判定
+
+if ($('body').hasClass('LySP')) {
+  Store.Layout = 'SP';
+} else {
+  Store.Layout = 'PC';
+}
 
 /*===========================
 

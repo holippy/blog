@@ -16,8 +16,12 @@ app.single = {
     this.imgCount = 0;
     this.imgLoadFlag = false;
 
+    if( this.mainImgs.length > 0 ){
+      this.imgLoading();
+    }else{
+      this.setEvnt();
+    }
 
-    this.imgLoading();
   },
   headerControl(scrollTop){
 
@@ -33,13 +37,7 @@ app.single = {
 
           if( this.imgCount === this.mainImgsLength ){
 
-            this.cntsBodyHeight = this.cntsBody.height();
-            this.mvTop = this.mv.height() - 40;
 
-            this.hdg.each(( i, elm )=>{
-              $(elm).attr('id', 'hdg' + ( i + 1) );
-              this.hdgPos.push($(elm).position().top - 200);
-            });
 
             this.setEvnt();
           }
@@ -50,6 +48,15 @@ app.single = {
 
   },
   setEvnt(){
+
+    this.cntsBodyHeight = this.cntsBody.height();
+    this.mvTop = this.mv.height() - 40;
+
+    this.hdg.each(( i, elm )=>{
+      $(elm).attr('id', 'hdg' + ( i + 1) );
+      this.hdgPos.push($(elm).position().top - 200);
+    });
+
     this.asideLink.each(( i, elm )=>{
 
       $(elm).on('click', (e)=>{

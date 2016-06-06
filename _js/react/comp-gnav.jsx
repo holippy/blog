@@ -48,14 +48,24 @@ var Gnav = React.createClass({
   },
   componentDidUpdate(){
 
-    if( $('.LyHead.FncStart').length === 0 ){
-      console.log('headerinit');
-      Header.init();
+    if( Store.Layout == 'PC' ){
+      if( $('.LyHead.FncStart').length === 0 ){
+        console.log('headerinit');
+        Header.init( Store.Layout );
+      }
+
+      $('#Gnav li').on('click', (e)=>{
+        e.preventDefault();
+      });
     }
 
-    $('#Gnav li').on('click', (e)=>{
-      e.preventDefault();
-    });
+    if( Store.Layout == 'SP' ){
+      Header.init( Store.Layout );
+      $('.LyMenu .mdListCat li').on('click', (e)=>{
+        e.preventDefault();
+      });
+    }
+
   },
   actionCreator( comps ){
     Store.addSubscribe({
@@ -101,25 +111,55 @@ var Gnav = React.createClass({
     if( Store.gnav.data === null ){
       return false;
     }else{
+      if( Store.Layout == 'SP' ){
 
-      let lists = this.state.gnav.map((res)=>{
-      
-      return <li key={res.ID}><span className="icon-icon05"></span><a onClick={this.navClick.bind(this, res.slug)} href={'?type=category&paged=' + res.slug}>{res.catName}</a></li>;
+        let lists = this.state.gnav.map((res)=>{
+        
+        return <li key={res.ID}><a onClick={this.navClick.bind(this, res.slug)} href={'?type=category&paged=' + res.slug}>{res.catName}<span className="icon-icon04"></span></a></li>;
 
-      });
+        });
+        return (
+          <div>
+            <div className="LyHead">
+              <header className="MdHead">
+                <p className="mdLogo"><a href="#" onClick={this.backTop}>Indoor Living</a></p>
+                <p id="BtnMenu" className="mdBtnMenu"><a href="#"></a></p>
+              </header>
+            </div>
+            <div className="LyMenu">
+              <div className="MdMenu">
+                <p id="BtnMenuClose" className="mdBtnClose"><a href="#">CLOSE</a></p>
+                <p className="MdHdgCmn01"><span>Categories</span></p>
+                <ul className="mdListCat">{lists}</ul>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      if( Store.Layout == 'PC' ){
+
+        let lists = this.state.gnav.map((res)=>{
+        
+        return <li key={res.ID}><span className="icon-icon05"></span><a onClick={this.navClick.bind(this, res.slug)} href={'?type=category&paged=' + res.slug}>{res.catName}</a></li>;
+
+        });
+
+        return (
+          <div className="LyHead">
+            <header className="MdHead">
+              <p className="mdLogo"><a href="#" onClick={this.backTop}>Indoor Living</a></p>
+              <nav id="Gnav" className="MdGNV"><ul>{lists}</ul></nav>
+              <form method="post" action="#" className="MdSearch">
+                <input type="text" />
+                <button type="submit" className="icon-icon_search"></button>
+              </form>
+            </header>
+          </div>
+        );
+      }
       
-      return (
-        <div className="LyHead">
-          <header className="MdHead">
-            <p className="mdLogo"><a href="#" onClick={this.backTop}>Indoor Living</a></p>
-            <nav id="Gnav" className="MdGNV"><ul>{lists}</ul></nav>
-            <form method="post" action="#" className="MdSearch">
-              <input type="text" />
-              <button type="submit" className="icon-icon_search"></button>
-            </form>
-          </header>
-        </div>
-      );
+
     }
   }
 });

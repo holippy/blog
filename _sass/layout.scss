@@ -12,6 +12,7 @@
 $color-main: #ff533f;
 $color-default: #000;
 $color-gray: #666;
+$color-border-gray: #CCC;
 $color-bg-gray: #f4f4f4;
 $path-svg:"/assets/svg/";
 
@@ -23,9 +24,6 @@ $path-svg:"/assets/svg/";
 
 @import "mixins/_font";
 
-@include WebFont;
-@include IconFont;
-
 /*=====================================
 
 共通スタイル
@@ -33,8 +31,6 @@ $path-svg:"/assets/svg/";
 =====================================*/
 
 @import "mixins/_setting";
-
-@include Setting;
 
 /*=====================================
 
@@ -52,9 +48,10 @@ $path-svg:"/assets/svg/";
 
 @import "mixins/_common";
 
-@include Layout;
-@include MdPager01;
-@include MdLoading;
+.LySP{
+  @import "mixins/_common_sp";
+}
+
 
 /*=====================================
 
@@ -63,9 +60,12 @@ $path-svg:"/assets/svg/";
 =====================================*/
 
 @import "mixins/_top";
+@import "mixins/_slick";
 
-@include MdSlideContianer;
-@include MdCntsThumb01;
+.LySP{
+  @import "mixins/_top_sp";
+}
+
 
 /*=====================================
 
@@ -75,11 +75,9 @@ $path-svg:"/assets/svg/";
 
 @import "mixins/_single";
 
-@include MdMvSingle01;
-@include MdMainSingle01;
-@include MdTitleSingle01;
-@include MdCmsStyle;
-@include MdOutline;
+.LySP{
+  @import "mixins/_single_sp";
+}
 
 /*=====================================
 
@@ -89,4 +87,6 @@ $path-svg:"/assets/svg/";
 
 @import "mixins/_catList";
 
-@include MdCatImg01;
+.LySP{
+  @import "mixins/_catList_sp";
+}

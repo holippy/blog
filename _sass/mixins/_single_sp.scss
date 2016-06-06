@@ -10,15 +10,18 @@ MdMvSingle01
 =====================================*/
 
 .MdMvSingle01{
-  margin: 20px 0 40px 0;
-  background-color: $color-bg-gray;
+  margin-top: 60px;
+  margin-bottom: 30px;
+  //padding-top: 60px;
+  width: 100%;
+  height: 150px;
   text-align: center;
-  height: 450px;
-  overflow: hidden;
 
   img{
-    margin-top: -110px;
-    vertical-align: bottom;
+    margin-top: -50px;
+    width: 100%;
+
+
   }
 }
 
@@ -29,27 +32,25 @@ MdMainSingle01
 
 .MdMainSingle01{
   padding-bottom: 20px;
-  border-bottom: solid 3px $color-bg-gray;
-  @include clearfix;
+
 
   .mdContainer{
     @include clearfix;
     margin: 0 auto;
-    padding: 0 20px;
-    width: 960px;
+    padding: 0 15px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .mdMain{
-    float: right;
-    width: 700px;
+    float: none;
+    width: 100%;
   }
 
   .mdAside{
-    float: left;
-    width: 210px;
+    display: none;
   }
 }
-
 /*=====================================
 MdCntsData01
 =====================================*/
@@ -58,24 +59,15 @@ MdCntsData01
   margin-bottom: 10px;
 
   .mdDate{
-    margin-right: 10px;
-    display: inline-block;
-    color: $color-gray;
+    font-size: 12px;
+    letter-spacing: 2px;
   }
 
   .mdCat{
-    @include border-top-radius(5px);
-    @include border-bottom-radius(5px);
-
-    padding: 2px 5px;
-    display: inline-block;
-    background-color: $color-main;
-
-    a{
-      color: #FFF;
-    }
+    font-size: 11px;
   }
 }
+
 
 /*=====================================
 MdTtlSingle01
@@ -85,16 +77,16 @@ MdTtlSingle01
   margin-bottom: 30px;
   padding-bottom: 10px;
   border-bottom: solid 3px $color-main;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: bold;
 }
 
 
 .mdCms{
   h2{
-    margin-top: 50px;
-    margin-bottom: 30px;
-    font-size: 18px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    font-size: 15px;
     font-weight: bold;
   }
 
@@ -102,6 +94,7 @@ MdTtlSingle01
     margin-bottom: 20px;
     line-height: 2;
     letter-spacing: 2px;
+    font-size: 13px;
   }
 
   img{
@@ -117,7 +110,7 @@ MdTtlSingle01
   blockquote{
     margin-bottom: 20px;
     padding: 30px 20px 1px 20px;
-    background: $color-bg-gray;
+    background: #efefef;
     font-style: italic;
     border-radius: 3px;
     position: relative;
@@ -132,12 +125,6 @@ MdTtlSingle01
     }
   }
 
-  .mdBox01{
-    margin-bottom: 20px;
-    padding: 20px 20px 1px 20px;
-    background: $color-bg-gray;
-  }
-
   ul{
     margin-bottom: 20px;
     li{
@@ -145,6 +132,7 @@ MdTtlSingle01
       margin-bottom: 10px;
       position: relative;
       padding-left: 15px;
+      font-size: 12px;
       &:last-child{
         margin-bottom: 0;
       }
@@ -174,26 +162,29 @@ MdTtlSingle01
 
   .mdCaption{
     display: block;
-    font-size: 12px;
+    font-size: 11px;
   }
 
   .md2Clm{
     @include clearfix;
     width: 100%;
-    padding-bottom: 30px;
-    border-bottom: dotted 2px $color-border-gray;
+    border-bottom: none;
+    padding-bottom: 0;
 
     .md2Clm01{
-      float: left;
-      width: 200px;
+      float: none;
+      width: 100%;
+      text-align: center;
+      background: $color-bg-gray;
       img{
-        width: 200px;
+        width: 150px;
+        height: 150px;
         height: auto;
       }
     }
     .md2Clm02{
-      float: right;
-      width: 480px;
+      float: none;
+      width: 100%;
     }
   }
 
@@ -203,6 +194,7 @@ MdTtlSingle01
     border-bottom: solid 2px $color-main;
     border-left: solid 2px $color-main;
     width: 100%;
+    font-size: 11px;
 
     ul{
       margin-bottom: 0;
@@ -211,7 +203,7 @@ MdTtlSingle01
     th{
       padding: 10px;
       border-bottom: solid 2px $color-main;
-      border-left: solid 2px $color-main;
+      border-left: solid 1px $color-main;
       width: 30%;
       font-weight: bold;
       text-align: left;
@@ -224,6 +216,22 @@ MdTtlSingle01
       width: 70%;
     }
   }
+
+  .mdIframe {
+    position: relative;
+    padding-bottom: 56.25%;
+    padding-top: 30px;
+    height: 0;
+    overflow: hidden;
+  }
+
+  .mdIframe iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
 }
 
 /*=====================================
@@ -231,9 +239,7 @@ MdTtlOutline
 =====================================*/
 
 .MdTtlOutline{
-  margin-bottom: 20px;
-  font-size: 18px;
-  font-weight: bold;
+
 }
 
 /*=====================================
@@ -241,20 +247,5 @@ MdListAnc01
 =====================================*/
 
 .MdListAnc01{
-  li{
-    margin-bottom: 15px;
-    padding-left: 15px;
-    position: relative;
-    line-height: 1.6;
-    color: $color-main;
-    line-height: 1.4;
-    font-style: italic;
 
-    .icon-icon04{
-      @include position(absolute, 0.3em null null 0);
-    }
-  }
-  a{
-    color: $color-default;
-  }
 }

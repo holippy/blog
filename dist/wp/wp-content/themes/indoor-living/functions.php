@@ -3,6 +3,8 @@
 //アイキャッチを有効化
 add_theme_support( 'post-thumbnails' );
 
+add_image_size( 'SPMain', 1000, 450 , true);
+
 //総ページ数を返す
 function max_show_page_number() {
   global $wp_query;
@@ -18,12 +20,12 @@ function change_posts_per_page($query) {
  }
  
   if ( $query->is_home() ) {
-     $query->set( 'posts_per_page', '2' );
+     $query->set( 'posts_per_page', '8' );
      return;
  }
 
  if ( $query->is_category() ) {
-     $query->set( 'posts_per_page', '2' );
+     $query->set( 'posts_per_page', '8' );
      return;
  }
  

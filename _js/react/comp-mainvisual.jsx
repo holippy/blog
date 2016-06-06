@@ -90,13 +90,26 @@ var Mainvisual = React.createClass({
 
   componentDidUpdate(){
     console.log('MVcomponentDidUpdate');
-    Slider.unmount();
-    Slider.init();
-    $('.mdSlideListImg li').each((i, elm)=>{
-      $(elm).find('a').eq(0).on('click', (e)=>{
-        e.preventDefault();
+
+    if( Store.Layout == 'PC' ){
+      Slider.unmount();
+      Slider.init();
+      $('.mdSlideListImg li').each((i, elm)=>{
+        $(elm).find('a').eq(0).on('click', (e)=>{
+          e.preventDefault();
+        });
       });
-    });
+    }
+
+    if( Store.Layout == 'SP' ){
+      $('.mdSlideListImg').slick({
+        infinite: true,
+        arrows: false,
+        dots: true,
+        slidesToShow: 1,
+        slidesToScroll: 1
+      });
+    }
   },
   componentWillUnmount(){
     console.log('unmount');
@@ -112,15 +125,25 @@ var Mainvisual = React.createClass({
     
   },
   componentDidMount(){
-    console.log('MVcomponentDidMount');
-    console.log('MVcomponentDidUpdate');
-    Slider.unmount();
-    Slider.init();
-    $('.mdSlideListImg li').each((i, elm)=>{
-      $(elm).find('a').eq(0).on('click', (e)=>{
-        e.preventDefault();
+
+    if( Store.Layout == 'PC' ){
+      console.log('MVcomponentDidMount');
+      console.log('MVcomponentDidUpdate');
+      Slider.unmount();
+      Slider.init();
+      $('.mdSlideListImg li').each((i, elm)=>{
+        $(elm).find('a').eq(0).on('click', (e)=>{
+          e.preventDefault();
+        });
       });
-    });
+    }
+    if( Store.Layout == 'SP' ){
+      $('.mdSlideListImg li').each((i, elm)=>{
+        $(elm).find('a').eq(0).on('click', (e)=>{
+          e.preventDefault();
+        });
+      });
+    }
   },
   thumbClick( ID ){
     console.log(ID);
@@ -131,47 +154,81 @@ var Mainvisual = React.createClass({
     if(this.state.mainvisual.length === 0){
       return false;
     }else{
-      Slider.unmount();
-      var mvArray = [];
-      for (var i = 0; i < 3; i++) {
-        for (var j = 0; j < this.state.mainvisual.length; j++) {
-          mvArray.push(this.state.mainvisual[j]);
+
+
+
+      if( Store.Layout == 'PC' ){
+        Slider.unmount();
+
+        var mvArray = [];
+        for (var i = 0; i < 3; i++) {
+          for (var j = 0; j < this.state.mainvisual.length; j++) {
+            mvArray.push(this.state.mainvisual[j]);
+          }
         }
+
+        var imgs = mvArray.map((res, index)=>{
+          return (
+            <li key={'thumb'+index}>
+              <a onClick={this.thumbClick.bind(this, res.ID)} href={'?type=single&paged=' + res.ID}>
+                <p className="mdSlideCat">{res.category}</p>
+                <p className="mdSlideTtl"><span>{res.title}</span></p>
+                <p className="mdSlideImg"><img src={res.thumb} /></p>
+              </a>
+            </li>
+            );
+        });
+
+        var pager = this.state.mainvisual.map((res, index)=>{
+          return (
+            <li key={index}><a href="#" className="icon-icon01"></a></li>
+            );
+        });
+
+        return (
+          <div key={this.mainvisualID} className="MdSlideContianer">
+            <ul className="mdSlideListImg">
+            {imgs}
+            </ul>
+            <ul className="mdSlideListPager">
+            {pager}
+            </ul>
+            <ul className="mdSlideListBtn">
+              <li className="mdSlideListBtnBack"><a href="#" className="icon-icon02"></a></li>
+              <li className="mdSlideListBtnNext"><a href="#" className="icon-icon04"></a></li>
+            </ul>
+          </div>
+        );
       }
-      var imgs = mvArray.map((res, index)=>{
+
+      if( Store.Layout == 'SP' ){
+
+        var mvArray = [];
+        for (var i = 0; i < 1; i++) {
+          for (var j = 0; j < this.state.mainvisual.length; j++) {
+            mvArray.push(this.state.mainvisual[j]);
+          }
+        }
+
+        var imgs = mvArray.map((res, index)=>{
+          return (
+            <li className="mdList" key={'thumb'+index}>
+              <a onClick={this.thumbClick.bind(this, res.ID)} href={'?type=single&paged=' + res.ID}>
+                <p className="mdSlideCat">{res.category}</p>
+                <p className="mdSlideTtl"><span>{res.title}</span></p>
+                <p className="mdSlideImg"><img src={res.thumb} /></p>
+              </a>
+            </li>
+            );
+        });
+
         return (
-          <li key={'thumb'+index}>
-            <a onClick={this.thumbClick.bind(this, res.ID)} href={res.ID}>
-              <p className="mdSlideCat">{res.category}</p>
-              <p className="mdSlideTtl"><span>{res.title}</span></p>
-              <p className="mdSlideImg"><img src={res.thumb} /></p>
-            </a>
-          </li>
-          );
-      });
+          <div className="MdSlideContianerSP">
+            <ul className="mdSlideListImg">{imgs}</ul>
+          </div>
+        );
+      }
 
-      var pager = this.state.mainvisual.map((res, index)=>{
-        return (
-          <li key={index}><a href="#" className="icon-icon01"></a></li>
-          );
-      });
-
-      return (
-        <div key={this.mainvisualID} className="MdSlideContianer">
-          <ul className="mdSlideListImg">
-          {imgs}
-          </ul>
-          <ul className="mdSlideListPager">
-          {pager}
-          </ul>
-          <ul className="mdSlideListBtn">
-            <li className="mdSlideListBtnBack"><a href="#" className="icon-icon02"></a></li>
-            <li className="mdSlideListBtnNext"><a href="#" className="icon-icon04"></a></li>
-          </ul>
-        </div>
-      );
-
-      
     }
   }
 });

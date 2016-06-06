@@ -130,7 +130,8 @@ var CategolyList = React.createClass({
 
     this.first = false;
 
-    CntsThumb.init();
+    CntsThumb.init(Store.Layout);
+
     $('.MdCntsThumb01 a').on('click', (e)=>{
       e.preventDefault();
     });

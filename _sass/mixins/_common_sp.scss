@@ -1,0 +1,304 @@
+/*=====================================
+
+Layout
+
+=====================================*/
+
+/*===========================
+LyHead
+===========================*/
+
+.LyHead{
+  @include position(fixed, 0 0 null null);
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-bottom: none;
+  width: 100%;
+  height: 20px;
+  background: $color-main;
+  z-index: 100;
+  //opacity: 0;
+
+
+}
+
+/*===========================
+MdHead
+===========================*/
+
+.MdHead{
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+  .mdLogo{
+    @include hide-text;
+    margin: 0 auto;
+    width: 120px;
+    height: 20px;
+    background: url( "/assets/svg/logo_sp.svg" ) no-repeat;
+    background-size: 100% 100%;
+    a{
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .mdBtnMenu{
+    @include position(absolute, 0 20px null null);
+
+
+    a{
+      display: block;
+      width: 20px;
+      height: 20px;
+      background: url( "/assets/svg/icon_menu.svg" ) no-repeat;
+      background-size: 100% 100%;
+    }
+  }
+}
+
+/*===========================
+LyMenu
+===========================*/
+
+.LyMenu{
+  @include position(fixed, 0 0 null null);
+  padding: 20px;
+  display: none;
+  width: 100%;
+  height: 100%;
+  background: $color-bg-gray;
+  z-index: 200;
+  box-sizing: border-box;
+  overflow: auto;
+  &.ExView{
+    display: block;
+  }
+
+  .MdMenu{
+    position: absolute;
+    left: 0;
+    width: 100%;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+
+  .mdBtnClose{
+    a{
+      @include hide-text;
+      @include position(absolute, 0 20px null null);
+      background: url(/assets/svg/icon_menu_close.svg) no-repeat;
+      display: block;
+      background-size: 100% 100%;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .mdListCat{
+    margin-bottom: 30px;
+    border-bottom: solid 1px #FFF;
+    font-size: 14px;
+
+    li{
+      a{
+        border-top: solid 1px #FFF;
+        padding: 20px;
+        display: block;
+        text-align: center;
+        position: relative;
+        font-weight: bold;
+
+        .icon-icon04{
+          @include position(absolute, 20px 0 null null);
+          display: block;
+          width: 20px;
+          height: 20px;
+          background: $color-main;
+          border-radius: 50%;
+          color: #FFF;
+          font-size: 12px;
+          &:before{
+             @include position(absolute, 4px 4px null null);
+          }
+        }
+
+      }
+    }
+  }
+
+  .mdListTag{
+    li{
+      margin: 0 10px 10px 0;
+      display: inline-block;
+      a{
+        padding: 2px 5px;
+        display: inline-block;
+        border: solid 2px $color-main;
+        border-radius: 5px;
+        font-size: 11px;
+      }
+    }
+  }
+}
+
+
+/*===========================
+MdGNV
+===========================*/
+
+
+
+/*===========================
+MdSearch
+===========================*/
+
+
+/*===========================
+LyMain
+===========================*/
+
+
+
+
+/*===========================
+LyCntsList
+===========================*/
+
+.LyCntsList{
+  padding: 0 15px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/*===========================
+LyFtr
+===========================*/
+
+.LyFtr{
+  margin-top: 20px;
+  padding: 20px 0 20px 0;
+  font-size: 11px;
+}
+
+
+/*=====================================
+
+loading
+
+=====================================*/
+
+/*===========================
+MdLoading
+===========================*/
+
+
+
+/*=====================================
+
+heading
+
+=====================================*/
+
+/*===========================
+MdHdgCmn01
+===========================*/
+
+.MdHdgCmn01{
+  margin: 20px 0 20px;
+  font-size: 16px;
+}
+
+/*=====================================
+
+index layout
+
+=====================================*/
+
+/*===========================
+MdCntsThumb01
+===========================*/
+
+.MdCntsThumb01{
+  margin-right: 4%;
+  width: 48%;
+  border: solid 3px $color-main;
+  box-sizing: border-box;
+
+  &:nth-of-type(2n){
+    margin-right: 0;
+  }
+
+  .mdCntsThumb01Img{
+    border-bottom: solid 3px $color-main;
+  }
+
+  .mdCntsThumb01InfoClm{
+    border-bottom: solid 3px $color-main;
+    .mdCntsThumb01Clm01{
+      border-right: solid 3px $color-main;
+    }
+
+    .mdCntsThumb01Clm02{
+      border-right: none;
+    }
+  }
+
+
+
+  .mdCntsThumb01Cat{
+    width: 100%;
+    font-size: 12px;
+  }
+
+  .mdCntsThumb01Date{
+    font-size: 11px;
+  }
+
+  .mdCntsThumb01Ttl{
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+
+  .mdCntsThumb01Txt{
+    font-size: 12px;
+  }
+
+  .mdCntsThumb01Icn{
+    bottom: 5px;
+  }
+}
+
+/*===========================
+MdPager01
+===========================*/
+
+.MdPager01{
+  margin-bottom: 0;
+  padding-bottom: 0;
+
+  .mdBtnNext{
+    a{
+      @include hide-text;
+      display: block;
+      position: relative;
+      
+      &:before{
+        @include position(absolute, 5px 6px null null);
+      }
+    }
+  }
+
+  .mdBtnBack{
+    a{
+      @include hide-text;
+      display: block;
+      position: relative;
+      
+      &:before{
+        @include position(absolute, 5px 4px null null);
+      }
+    }
+  }
+}

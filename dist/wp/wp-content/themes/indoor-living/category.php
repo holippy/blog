@@ -31,7 +31,10 @@ while(have_posts()): the_post(); ?>
 
   $imgPath = '';
 
-  if (has_post_thumbnail() )  {
+  if( get_field('thumbImg') ){
+    $imgPath = get_field('thumbImg');
+
+  }else if ( has_post_thumbnail() ) {
 
     //アイキャッチ IDを取得して画像の「URL,横幅,高さ」を取得。
     //画像サイズは medium で出力しています。

@@ -112,7 +112,9 @@ var ArticleList = React.createClass({
 
     this.loadFlag = false;
 
-    CntsThumb.init();
+    //高さ揃え
+    CntsThumb.init(Store.Layout);
+
     $('.MdCntsThumb01 a').on('click', (e)=>{
       e.preventDefault();
     });

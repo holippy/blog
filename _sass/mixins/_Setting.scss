@@ -4,27 +4,23 @@ setting
 
 =====================================*/
 
-@mixin Setting {
+html {
+  overflow-y: scroll;
+}
 
-  html {
-    overflow-y: scroll;
+body{
+  font-family: 'noto-regular';
+  font-size: 14px;
+  line-height: 1.5;
+  color: $color-default;
+
+}
+
+a{
+  color: $color-main;
+  text-decoration: none;
+
+  &:hover{
+    text-decoration: underline;
   }
-
-  body{
-    font-family: 'noto-regular';
-    font-size: 14px;
-    line-height: 1.5;
-    color: $color-default;
-
-  }
-
-  a{
-    color: $color-main;
-    text-decoration: none;
-
-    &:hover{
-      text-decoration: underline;
-    }
-  }
-
 }

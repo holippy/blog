@@ -99,7 +99,7 @@ var Single = React.createClass({
     this.changeMeta();
 
     SingleFnc.init();
-    CntsThumb.init();
+    CntsThumb.init(Store.Layout);
 
     $('.MdCntsThumb01 a').on('click', (e)=>{
       e.preventDefault();
@@ -137,7 +137,7 @@ var Single = React.createClass({
 
       return(
         <div key={this.props.articleID}>
-        <div className="MdMvSingle01"><img src={this.state.data.visual} /></div>
+        <div className="MdMvSingle01"><img src={this.state.data.visual} alt={this.state.data.title} /></div>
         <section className="MdMainSingle01">
           <div className="mdContainer">
             <main className="mdMain">

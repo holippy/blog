@@ -4,168 +4,178 @@ Layout
 
 =====================================*/
 
-@mixin Layout {
+/*===========================
+LyHead
+===========================*/
 
-  /*===========================
-  LyHead
-  ===========================*/
+.LyHead{
+  padding-top: 20px;
+  border-bottom: solid 5px $color-main;
+  position: relative;
+  width: 100%;
+  height: 130px;
+  background: #FFF;
+  //opacity: 0;
 
-  .LyHead{
-    padding-top: 20px;
-    border-bottom: solid 5px $color-main;
-    position: relative;
-    width: 100%;
-    height: 130px;
-    background: #FFF;
-    opacity: 0;
-
-    &.ExHidden{
-      display: none;
-    }
-
-    &.ExFixed{
-      height: 40px;
-      position: fixed;
-      top: 0;
-      z-index: 10;
-    }
-  }
-
-  .MdHead{
-    margin: 0 auto;
-    width: 1000px;
-    position: relative;
-    .mdLogo{
-      @include hide-text;
-      margin-top: 0;
-      margin-right: auto;
-      margin-bottom: 20px;
-      margin-left: auto;
-      width: 90px;
-      height: 70px;
-      background: url( "/assets/svg/logo.svg" ) no-repeat;
-      background-size: 100% 100%;
-      a{
-        display: block;
-        width: 100%;
-        height: 100%;
-      }
-    }
-  }
-
-    &.ExFixed{
-      .mdLogo{
-        @include animation-name(logo01);
-        @include animation-duration(0.2s);
-        @include animation-timing-function(ease);
-        @include animation-iteration-count(1);
-        @include animation-fill-mode(forwards);
-        @include position(absolute, 0 null null 0);
-      }
-    }
-
-  .MdGNV{
-    padding-bottom: 20px;
-    text-align: center;
-    li{
-      display: inline-block;
-      position: relative;
-      margin-right: 10px;
-      padding-left: 20px;
-      line-height: 1;
-      font-family: "noto-bold";
-
-      &:last-child{
-        margin-right: 0;
-      }
-
-      span:before{
-        @include position(absolute, 2px null null 5px);
-        color: $color-main;
-        font-size: 15px;
-      }
-    }
-  }
-
-  .MdSearch{
+  &.ExHidden{
     display: none;
-    @include position(absolute, null 0 20px null);
+  }
 
-    input {
-      @include border-top-radius(3px);
-      @include border-bottom-radius(3px);
-      border: none;
-      padding: 2px 30px 2px 5px;
-      background: $color-main;
-      color: #FFF;
-      width: 200px;
-      font-size: 14px;
+  &.ExFixed{
+    height: 40px;
+    position: fixed;
+    top: 0;
+    z-index: 10;
+  }
+}
+
+/*===========================
+MdHead
+===========================*/
+
+.MdHead{
+  margin: 0 auto;
+  width: 1000px;
+  position: relative;
+  .mdLogo{
+    @include hide-text;
+    margin-top: 0;
+    margin-right: auto;
+    margin-bottom: 20px;
+    margin-left: auto;
+    width: 90px;
+    height: 70px;
+    background: url( "/assets/svg/logo.svg" ) no-repeat;
+    background-size: 100% 100%;
+    a{
+      display: block;
+      width: 100%;
+      height: 100%;
     }
+  }
+}
 
-    button{
-      @include position(absolute, 0px 0px null null);
-      border: none;
-      background: none;
-      color: #FFF;
-      font-size: 22px;
-      width: 28px;
-      height: 20px;
-    }
-
-    .icon-icon_search{
-      &:before{
-        @include position(absolute, 0px 0px null null);
-      }
+  &.ExFixed{
+    .mdLogo{
+      @include animation-name(logo01);
+      @include animation-duration(0.2s);
+      @include animation-timing-function(ease);
+      @include animation-iteration-count(1);
+      @include animation-fill-mode(forwards);
+      @include position(absolute, 0 null null 0);
     }
   }
 
-  /*===========================
-  LyMain
-  ===========================*/
+/*===========================
+MdGNV
+===========================*/
 
-  .LyMain{
-    &.ExHidden{
-      display: none;
+.MdGNV{
+  padding-bottom: 20px;
+  text-align: center;
+  li{
+    display: inline-block;
+    position: relative;
+    margin-right: 10px;
+    padding-left: 20px;
+    line-height: 1;
+    font-family: "noto-bold";
+
+    &:last-child{
+      margin-right: 0;
+    }
+
+    span:before{
+      @include position(absolute, 2px null null 5px);
+      color: $color-main;
+      font-size: 15px;
     }
   }
+}
 
+/*===========================
+MdSearch
+===========================*/
 
-  /*===========================
-  LyCntsList
-  ===========================*/
+.MdSearch{
+  display: none;
+  @include position(absolute, null 0 20px null);
 
-  .LyCntsList{
-    @include clearfix;
-    margin: 26px auto 0 auto;
-    width: 1000px;
-
-    &.ExHidden{
-      display: none;
-    }
-  }
-
-  /*===========================
-  LyFtr
-  ===========================*/
-
-  .LyFtr{
-    margin-top: 20px;
-    padding: 50px 0 80px 0;
-    width: 100%;
+  input {
+    @include border-top-radius(3px);
+    @include border-bottom-radius(3px);
+    border: none;
+    padding: 2px 30px 2px 5px;
     background: $color-main;
-    box-sizing: border-box;
-    opacity: 0;
+    color: #FFF;
+    width: 200px;
+    font-size: 14px;
+  }
 
-    .mdFtrCopyright{
-      color: #FFF;
-      text-align: center;
+  button{
+    @include position(absolute, 0px 0px null null);
+    border: none;
+    background: none;
+    color: #FFF;
+    font-size: 22px;
+    width: 28px;
+    height: 20px;
+  }
+
+  .icon-icon_search{
+    &:before{
+      @include position(absolute, 0px 0px null null);
     }
   }
+}
+
+/*===========================
+LyMain
+===========================*/
+
+.LyMain{
+  &.ExHidden{
+    display: none;
+  }
+}
+
+
+/*===========================
+LyCntsList
+===========================*/
+
+.LyCntsList{
+  @include clearfix;
+  margin: 26px auto 0 auto;
+  width: 1000px;
 
   &.ExHidden{
     display: none;
   }
 }
+
+/*===========================
+LyFtr
+===========================*/
+
+.LyFtr{
+  margin-top: 20px;
+  padding: 50px 0 80px 0;
+  width: 100%;
+  background: $color-main;
+  box-sizing: border-box;
+  //opacity: 0;
+
+  .mdFtrCopyright{
+    color: #FFF;
+    text-align: center;
+  }
+}
+
+&.ExHidden{
+  display: none;
+}
+
 
 /*=====================================
 
@@ -173,89 +183,89 @@ loading
 
 =====================================*/
 
-@mixin MdLoading{
-  #MdLoading{
+/*===========================
+MdLoading
+===========================*/
+
+#MdLoading{
+  width: 100%;
+  height: 100%;
+  div{
+    @include position(fixed, 0 null 0 null);
     width: 100%;
     height: 100%;
-    div{
-      @include position(fixed, 0 null 0 null);
-      width: 100%;
-      height: 100%;
-      background-color: rgba(255, 255, 255, 1);
-      z-index: 100;
+    background-color: rgba(255, 255, 255, 1);
+    z-index: 1000;
+  }
+
+  ul{
+    @include position(absolute, 50% 50% null null);
+    margin: -20px;
+    width: 40px;
+    height: 40px;
+  }
+
+  li{
+    @include border-top-radius(50%);
+    @include border-bottom-radius(50%);
+    @include position(absolute, 0 null 0 null);
+    display: table;
+    border: solid 3px $color-main;
+    color: $color-main;
+    width: 40px;
+    height: 40px;
+    background-color: $color-main;
+    line-height: 0;
+    font-size: 16px;
+    font-weight: bold;
+    box-sizing: border-box;
+    text-align: center;
+    opacity: 0;
+
+    &:nth-child(1){
+      @include animation-name(loading);
+      @include animation-duration(1s);
+      @include animation-timing-function(linear);
+      @include animation-iteration-count(infinite);
+      @include animation-fill-mode(forwards);
+
     }
 
-    ul{
-      @include position(absolute, 50% 50% null null);
-      margin: -20px;
-      width: 40px;
-      height: 40px;
+    &:nth-child(2){
+      @include animation-name(loading);
+      @include animation-duration(1s);
+      @include animation-timing-function(linear);
+      @include animation-iteration-count(infinite);
+      @include animation-fill-mode(forwards);
+      @include animation-delay(0.5s);
     }
 
-    li{
-      @include border-top-radius(50%);
-      @include border-bottom-radius(50%);
-      @include position(absolute, 0 null 0 null);
-      display: table;
-      border: solid 3px $color-main;
-      color: $color-main;
-      width: 40px;
-      height: 40px;
-      background-color: $color-main;
-      line-height: 0;
-      font-size: 16px;
-      font-weight: bold;
-      box-sizing: border-box;
-      text-align: center;
-      opacity: 0;
-
-      &:nth-child(1){
-        @include animation-name(loading);
-        @include animation-duration(1s);
-        @include animation-timing-function(linear);
-        @include animation-iteration-count(infinite);
-        @include animation-fill-mode(forwards);
-
-      }
-
-      &:nth-child(2){
-        @include animation-name(loading);
-        @include animation-duration(1s);
-        @include animation-timing-function(linear);
-        @include animation-iteration-count(infinite);
-        @include animation-fill-mode(forwards);
-        @include animation-delay(0.5s);
-      }
-
-      &:nth-child(3){
-        @include animation-name(loading);
-        @include animation-duration(1s);
-        @include animation-timing-function(linear);
-        @include animation-iteration-count(infinite);
-        @include animation-fill-mode(forwards);
-        @include animation-delay(1s);
-      }
-
-      &:nth-child(4){
-        @include animation-name(loading);
-        @include animation-duration(1s);
-        @include animation-timing-function(linear);
-        @include animation-iteration-count(infinite);
-        @include animation-fill-mode(forwards);
-        @include animation-delay(1.5s);
-      }
-
-      &:nth-child(5){
-        @include animation-name(loading);
-        @include animation-duration(1s);
-        @include animation-timing-function(linear);
-        @include animation-iteration-count(infinite);
-        @include animation-fill-mode(forwards);
-        @include animation-delay(2s);
-      }
+    &:nth-child(3){
+      @include animation-name(loading);
+      @include animation-duration(1s);
+      @include animation-timing-function(linear);
+      @include animation-iteration-count(infinite);
+      @include animation-fill-mode(forwards);
+      @include animation-delay(1s);
     }
 
+    &:nth-child(4){
+      @include animation-name(loading);
+      @include animation-duration(1s);
+      @include animation-timing-function(linear);
+      @include animation-iteration-count(infinite);
+      @include animation-fill-mode(forwards);
+      @include animation-delay(1.5s);
+    }
 
+    &:nth-child(5){
+      @include animation-name(loading);
+      @include animation-duration(1s);
+      @include animation-timing-function(linear);
+      @include animation-iteration-count(infinite);
+      @include animation-fill-mode(forwards);
+      @include animation-delay(2s);
+    }
   }
 }
 
@@ -265,57 +275,58 @@ pager
 
 =====================================*/
 
-@mixin MdPager01{
-  .MdPager01{
-    padding:10px 0 35px 0;
-    text-align: center;
+/*===========================
+MdPager01
+===========================*/
 
-    li{
-      margin: 0 5px;
-      display: inline-block;
+.MdPager01{
+  padding:10px 0 35px 0;
+  text-align: center;
 
-      &.ExHover01 a{
-        @include animation-name(hover01);
-        @include animation-duration(0.5s);
-        @include animation-timing-function(ease);
-        @include animation-iteration-count(1);
-        @include animation-fill-mode(forwards);
-      }
-      &.ExHover02 a{
-        @include animation-name(hover02);
-        @include animation-duration(0.5s);
-        @include animation-timing-function(ease);
-        @include animation-iteration-count(1);
-        @include animation-fill-mode(forwards);
-      }
+  li{
+    margin: 0 5px;
+    display: inline-block;
 
-      &.ExStay a{
-        color: $color-main;
-        text-decoration: none;
-        background: #FFF;
-        font-weight: bold;
-      }
+    &.ExHover01 a{
+      @include animation-name(hover01);
+      @include animation-duration(0.5s);
+      @include animation-timing-function(ease);
+      @include animation-iteration-count(1);
+      @include animation-fill-mode(forwards);
+    }
+    &.ExHover02 a{
+      @include animation-name(hover02);
+      @include animation-duration(0.5s);
+      @include animation-timing-function(ease);
+      @include animation-iteration-count(1);
+      @include animation-fill-mode(forwards);
     }
 
-    a{
-      @include border-top-radius(50%);
-      @include border-bottom-radius(50%);
-      border: solid 3px $color-main;
-
-      display: inline-block;
-      width: 30px;
-      height: 30px;
-      background: $color-main;
-      color: #FFF;
-      box-sizing: border-box;
-
-      &:hover{
-        color: $color-main;
-        text-decoration: none;
-        background: #FFF;
-      }
+    &.ExStay a{
+      color: $color-main;
+      text-decoration: none;
+      background: #FFF;
+      font-weight: bold;
     }
+  }
 
+  a{
+    @include border-top-radius(50%);
+    @include border-bottom-radius(50%);
+    border: solid 3px $color-main;
+
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background: $color-main;
+    color: #FFF;
+    box-sizing: border-box;
+
+    &:hover{
+      color: $color-main;
+      text-decoration: none;
+      background: #FFF;
+    }
   }
 }
 
@@ -324,6 +335,10 @@ pager
 heading
 
 =====================================*/
+
+/*===========================
+MdHdgCmn01
+===========================*/
 
 .MdHdgCmn01{
   margin: 40px 0 20px 0;
@@ -343,176 +358,179 @@ index layout
 
 =====================================*/
 
-@mixin MdCntsThumb01{
-  .MdCntsThumb01{
-    @include border-top-radius(5px);
-    @include border-bottom-radius(5px);
-    margin-right: 15px;
-    margin-bottom: 20px;
-    border: solid 5px $color-main;
-    float: left;
-    width: 228px;
+/*===========================
+MdCntsThumb01
+===========================*/
 
-    a{
-      
-      display: block;
-      position: relative;
-      &:hover{
-        text-decoration: none;
-      }
+.MdCntsThumb01{
+  @include border-top-radius(5px);
+  @include border-bottom-radius(5px);
+  margin-right: 15px;
+  margin-bottom: 20px;
+  border: solid 5px $color-main;
+  float: left;
+  width: 228px;
+  opacity: 0;
+
+  a{
+    
+    display: block;
+    position: relative;
+    &:hover{
+      text-decoration: none;
     }
+  }
 
-    &:nth-child(4n){
-      margin-right: 0;
-    }
+  &:nth-child(4n){
+    margin-right: 0;
+  }
 
-    .mdCntsThumb01Img{
-      background-color: $color-main;
-      border-bottom: solid 5px $color-main;
-      img{
-        @include border-top-radius(3px);
-        width: 100%;
-        vertical-align: bottom;
-      }
-    }
-
-    .mdCntsThumb01InfoClm{
-      @include clearfix;
-      border-bottom: solid 5px $color-main;
+  .mdCntsThumb01Img{
+    background-color: $color-main;
+    border-bottom: solid 5px $color-main;
+    img{
+      @include border-top-radius(3px);
       width: 100%;
+      vertical-align: bottom;
+    }
+  }
 
-      .mdCntsThumb01Clm01{
-        padding: 5px;
-        float: left;
-        width: 50%;
-        border-right: solid 5px $color-main;
-        box-sizing: border-box;
-        text-align: center;
-      }
-      .mdCntsThumb01Clm02{
-        @extend .mdCntsThumb01Clm01;
-        border-right: none;
-        line-height: 1.4;
-      }
+  .mdCntsThumb01InfoClm{
+    @include clearfix;
+    border-bottom: solid 5px $color-main;
+    width: 100%;
 
-      .mdCntsThumb01Cat{
-        @include border-top-radius(5px);
-        @include border-bottom-radius(5px);
-        padding: 2px 0;
-        display: inline-block;
-        width: 100px;
-        background: $color-main;
-        color: #FFF;
-        font-size: 12px;
-      }
-      .mdCntsThumb01Date{
-        padding-top: 2px;
-        color: $color-gray;
-      }
+    .mdCntsThumb01Clm01{
+      padding: 5px;
+      float: left;
+      width: 50%;
+      border-right: solid 5px $color-main;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    .mdCntsThumb01Clm02{
+      @extend .mdCntsThumb01Clm01;
+      border-right: none;
+      line-height: 1.4;
     }
 
-    .mdCntsThumb01InfoInBox{
-      padding: 10px 10px 35px 10px;
+    .mdCntsThumb01Cat{
+      @include border-top-radius(5px);
+      @include border-bottom-radius(5px);
+      padding: 2px 0;
+      display: inline-block;
+      width: 100px;
+      background: $color-main;
+      color: #FFF;
+      font-size: 12px;
     }
+    .mdCntsThumb01Date{
+      padding-top: 2px;
+      color: $color-gray;
+    }
+  }
 
-    .mdCntsThumb01Ttl{
-      margin-bottom: 10px;
-      font-size: 16px;
-      line-height: 1.2;
-      font-weight: bold;
-      color: $color-default;
+  .mdCntsThumb01InfoInBox{
+    padding: 10px 10px 35px 10px;
+  }
+
+  .mdCntsThumb01Ttl{
+    margin-bottom: 10px;
+    font-size: 16px;
+    line-height: 1.2;
+    font-weight: bold;
+    color: $color-default;
+  }
+
+  .mdCntsThumb01Txt{
+    margin-bottom: 5px;
+    color: $color-default;
+  }
+
+  .mdCntsThumb01Icn{
+    padding-top: 5px;
+    background: $color-main;
+  }
+  .mdCntsThumb01Icn{
+    @include position(absolute, null null 0 null);
+    width: 100%;
+    text-align: center;
+    z-index: 6;
+    span{
+      @include border-top-radius(50%);
+      @include border-bottom-radius(50%);
+      display: inline-block;
+      background: #FFF;
+
+      &:before{
+        margin-right: -1px;
+        padding-left: 1px;
+      }
     }
+  }
+
+  &.ExHover01{
+    @include animation-name(shadow01);
+    @include animation-duration(0.2s);
+    @include animation-timing-function(ease);
+    @include animation-iteration-count(1);
+    @include animation-fill-mode(forwards);
+  }
+
+  &.ExHover02{
+    @include animation-name(shadow02);
+    @include animation-duration(0.2s);
+    @include animation-timing-function(ease);
+    @include animation-iteration-count(1);
+    @include animation-fill-mode(forwards);
+  }
+  &.ExHover01 .icon-icon04{
+    @include animation-name(cntsThumbIcn01);
+    @include animation-duration(0.5s);
+    @include animation-timing-function(ease);
+    @include animation-iteration-count(1);
+    @include animation-fill-mode(forwards);
+  }
+  &.ExHover02 .icon-icon04{
+    @include animation-name(cntsThumbIcn02);
+    @include animation-duration(0.5s);
+    @include animation-timing-function(ease);
+    @include animation-iteration-count(1);
+    @include animation-fill-mode(forwards);
+  }
+  .mdCntsThumb01Cover{
+    display: none;
+    @include position(absolute, 0 null 0 null);
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    background: rgba(256, 83, 63, 0.5);
 
     .mdCntsThumb01Txt{
-      margin-bottom: 5px;
-      color: $color-default;
-    }
-
-    .mdCntsThumb01Icn{
-      padding-top: 5px;
-      background: $color-main;
-    }
-    .mdCntsThumb01Icn{
-      @include position(absolute, null null 0 null);
-      width: 100%;
+      @include border-top-radius(20px);
+      @include border-bottom-radius(20px);
+      margin: 100px auto 0 auto;
+      color: $color-main;
+      padding: 5px;
+      width: 100px;
+      background: #FFF;
       text-align: center;
-      z-index: 6;
-      span{
-        @include border-top-radius(50%);
-        @include border-bottom-radius(50%);
-        display: inline-block;
-        background: #FFF;
-
-        &:before{
-          margin-right: -1px;
-          padding-left: 1px;
-        }
-      }
     }
-
-    &.ExHover01{
-      @include animation-name(shadow01);
-      @include animation-duration(0.2s);
-      @include animation-timing-function(ease);
-      @include animation-iteration-count(1);
-      @include animation-fill-mode(forwards);
-    }
-
-    &.ExHover02{
-      @include animation-name(shadow02);
-      @include animation-duration(0.2s);
-      @include animation-timing-function(ease);
-      @include animation-iteration-count(1);
-      @include animation-fill-mode(forwards);
-    }
-    &.ExHover01 .icon-icon04{
-      @include animation-name(cntsThumbIcn01);
-      @include animation-duration(0.5s);
-      @include animation-timing-function(ease);
-      @include animation-iteration-count(1);
-      @include animation-fill-mode(forwards);
-    }
-    &.ExHover02 .icon-icon04{
-      @include animation-name(cntsThumbIcn02);
-      @include animation-duration(0.5s);
-      @include animation-timing-function(ease);
-      @include animation-iteration-count(1);
-      @include animation-fill-mode(forwards);
-    }
-    .mdCntsThumb01Cover{
-      display: none;
-      @include position(absolute, 0 null 0 null);
-      width: 100%;
-      height: 100%;
-      z-index: 5;
-      background: rgba(256, 83, 63, 0.5);
-
-      .mdCntsThumb01Txt{
-        @include border-top-radius(20px);
-        @include border-bottom-radius(20px);
-        margin: 100px auto 0 auto;
-        color: $color-main;
-        padding: 5px;
-        width: 100px;
-        background: #FFF;
-        text-align: center;
-      }
-    }
-    &.ExHover01 .mdCntsThumb01Cover{
-      display: block;
-      @include animation-name(cntsThumb01);
-      @include animation-duration(0.4s);
-      @include animation-timing-function(ease);
-      @include animation-iteration-count(1);
-      @include animation-fill-mode(forwards);
-    }
-    &.ExHover02 .mdCntsThumb01Cover{
-      display: block;
-      @include animation-name(cntsThumb02);
-      @include animation-duration(0.2s);
-      @include animation-timing-function(ease);
-      @include animation-iteration-count(1);
-      @include animation-fill-mode(forwards);
-    }
+  }
+  &.ExHover01 .mdCntsThumb01Cover{
+    display: block;
+    @include animation-name(cntsThumb01);
+    @include animation-duration(0.4s);
+    @include animation-timing-function(ease);
+    @include animation-iteration-count(1);
+    @include animation-fill-mode(forwards);
+  }
+  &.ExHover02 .mdCntsThumb01Cover{
+    display: block;
+    @include animation-name(cntsThumb02);
+    @include animation-duration(0.2s);
+    @include animation-timing-function(ease);
+    @include animation-iteration-count(1);
+    @include animation-fill-mode(forwards);
   }
 }

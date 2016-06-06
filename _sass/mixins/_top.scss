@@ -4,281 +4,357 @@ top page
 
 =====================================*/
 
-@mixin MdSlideContianer {
 
-  $thumbWidth: 810px;
-  $thumbHeight: 540px;
+/*===========================
+MdSlideContianer
+===========================*/
 
-  .MdSlideContianer{
-    border-bottom: 5px solid $color-main;
-    position: relative;
-    width: 100%;
-    overflow: hidden;
+$thumbWidth: 810px;
+$thumbHeight: 540px;
+
+.MdSlideContianer{
+  border-bottom: 5px solid $color-main;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  height: $thumbHeight;
+
+  img{
+    @include position(absolute, 0 null null 0);
     height: $thumbHeight;
+  }
 
-    img{
-      @include position(absolute, 0 null null 0);
+  .mdSlideListImg{
+    @include clearfix;
+    position: absolute;
+    li{
+      position: relative;
+      float: left;
+      width: $thumbWidth;
       height: $thumbHeight;
-    }
+      border-right: 5px solid $color-main;
+      overflow: hidden;
 
-    .mdSlideListImg{
-      @include clearfix;
-      position: absolute;
-      li{
-        position: relative;
-        float: left;
+      a{
+        display: block;
         width: $thumbWidth;
         height: $thumbHeight;
-        border-right: 5px solid $color-main;
-        overflow: hidden;
+        text-align: center;
+      }
 
-        a{
-          display: block;
-          width: $thumbWidth;
-          height: $thumbHeight;
-          text-align: center;
+      &.ExCurrent {
+
+        .mdSlideCat{
+          @include animation-name(slide01);
+          @include animation-duration(0.5s);
+          @include animation-timing-function(ease);
+          @include animation-iteration-count(1);
+          @include animation-fill-mode(forwards);
+        }
+        .mdSlideTtl{
+          @include animation-name(scale01);
+          @include animation-duration(0.5s);
+          @include animation-timing-function(ease);
+          @include animation-iteration-count(1);
+          @include animation-fill-mode(forwards);
         }
 
-        &.ExCurrent {
+        .mdSlideImg img{
+          @include animation-name(bg01);
+          @include animation-duration(10s);
+          @include animation-timing-function(linear);
+          @include animation-iteration-count(1);
+          @include animation-fill-mode(forwards);
+        }
+      }
 
-          .mdSlideCat{
-            @include animation-name(slide01);
-            @include animation-duration(0.5s);
-            @include animation-timing-function(ease);
-            @include animation-iteration-count(1);
-            @include animation-fill-mode(forwards);
+      &.ExHide {
+        @include keyframes(slide02) {
+          from {
+            opacity: 1;
+            right: 15px;
           }
-          .mdSlideTtl{
-            @include animation-name(scale01);
-            @include animation-duration(0.5s);
-            @include animation-timing-function(ease);
-            @include animation-iteration-count(1);
-            @include animation-fill-mode(forwards);
-          }
-
-          .mdSlideImg img{
-            @include animation-name(bg01);
-            @include animation-duration(10s);
-            @include animation-timing-function(linear);
-            @include animation-iteration-count(1);
-            @include animation-fill-mode(forwards);
+          to {
+            opacity: 0;
+            right: 100px;
           }
         }
 
-        &.ExHide {
-          @include keyframes(slide02) {
-            from {
-              opacity: 1;
-              right: 15px;
-            }
-            to {
-              opacity: 0;
-              right: 100px;
-            }
-          }
-
-          .mdSlideCat{
-            @include animation-name(slide02);
-            @include animation-duration(0.5s);
-            @include animation-timing-function(ease);
-            @include animation-iteration-count(1);
-            @include animation-fill-mode(forwards);
-          }
-          .mdSlideTtl{
-            @include animation-name(scale02);
-            @include animation-duration(0.5s);
-            @include animation-timing-function(ease);
-            @include animation-iteration-count(1);
-            @include animation-fill-mode(forwards);
-          }
-          .mdSlideImg img{
-            @include animation-name(bg02);
-            @include animation-duration(0.5s);
-            @include animation-timing-function(linear);
-            @include animation-iteration-count(1);
-            @include animation-fill-mode(forwards);
-          }
+        .mdSlideCat{
+          @include animation-name(slide02);
+          @include animation-duration(0.5s);
+          @include animation-timing-function(ease);
+          @include animation-iteration-count(1);
+          @include animation-fill-mode(forwards);
         }
+        .mdSlideTtl{
+          @include animation-name(scale02);
+          @include animation-duration(0.5s);
+          @include animation-timing-function(ease);
+          @include animation-iteration-count(1);
+          @include animation-fill-mode(forwards);
+        }
+        .mdSlideImg img{
+          @include animation-name(bg02);
+          @include animation-duration(0.5s);
+          @include animation-timing-function(linear);
+          @include animation-iteration-count(1);
+          @include animation-fill-mode(forwards);
+        }
+      }
+    }
+
+    .mdSlideCat{
+      @include position(absolute, 15px 15px null null);
+      @include border-top-radius(3px);
+      @include border-bottom-radius(3px);
+      padding: 2px 10px;
+      display: inline-block;
+      color: #FFF;
+      background: $color-main;
+      font-size: 12px;
+      opacity: 0;
+      z-index: 2;
+    }
+
+    .mdSlideTtl{
+      @include position(absolute, 50% null null 50%);
+      margin-top: -1em;
+      margin-left: -125px;
+      text-align: center;
+      opacity: 0;
+      z-index: 2;
+
+      span{
+        @include border-top-radius(10px);
+        @include border-bottom-radius(10px);
+        display: inline-block;
+        padding: 5px 10px;
+        width: 250px;
+        background: #FFF;
+      }
+    }
+
+    .mdSlideImg{
+      @include position(absolute, null null null null);
+      z-index: 1;
+      img{
+        width: $thumbWidth;
+        height: $thumbHeight;
+      }
+    }
+
+
+  }
+
+  /*===========================
+
+    pager
+
+  ===========================*/
+
+  .mdSlideListPager{
+    @include position(absolute, null null 15px null);
+    z-index: 2;
+    text-align: center;
+    width: 100%;
+
+    li{
+      padding: 5px;
+      display: inline-block;
+      cursor: pointer;
+
+      a{
+        @include hide-text;
+        @include border-top-radius(50%);
+        @include border-bottom-radius(50%);
+        border: solid 5px $color-main;
+        background: #FFF;
+        font-size: 10px;
+        display: inline-block;
+        width: 5px;
+        height: 5px;
+      }
+
+      &:hover a{
+        background: $color-main;
+      }
+    }
+
+    .ExCurrent a{
+      background: $color-main;
+    }
+  }
+
+  .mdSlideListBtn{
+    margin: auto;
+    width: $thumbWidth;
+    position: relative;
+
+    @include keyframes(hover01) {
+      from {
+        background: $color-main;
+        transform: scale(1);
+        color: #FFF;
+      }
+      to {
+        background: #FFF;
+        transform: scale(0.9);
+        color: $color-main;
+      }
+    }
+
+    @include keyframes(hover02) {
+      from {
+        background: #FFF;
+        transform: scale(0.9);
+        color: $color-main;
+      }
+      to {
+        background: $color-main;
+        transform: scale(1);
+        color: #FFF;
+      }
+    }
+
+    .mdSlideListBtnBack{
+      a{
+        @include position(absolute, 230px null null -65px);
+        @include border-top-radius(50%);
+        @include border-bottom-radius(50%);
+        border: solid 3px $color-main;
+        padding: 8px;
+        font-size: 16px;
+        background: $color-main;
+        color: #FFF;
+        z-index: 5;
+
+        &:hover{
+          text-decoration: none;
+        }
+      }
+
+      &.ExHover01 a{
+        @include animation-name(hover01);
+        @include animation-duration(0.5s);
+        @include animation-timing-function(ease);
+        @include animation-iteration-count(1);
+        @include animation-fill-mode(forwards);
+      }
+      &.ExHover02 a{
+        @include animation-name(hover02);
+        @include animation-duration(0.5s);
+        @include animation-timing-function(ease);
+        @include animation-iteration-count(1);
+        @include animation-fill-mode(forwards);
+      }
+    }
+
+    .mdSlideListBtnNext{
+      a{
+        @include position(absolute, 230px -65px null null);
+        @include border-top-radius(50%);
+        @include border-bottom-radius(50%);
+        border: solid 3px $color-main;
+        padding: 8px;
+        font-size: 16px;
+        background: $color-main;
+        color: #FFF;
+        z-index: 5;
+
+        &:hover{
+          text-decoration: none;
+        }
+      }
+
+      &.ExHover01 a{
+        @include animation-name(hover01);
+        @include animation-duration(0.5s);
+        @include animation-timing-function(ease);
+        @include animation-iteration-count(1);
+        @include animation-fill-mode(forwards);
+      }
+      &.ExHover02 a{
+        @include animation-name(hover02);
+        @include animation-duration(0.5s);
+        @include animation-timing-function(ease);
+        @include animation-iteration-count(1);
+        @include animation-fill-mode(forwards);
+      }
+    }
+  }
+}
+
+/*===========================
+MdSlideContianer SP
+===========================*/
+
+.MdSlideContianerSP{
+  padding-top: 60px;
+
+  .mdSlideListImg{
+    @include clearfix;
+    width: 100%;
+
+    .mdList{
+
+      position: relative;
+
+      .mdSlideTtl{
+        @include position(absolute, 50% null null null);
+        margin: -1.5em 10% 0 10%;
+        padding: 10px;
+        border-radius: 5px;
+       
+        width: 80%;
+        background: #FFF;
+        box-sizing: border-box;
       }
 
       .mdSlideCat{
-        @include position(absolute, 15px 15px null null);
-        @include border-top-radius(3px);
-        @include border-bottom-radius(3px);
-        padding: 2px 10px;
+        @include position(absolute, 20px 20px null null);
         display: inline-block;
+        padding: 2px 5px;
+        border-radius: 5px;
+        background: $color-main;
         color: #FFF;
-        background: $color-main;
         font-size: 12px;
-        opacity: 0;
-        z-index: 2;
       }
 
-      .mdSlideTtl{
-        @include position(absolute, 50% null null 50%);
-        margin-top: -1em;
-        margin-left: -125px;
-        text-align: center;
-        opacity: 0;
-        z-index: 2;
-
-        span{
-          @include border-top-radius(10px);
-          @include border-bottom-radius(10px);
-          display: inline-block;
-          padding: 5px 10px;
-          width: 250px;
-          background: #FFF;
-        }
+      a{
+        display: block;
       }
 
-      .mdSlideImg{
-        @include position(absolute, null null null null);
-        z-index: 1;
-        img{
-          width: $thumbWidth;
-          height: $thumbHeight;
-        }
+      img{
+        width: 100%;
       }
-
-
     }
+  }
 
-    /*===========================
+  .slick-dots{
+    @include position(absolute, null null 15px null);
+    z-index: 2;
+    text-align: center;
+    width: 100%;
 
-      pager
 
-    ===========================*/
 
-    .mdSlideListPager{
-      @include position(absolute, null null 15px null);
-      z-index: 2;
-      text-align: center;
-      width: 100%;
+    li{
+      @include hide-text;
+      @include border-top-radius(50%);
+      @include border-bottom-radius(50%);
+      margin: 0 4px;
+      border: solid 5px $color-main;
+      background: #FFF;
+      font-size: 10px;
+      display: inline-block;
+      width: 5px;
+      height: 5px;
 
-      li{
-        padding: 5px;
-        display: inline-block;
-        cursor: pointer;
-
-        a{
-          @include hide-text;
-          @include border-top-radius(50%);
-          @include border-bottom-radius(50%);
-          border: solid 5px $color-main;
-          background: #FFF;
-          font-size: 10px;
-          display: inline-block;
-          width: 5px;
-          height: 5px;
-        }
-
-        &:hover a{
-          background: $color-main;
-        }
-      }
-
-      .ExCurrent a{
+      &.slick-active{
         background: $color-main;
       }
     }
 
-    .mdSlideListBtn{
-      margin: auto;
-      width: $thumbWidth;
-      position: relative;
-
-      @include keyframes(hover01) {
-        from {
-          background: $color-main;
-          transform: scale(1);
-          color: #FFF;
-        }
-        to {
-          background: #FFF;
-          transform: scale(0.9);
-          color: $color-main;
-        }
-      }
-
-      @include keyframes(hover02) {
-        from {
-          background: #FFF;
-          transform: scale(0.9);
-          color: $color-main;
-        }
-        to {
-          background: $color-main;
-          transform: scale(1);
-          color: #FFF;
-        }
-      }
-
-      .mdSlideListBtnBack{
-        a{
-          @include position(absolute, 230px null null -65px);
-          @include border-top-radius(50%);
-          @include border-bottom-radius(50%);
-          border: solid 3px $color-main;
-          padding: 8px;
-          font-size: 16px;
-          background: $color-main;
-          color: #FFF;
-          z-index: 5;
-
-          &:hover{
-            text-decoration: none;
-          }
-        }
-
-        &.ExHover01 a{
-          @include animation-name(hover01);
-          @include animation-duration(0.5s);
-          @include animation-timing-function(ease);
-          @include animation-iteration-count(1);
-          @include animation-fill-mode(forwards);
-        }
-        &.ExHover02 a{
-          @include animation-name(hover02);
-          @include animation-duration(0.5s);
-          @include animation-timing-function(ease);
-          @include animation-iteration-count(1);
-          @include animation-fill-mode(forwards);
-        }
-      }
-
-      .mdSlideListBtnNext{
-        a{
-          @include position(absolute, 230px -65px null null);
-          @include border-top-radius(50%);
-          @include border-bottom-radius(50%);
-          border: solid 3px $color-main;
-          padding: 8px;
-          font-size: 16px;
-          background: $color-main;
-          color: #FFF;
-          z-index: 5;
-
-          &:hover{
-            text-decoration: none;
-          }
-        }
-
-        &.ExHover01 a{
-          @include animation-name(hover01);
-          @include animation-duration(0.5s);
-          @include animation-timing-function(ease);
-          @include animation-iteration-count(1);
-          @include animation-fill-mode(forwards);
-        }
-        &.ExHover02 a{
-          @include animation-name(hover02);
-          @include animation-duration(0.5s);
-          @include animation-timing-function(ease);
-          @include animation-iteration-count(1);
-          @include animation-fill-mode(forwards);
-        }
-      }
-    }
   }
 }

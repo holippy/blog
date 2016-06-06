@@ -22,8 +22,5 @@ react
 
 ===========================*/
 
-$(window).on('load',()=>{
   var storeArticle = require('./react/store-article.js');
   var page = require('./react/comp-page.jsx');
-});
-

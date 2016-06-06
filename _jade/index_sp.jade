@@ -1,0 +1,147 @@
+doctype
+html(lang="ja")
+  head
+    meta(charset="utf-8")
+    meta(http-equiv="X-UA-Compatible", content="IE=edge,chrome=1")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    link(rel="shortcut icon" type="image/x-icon" href="/assets/img/favicon.ico")
+    title Indoor Living
+    meta(name="description", content="")
+    meta(name="keywords", content="")
+    meta(name="author", content="")
+    meta(property="og:title", content="")
+    meta(property="og:type", content="website")
+    meta(property="og:url", content="")
+    meta(property="og:image", content="")
+    meta(property="og:site_name", content="")
+    meta(property="og:description", content="")
+    meta(property="fb:app_id", content="")
+    link(rel="stylesheet" href="/assets/css/layout.css")
+    script.
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-77747096-1', 'auto');
+      ga('send', 'pageview');
+
+  body.LySP
+
+    #Main
+      .LyHead
+        header.MdHead
+          h1.mdLogo Indoor Living
+          p#BtnMenu.mdBtnMenu
+            a(href="#")
+
+      .LyMenu
+        .MdMenu
+          p#BtnMenuClose.mdBtnClose
+            a(href="#") CLOSE
+
+          p.MdHdgCmn01 
+            span Categories
+
+          ul.mdListCat
+           li
+              a(href="#") Diary
+                span.icon-icon04
+           li
+              a(href="#") Photo
+                span.icon-icon04
+           li
+              a(href="#") Music
+                span.icon-icon04
+           li
+              a(href="#") Interior
+                span.icon-icon04
+
+          p.MdHdgCmn01
+            span Tags
+
+          ul.mdListTag
+            li
+              a(href="#") Rolleifelx6008
+            li
+              a(href="#") アルテック
+            li
+              a(href="#") 広松木工
+            li
+              a(href="#") アルギュ
+            li
+              a(href="#") Fujifilm X-E1
+            li
+              a(href="#") アルギュ
+            li
+              a(href="#") Rolleifelx6008
+            li
+              a(href="#") アルテック
+            li
+              a(href="#") 広松木工
+
+
+         div.MdSlideContianerSP
+
+          ul.mdSlideListImg
+            each val in ['DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg', 'DSCF2559.jpg']
+              li.mdList
+                - var imgPath = '/assets/img/slide/'+val
+                a(href="#")
+                  p.mdSlideCat Music
+                  p.mdSlideTtl
+                    span タイトルタイトルタイトルタイトルタイトルタイトル
+                  p.mdSlideImg
+                    img(src='#{imgPath}')
+
+          section
+            h2.MdHdgCmn01 
+              span All Contents
+
+            .LyCntsList
+              each val in ['DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg','DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg','DSCF4256.jpg', 'DSCF1870.jpg', 'DSCF2033.jpg', 'DSCF4248.jpg',]
+                section.MdCntsThumb01
+                  a(href="#")
+                    p.mdCntsThumb01Img
+                      - var imgPath = '/assets/img/slide/'+val
+                      img(src='#{imgPath}')
+                    div.mdCntsThumb01InfoClm
+                      div.mdCntsThumb01Clm01
+                        p.mdCntsThumb01Cat Music
+                      div.mdCntsThumb01Clm02
+                        p.mdCntsThumb01Date 2016/02/01
+                    div.mdCntsThumb01InfoInBox
+                      h2.mdCntsThumb01Ttl タイトルタイトルタイトルタイトルタイトル
+                      p.mdCntsThumb01Txt テキストテキストテキストテキストテキストテキストテキストテキストテキストテキスト
+                    p.mdCntsThumb01Icn
+                      span.icon-icon04
+                    div.mdCntsThumb01Cover
+                      p.mdCntsThumb01Txt Read More
+
+            ul.MdPager01
+              li.mdBtnNext
+                a.icon-icon02(href="#") Next
+              li.mdBtnBack
+                a.icon-icon04(href="#") Back
+
+    .LyFtr
+      footer.MdFtr
+        p.mdFtrCopyright Copyright &copy; 2016 Indoor Living All right reserved.
+
+    #MdLoading
+      div
+        ul
+          li
+          li
+          li
+
+
+    script(src="/assets/js/lib.js")
+    script(src="/assets/js/slick.js")
+    script(src="/assets/js/app.js")
+
+    //script.
+      $(document).ready(function(){
+
+
+      });

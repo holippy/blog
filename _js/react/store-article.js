@@ -3,6 +3,14 @@ const Dispatcher = require('flux').Dispatcher;
 const Store = {};
 const domain = 'http://indoor-living.sakuraweb.com/wp/';
 
+//PC or SP判定
+
+if( $('body').hasClass('LySP') ){
+  Store.Layout = 'SP';
+}else{
+  Store.Layout = 'PC';
+}
+
 /*===========================
 
 push state管理

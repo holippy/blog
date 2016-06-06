@@ -1,0 +1,83 @@
+/*=====================================
+
+top page
+
+=====================================*/
+
+/*===========================
+MdSlideContianer SP
+===========================*/
+
+.MdSlideContianerSP{
+  padding-top: 60px;
+
+  .mdSlideListImg{
+    @include clearfix;
+    width: 100%;
+
+    .mdList{
+
+      position: relative;
+
+      .mdSlideTtl{
+        @include position(absolute, 50% null null null);
+        margin: -1.5em 10% 0 10%;
+        padding: 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        line-height: 1.5;
+       
+        width: 80%;
+        background: #FFF;
+        box-sizing: border-box;
+      }
+
+      .mdSlideCat{
+        @include position(absolute, 20px 20px null null);
+        display: inline-block;
+        padding: 2px 5px;
+        border-radius: 5px;
+        background: $color-main;
+        color: #FFF;
+        font-size: 12px;
+      }
+
+      a{
+        display: block;
+      }
+
+      img{
+        width: 100%;
+      }
+    }
+  }
+
+  .slick-dots{
+    @include position(absolute, null null 15px null);
+    z-index: 2;
+    text-align: center;
+    width: 100%;
+
+    button{
+      display: none;
+    }
+
+    li{
+      @include hide-text;
+      @include border-top-radius(50%);
+      @include border-bottom-radius(50%);
+      margin: 0 4px;
+      border: solid 5px $color-main;
+      background: #FFF;
+      font-size: 10px;
+      display: inline-block;
+      width: 5px;
+      height: 5px;
+
+      &.slick-active{
+        background: $color-main;
+      }
+    }
+
+  }
+}

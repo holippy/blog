@@ -2,11 +2,19 @@ var SetHeight = require('./setHeight.js');
 var app = app || {};
 
 app.cntsThumb = {
-  init(){
+  init(type){
     this.thumb = $('.MdCntsThumb01');
     this.thumbImgs = $('.MdCntsThumb01 img');
     this.thumbImgsLength = this.thumbImgs.length;
+    this.layoutType = type;
+    this.perSet = 0;
     this.imgCount  = 0;
+
+    if( this.layoutType == 'PC' ){
+      this.perSet = 4;
+    }else if( this.layoutType == 'SP' ){
+      this.perSet = 2;
+    }
 
     this.imgLoading();
 
@@ -14,17 +22,17 @@ app.cntsThumb = {
   imgLoaded(){
     SetHeight.init({
       Elem: '.mdCntsThumb01InfoInBox .mdCntsThumb01Ttl',
-      group: 4
+      group: this.perSet
     });
 
     SetHeight.init({
       Elem: '.mdCntsThumb01InfoInBox .mdCntsThumb01Txt',
-      group: 4
+      group: this.perSet
     });
 
     SetHeight.init({
       Elem: '.MdCntsThumb01',
-      group: 4
+      group: this.perSet
     });
 
     for (var i = 0; i < this.thumb.length; i++) {
