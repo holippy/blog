@@ -22,5 +22,6 @@ react
 
 ===========================*/
 
-  var storeArticle = require('./react/store-article.js');
-  var page = require('./react/comp-page.jsx');
+  //var storeArticle = require('./react/store-article.js');
+  //var page = require('./react/comp-page.jsx');
+  var music = require('./react/comp-music.jsx');
