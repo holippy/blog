@@ -87,7 +87,6 @@ StoreMusic.dispatcher.action = {
     this.loadStatus = true;
 
     var d = new $.Deferred(),
-        payload = this.queue[this.counter],
         url,
         data;
 
@@ -103,6 +102,8 @@ StoreMusic.dispatcher.action = {
     });
 
     this.xhr.done(function (data) {
+
+      console.log(data);
 
       _this.counter = _this.counter + 1;
 
@@ -124,8 +125,6 @@ StoreMusic.dispatcher.action = {
   create: function create(payload) {
     var _this2 = this;
 
-    console.log(payload);
-
     //すでにajaxが実行中だった場合はabortして各パラメータをリセット
     if (this.loadStatus) {
       console.log('abort');
@@ -133,7 +132,7 @@ StoreMusic.dispatcher.action = {
       this.reset();
     }
 
-    this.requestArray = payload.length;
+    this.requestArray = payload.requireItem;
 
     var doPromise = this.getData();
     for (var i = 0; i < this.requestArray.length - 1; i++) {
