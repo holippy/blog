@@ -34,9 +34,7 @@ header("Access-Control-Allow-Origin: *");
 
  ?>
 
-{
-
-"ID": [
+[
 <?php for ($j=0; $j < count($IDArray); $j++): ?>
   <?php if( $j != count($IDArray) - 1 ): ?>
     <?php echo '"'.$IDArray[$j].'",'; ?>
@@ -44,5 +42,4 @@ header("Access-Control-Allow-Origin: *");
     <?php echo '"'.$IDArray[$j].'"'; ?>
   <?php endif; ?>
 <?php endfor; ?>
-      ]
-}
+]

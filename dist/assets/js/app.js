@@ -61,13 +61,14 @@ var music = require('./react/comp-music.jsx');
 var Dispatcher = require('flux').Dispatcher;
 
 var StoreMusic = {};
-var API = 'http://indoor-living.sakuraweb.com/wp/music/';
+var API = '';
 
 StoreMusic.dispatcher = new Dispatcher();
 
 //musics定義
 StoreMusic.musics = {
-  data: null,
+  dataID: null,
+  dataDetail: [],
   subscriber: []
 };
 
@@ -76,11 +77,10 @@ StoreMusic.dispatcher.subscriber = [];
 
 StoreMusic.dispatcher.action = {
   counter: 0,
-  queue: [],
-  compArray: [],
-  resData: {},
-  xhr: null,
+  payload: null,
   loadStatus: false,
+  resData: {},
+  requestArray: null,
   getData: function getData(num) {
     var _this = this;
 
@@ -90,10 +90,22 @@ StoreMusic.dispatcher.action = {
         url,
         data;
 
+    console.log(this.payload);
+
+    switch (this.payload.actionType) {
+      case 'ID':
+        url = 'http://indoor-living.sakuraweb.com/wp/music/';
+        break;
+      case 'list':
+        url = domain + 'page/' + payload.page + '/';
+        data = { paged: payload.page };
+        break;
+    }
+
     //loadStatusをtrueにする
     //loadStatus = true;
     this.xhr = $.ajax({
-      url: API,
+      url: url,
       //data: data,
       type: 'GET',
       crossDomain: true,
@@ -103,11 +115,10 @@ StoreMusic.dispatcher.action = {
 
     this.xhr.done(function (data) {
 
-      console.log(data);
-
       _this.counter = _this.counter + 1;
+      _this.resData[_this.payload.actionType] = data;
 
-      if (_this.counter === _this.compArray.length) {
+      if (_this.counter === _this.requestArray.length) {
 
         StoreMusic.dispatcher.dispatch(_this.resData);
         _this.loadStatus = false;
@@ -125,6 +136,8 @@ StoreMusic.dispatcher.action = {
   create: function create(payload) {
     var _this2 = this;
 
+    this.payload = payload;
+
     //すでにajaxが実行中だった場合はabortして各パラメータをリセット
     if (this.loadStatus) {
       console.log('abort');
@@ -132,10 +145,11 @@ StoreMusic.dispatcher.action = {
       this.reset();
     }
 
-    this.requestArray = payload.requireItem;
+    this.requestArray = this.payload.requestItem;
 
     var doPromise = this.getData();
     for (var i = 0; i < this.requestArray.length - 1; i++) {
+
       doPromise = doPromise.then(function (data) {
         return _this2.getData();
       });
@@ -143,11 +157,11 @@ StoreMusic.dispatcher.action = {
   },
   reset: function reset() {
     this.counter = 0;
-    this.queue = [];
-    this.compArray = [];
+    this.counter = 0;
+    this.payload = null;
     this.resData = {};
-    this.xhr = null;
     this.loadStatus = false;
+    this.requestArray = null;
   }
 };
 
@@ -195,10 +209,9 @@ musicsのdispatchToken
 ===========================*/
 
 StoreMusic.musics.dispatchToken = StoreMusic.dispatcher.register(function (res) {
-  if (res['musics']) {
-
-    StoreMusic.dispatcher.waitFor([StoreMusic.mainvisual.dispatchToken]);
-    StoreMusic.musics.data = res['musics'];
+  console.log(res);
+  if (res['ID']) {
+    StoreMusic.musics.dataID = res['ID'];
     StoreMusic.publish();
   } else {
     StoreMusic.musics.data = null;
@@ -231,9 +244,12 @@ var Music = React.createClass({
     this.loadAction();
   },
   loadAction: function loadAction() {
-    this.actionCreator(['ID']);
+    this.actionCreator({
+      actionType: 'ID',
+      requestItem: ['ID']
+    });
   },
-  actionCreator: function actionCreator(items) {
+  actionCreator: function actionCreator(options) {
     //console.log('actionCreator');
     StoreMusic.addSubscribe({
       actionType: this.props.actionType,
@@ -241,10 +257,13 @@ var Music = React.createClass({
     });
 
     StoreMusic.dispatcher.action.create({
-      requireItem: items
+      actionType: options.actionType,
+      requestItem: options.requestItem
     });
   },
-  dataloaded: function dataloaded() {},
+  dataloaded: function dataloaded() {
+    console.log(StoreMusic.musics.dataID);
+  },
   shouldComponentUpdate: function shouldComponentUpdate() {},
   componentDidUpdate: function componentDidUpdate() {},
   componentWillReceiveProps: function componentWillReceiveProps(nextProps) {},

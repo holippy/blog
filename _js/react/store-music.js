@@ -1,7 +1,7 @@
 const Dispatcher = require('flux').Dispatcher;
 
 const StoreMusic = {};
-const API = 'http://indoor-living.sakuraweb.com/wp/music/';
+const API = '';
 
 
 
@@ -9,7 +9,8 @@ StoreMusic.dispatcher = new Dispatcher();
 
 //musics定義
 StoreMusic.musics = {
-  data: null,
+  dataID: null,
+  dataDetail: [],
   subscriber: []
 };
 
@@ -19,11 +20,10 @@ StoreMusic.dispatcher.subscriber = [];
 
 StoreMusic.dispatcher.action = {
   counter: 0,
-  queue: [],
-  compArray: [],
-  resData: {},
-  xhr: null,
+  payload: null,
   loadStatus: false,
+  resData: {},
+  requestArray: null,
   getData( num ){
 
     this.loadStatus = true;
@@ -32,10 +32,22 @@ StoreMusic.dispatcher.action = {
         url,
         data;
 
+    console.log(this.payload);
+
+    switch ( this.payload.actionType ){
+      case 'ID':
+        url = 'http://indoor-living.sakuraweb.com/wp/music/';
+        break;
+      case 'list':
+        url = domain + 'page/' + payload.page + '/';
+        data = { paged: payload.page };
+        break;
+    }
+
     //loadStatusをtrueにする
     //loadStatus = true;
     this.xhr = $.ajax({
-        url: API,
+        url: url,
         //data: data,
         type: 'GET',
         crossDomain: true,
@@ -45,11 +57,10 @@ StoreMusic.dispatcher.action = {
 
     this.xhr.done( ( data )=>{
 
-          console.log(data);
-
       this.counter = this.counter + 1;
+      this.resData[this.payload.actionType] = data;
 
-      if( this.counter === this.compArray.length ){
+      if( this.counter === this.requestArray.length ){
 
         StoreMusic.dispatcher.dispatch(this.resData);
         this.loadStatus = false;
@@ -66,6 +77,8 @@ StoreMusic.dispatcher.action = {
   },
   create(payload){
 
+    this.payload = payload;
+
     //すでにajaxが実行中だった場合はabortして各パラメータをリセット
     if( this.loadStatus ){
       console.log('abort');
@@ -73,12 +86,11 @@ StoreMusic.dispatcher.action = {
       this.reset();
     }
 
-    this.requestArray = payload.requireItem;
-
-
+    this.requestArray = this.payload.requestItem;
 
     var doPromise = this.getData();
     for (var i = 0; i < this.requestArray.length - 1; i++) {
+      
       doPromise = doPromise.then( (data)=>{
         return this.getData();
       } );
@@ -86,12 +98,12 @@ StoreMusic.dispatcher.action = {
 
   },
   reset(){
-    this.counter =  0;
-    this.queue = [];
-    this.compArray = [];
+    this.counter = 0;
+    this.counter = 0;
+    this.payload = null;
     this.resData = {};
-    this.xhr = null;
     this.loadStatus = false;
+    this.requestArray = null;
   }
 }
 
@@ -141,10 +153,9 @@ musicsのdispatchToken
 ===========================*/
 
 StoreMusic.musics.dispatchToken = StoreMusic.dispatcher.register(function( res ) {
-  if( res['musics'] ){
-
-    StoreMusic.dispatcher.waitFor([StoreMusic.mainvisual.dispatchToken]);
-    StoreMusic.musics.data = res['musics'];
+  console.log(res); 
+  if( res['ID'] ){
+    StoreMusic.musics.dataID = res['ID'];
     StoreMusic.publish();
   }else{
     StoreMusic.musics.data = null;

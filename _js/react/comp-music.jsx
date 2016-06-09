@@ -18,10 +18,13 @@ var Music = React.createClass({
   },
 
   loadAction(){
-    this.actionCreator( ['ID'] );
+    this.actionCreator({
+      actionType: 'ID',
+      requestItem: ['ID']
+    });
   },
 
-  actionCreator( items ){
+  actionCreator( options ){
     //console.log('actionCreator');
     StoreMusic.addSubscribe({
       actionType: this.props.actionType,
@@ -29,11 +32,12 @@ var Music = React.createClass({
     });
 
     StoreMusic.dispatcher.action.create({
-      requireItem: items
+      actionType: options.actionType,
+      requestItem: options.requestItem
     });
   },
   dataloaded(){
-
+    console.log(StoreMusic.musics.dataID);
 
   },
   shouldComponentUpdate(){
