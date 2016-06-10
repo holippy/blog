@@ -9,8 +9,9 @@ StoreMusic.dispatcher = new Dispatcher();
 
 //musics定義
 StoreMusic.musics = {
-  dataID: null,
-  dataDetail: [],
+  actionType: null,
+  dataID: [],
+  dataMovie: [],
   subscriber: []
 };
 
@@ -22,7 +23,7 @@ StoreMusic.dispatcher.action = {
   counter: 0,
   payload: null,
   loadStatus: false,
-  resData: {},
+  resData: [],
   requestArray: null,
   getData( num ){
 
@@ -32,15 +33,18 @@ StoreMusic.dispatcher.action = {
         url,
         data;
 
-    console.log(this.payload);
-
     switch ( this.payload.actionType ){
       case 'ID':
         url = 'http://indoor-living.sakuraweb.com/wp/music/';
         break;
-      case 'list':
-        url = domain + 'page/' + payload.page + '/';
-        data = { paged: payload.page };
+      case 'Movie':
+        url = 'https://www.googleapis.com/youtube/v3/videos';
+        data = {
+          id: this.requestArray[this.counter],
+          key: 'AIzaSyBYXH8zTsm40Kz9JvpOvFyZLNXGV0Ju31A',
+          fields: 'items(id,snippet(channelTitle,title,thumbnails),statistics)',
+          part: 'snippet,contentDetails,statistics'
+        };
         break;
     }
 
@@ -48,7 +52,7 @@ StoreMusic.dispatcher.action = {
     //loadStatus = true;
     this.xhr = $.ajax({
         url: url,
-        //data: data,
+        data: data,
         type: 'GET',
         crossDomain: true,
         cache: true,
@@ -57,13 +61,30 @@ StoreMusic.dispatcher.action = {
 
     this.xhr.done( ( data )=>{
 
+
+
+
       this.counter = this.counter + 1;
-      this.resData[this.payload.actionType] = data;
+
+      if( this.requestArray.length === 1 ){
+        this.resData = {}
+        this.resData[this.payload.actionType] = data;
+      }else{
+        this.resData.push(data);
+      }
+      
+
+      
 
       if( this.counter === this.requestArray.length ){
 
-        StoreMusic.dispatcher.dispatch(this.resData);
         this.loadStatus = false;
+
+        StoreMusic.dispatcher.dispatch({
+          actionType: this.payload.actionType,
+          resData: this.resData
+        });
+        
 
         //console.log('load end');
         
@@ -77,6 +98,8 @@ StoreMusic.dispatcher.action = {
   },
   create(payload){
 
+    console.log(payload);
+
     this.payload = payload;
 
     //すでにajaxが実行中だった場合はabortして各パラメータをリセット
@@ -87,6 +110,8 @@ StoreMusic.dispatcher.action = {
     }
 
     this.requestArray = this.payload.requestItem;
+
+
 
     var doPromise = this.getData();
     for (var i = 0; i < this.requestArray.length - 1; i++) {
@@ -101,7 +126,7 @@ StoreMusic.dispatcher.action = {
     this.counter = 0;
     this.counter = 0;
     this.payload = null;
-    this.resData = {};
+    this.resData = [];
     this.loadStatus = false;
     this.requestArray = null;
   }
@@ -152,12 +177,26 @@ musicsのdispatchToken
 
 ===========================*/
 
-StoreMusic.musics.dispatchToken = StoreMusic.dispatcher.register(function( res ) {
-  console.log(res); 
-  if( res['ID'] ){
-    StoreMusic.musics.dataID = res['ID'];
+StoreMusic.musics.dispatchToken = StoreMusic.dispatcher.register(function( options ) {
+
+  console.log(options);
+  
+  StoreMusic.musics.actionType = options.actionType;
+
+  if( options.actionType == 'ID' ){
+    StoreMusic.musics.dataID = options.resData['ID'];
     StoreMusic.publish();
-  }else{
+  }else if( options.actionType == 'Movie' ){
+    StoreMusic.musics.dataMovie.push();
+    _.each(options.resData,(elm, i)=>{
+      StoreMusic.musics.dataMovie.push(elm);
+    });
+    
+    console.log(StoreMusic.musics.dataMovie);
+
+    StoreMusic.publish();
+  }
+  else{
     StoreMusic.musics.data = null;
   }
 });

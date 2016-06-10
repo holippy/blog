@@ -2,6 +2,7 @@ var StoreMusic = require('./Store-music');
 
 var Music = React.createClass({
   loadFlag: true,
+  offset: 0,
   getDefaultProps(){
     return {
       actionType:"music"
@@ -9,11 +10,13 @@ var Music = React.createClass({
   },
   getInitialState(){
     return {
-      data: null
+      ids: [],
+      videos: []
     }
   },
   componentWillMount(){
     console.log('componentWillMount');
+    
     this.loadAction();
   },
 
@@ -25,7 +28,8 @@ var Music = React.createClass({
   },
 
   actionCreator( options ){
-    //console.log('actionCreator');
+    this.loadFlag = false;
+
     StoreMusic.addSubscribe({
       actionType: this.props.actionType,
       callback: this.dataloaded
@@ -37,12 +41,18 @@ var Music = React.createClass({
     });
   },
   dataloaded(){
-    console.log(StoreMusic.musics.dataID);
-
+    StoreMusic.removeSubscribe({
+      actionType: this.props.actionType
+    });
+    this.loadFlag = true;
+    if( StoreMusic.musics.actionType == 'ID' ){
+        this.replaceState({
+          ids: StoreMusic.musics.dataID
+        });
+    }
   },
   shouldComponentUpdate(){
-
-
+    return true;
   },
   componentDidUpdate(){
 
@@ -50,15 +60,36 @@ var Music = React.createClass({
   componentWillReceiveProps(nextProps){
 
   },
-  render(){
+  requestItems(){
+    var itemList = [];
+    for (var i = this.offset - 1; i < this.offset + 5; i++) {
+      itemList.push( StoreMusic.musics.dataID[i] );
+    }
 
+    return itemList;
+  },
+  iconClick(){
+    if( this.offset == 0 ){
+      this.offset = 1;
+      this.actionCreator({
+        actionType: 'Movie',
+        requestItem: this.requestItems()
+      });
+    }
+  },
+  render(){
 
       if( this.loadFlag ){
         return(
         <div className="LyPlayer">
           <div className="MdPlayer">
             <div className="mdPlayerInner">
-              <p className="mdPlayerTtl"><span>Movie Player</span></p>
+              <p className="mdPlayerTtl" onClick={this.iconClick} ><span>Movie Player</span></p>
+              {(() => {
+                if (this.loadFlag) {
+                  return <p>さらに見る</p>;
+                }
+              })()}
             </div>
           </div>
         </div>

@@ -67,8 +67,9 @@ StoreMusic.dispatcher = new Dispatcher();
 
 //musics定義
 StoreMusic.musics = {
-  dataID: null,
-  dataDetail: [],
+  actionType: null,
+  dataID: [],
+  dataMovie: [],
   subscriber: []
 };
 
@@ -79,7 +80,7 @@ StoreMusic.dispatcher.action = {
   counter: 0,
   payload: null,
   loadStatus: false,
-  resData: {},
+  resData: [],
   requestArray: null,
   getData: function getData(num) {
     var _this = this;
@@ -90,15 +91,18 @@ StoreMusic.dispatcher.action = {
         url,
         data;
 
-    console.log(this.payload);
-
     switch (this.payload.actionType) {
       case 'ID':
         url = 'http://indoor-living.sakuraweb.com/wp/music/';
         break;
-      case 'list':
-        url = domain + 'page/' + payload.page + '/';
-        data = { paged: payload.page };
+      case 'Movie':
+        url = 'https://www.googleapis.com/youtube/v3/videos';
+        data = {
+          id: this.requestArray[this.counter],
+          key: 'AIzaSyBYXH8zTsm40Kz9JvpOvFyZLNXGV0Ju31A',
+          fields: 'items(id,snippet(channelTitle,title,thumbnails),statistics)',
+          part: 'snippet,contentDetails,statistics'
+        };
         break;
     }
 
@@ -106,7 +110,7 @@ StoreMusic.dispatcher.action = {
     //loadStatus = true;
     this.xhr = $.ajax({
       url: url,
-      //data: data,
+      data: data,
       type: 'GET',
       crossDomain: true,
       cache: true,
@@ -116,12 +120,22 @@ StoreMusic.dispatcher.action = {
     this.xhr.done(function (data) {
 
       _this.counter = _this.counter + 1;
-      _this.resData[_this.payload.actionType] = data;
+
+      if (_this.requestArray.length === 1) {
+        _this.resData = {};
+        _this.resData[_this.payload.actionType] = data;
+      } else {
+        _this.resData.push(data);
+      }
 
       if (_this.counter === _this.requestArray.length) {
 
-        StoreMusic.dispatcher.dispatch(_this.resData);
         _this.loadStatus = false;
+
+        StoreMusic.dispatcher.dispatch({
+          actionType: _this.payload.actionType,
+          resData: _this.resData
+        });
 
         //console.log('load end');
 
@@ -135,6 +149,8 @@ StoreMusic.dispatcher.action = {
   },
   create: function create(payload) {
     var _this2 = this;
+
+    console.log(payload);
 
     this.payload = payload;
 
@@ -159,7 +175,7 @@ StoreMusic.dispatcher.action = {
     this.counter = 0;
     this.counter = 0;
     this.payload = null;
-    this.resData = {};
+    this.resData = [];
     this.loadStatus = false;
     this.requestArray = null;
   }
@@ -208,10 +224,23 @@ musicsのdispatchToken
 
 ===========================*/
 
-StoreMusic.musics.dispatchToken = StoreMusic.dispatcher.register(function (res) {
-  console.log(res);
-  if (res['ID']) {
-    StoreMusic.musics.dataID = res['ID'];
+StoreMusic.musics.dispatchToken = StoreMusic.dispatcher.register(function (options) {
+
+  console.log(options);
+
+  StoreMusic.musics.actionType = options.actionType;
+
+  if (options.actionType == 'ID') {
+    StoreMusic.musics.dataID = options.resData['ID'];
+    StoreMusic.publish();
+  } else if (options.actionType == 'Movie') {
+    StoreMusic.musics.dataMovie.push();
+    _.each(options.resData, function (elm, i) {
+      StoreMusic.musics.dataMovie.push(elm);
+    });
+
+    console.log(StoreMusic.musics.dataMovie);
+
     StoreMusic.publish();
   } else {
     StoreMusic.musics.data = null;
@@ -229,6 +258,7 @@ var Music = React.createClass({
   displayName: 'Music',
 
   loadFlag: true,
+  offset: 0,
   getDefaultProps: function getDefaultProps() {
     return {
       actionType: "music"
@@ -236,11 +266,13 @@ var Music = React.createClass({
   },
   getInitialState: function getInitialState() {
     return {
-      data: null
+      ids: [],
+      videos: []
     };
   },
   componentWillMount: function componentWillMount() {
     console.log('componentWillMount');
+
     this.loadAction();
   },
   loadAction: function loadAction() {
@@ -250,7 +282,8 @@ var Music = React.createClass({
     });
   },
   actionCreator: function actionCreator(options) {
-    //console.log('actionCreator');
+    this.loadFlag = false;
+
     StoreMusic.addSubscribe({
       actionType: this.props.actionType,
       callback: this.dataloaded
@@ -262,12 +295,40 @@ var Music = React.createClass({
     });
   },
   dataloaded: function dataloaded() {
-    console.log(StoreMusic.musics.dataID);
+    StoreMusic.removeSubscribe({
+      actionType: this.props.actionType
+    });
+    this.loadFlag = true;
+    if (StoreMusic.musics.actionType == 'ID') {
+      this.replaceState({
+        ids: StoreMusic.musics.dataID
+      });
+    }
   },
-  shouldComponentUpdate: function shouldComponentUpdate() {},
+  shouldComponentUpdate: function shouldComponentUpdate() {
+    return true;
+  },
   componentDidUpdate: function componentDidUpdate() {},
   componentWillReceiveProps: function componentWillReceiveProps(nextProps) {},
+  requestItems: function requestItems() {
+    var itemList = [];
+    for (var i = this.offset - 1; i < this.offset + 5; i++) {
+      itemList.push(StoreMusic.musics.dataID[i]);
+    }
+
+    return itemList;
+  },
+  iconClick: function iconClick() {
+    if (this.offset == 0) {
+      this.offset = 1;
+      this.actionCreator({
+        actionType: 'Movie',
+        requestItem: this.requestItems()
+      });
+    }
+  },
   render: function render() {
+    var _this = this;
 
     if (this.loadFlag) {
       return React.createElement(
@@ -281,13 +342,22 @@ var Music = React.createClass({
             { className: 'mdPlayerInner' },
             React.createElement(
               'p',
-              { className: 'mdPlayerTtl' },
+              { className: 'mdPlayerTtl', onClick: this.iconClick },
               React.createElement(
                 'span',
                 null,
                 'Movie Player'
               )
-            )
+            ),
+            function () {
+              if (_this.loadFlag) {
+                return React.createElement(
+                  'p',
+                  null,
+                  'さらに見る'
+                );
+              }
+            }()
           )
         )
       );
