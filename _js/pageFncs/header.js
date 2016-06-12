@@ -7,8 +7,10 @@ app.header = {
     if( type == 'PC' ){
       this.header = $('.LyHead');
       this.logo = $('.mdLogo');
+      this.LyPlayer = $('.LyPlayer');
       this.logoWidth = 90;
       this.logoHeight = 70;
+      this.timer;
 
       this.header.addClass('FncStart');
 
@@ -33,6 +35,12 @@ app.header = {
         width = this.logoWidth * ( 100 - (scrollTop / 90 * 100) ) / 100,
         height = this.logoHeight * ( 100 - (scrollTop / 90 * 100) ) / 100,
         bgsize = ( 100 - (scrollTop / 90 * 100) );
+
+
+    //プレーヤー表示時はヘッダーはそのまま
+    if( this.LyPlayer.hasClass('FncView')){
+      return false;
+    }
 
     if( scrollTop < 45 ){
       TweenMax.set(this.logo , {
@@ -71,7 +79,11 @@ app.header = {
   },
   eventSetPC(){
     $(window).on('scroll', ()=>{
-      this.headerControl( $(window).scrollTop() );
+      clearTimeout(this.timer);
+      this.timer = setTimeout(()=>{
+        this.headerControl( $(window).scrollTop() );
+      }, 10);
+      
     });
   },
   eventSetSP(){

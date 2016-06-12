@@ -5,20 +5,20 @@
 	 y="0px" width="81.709px" height="81.708px" viewBox="0 0 81.709 81.708" enable-background="new 0 0 81.709 81.708"
 	 xml:space="preserve">
 <g>
-	<circle fill="none" stroke="#FFFFFF" stroke-width="3" stroke-miterlimit="10" cx="40.854" cy="40.854" r="40.854"/>
-	<circle fill="#FFFFFF" cx="40.854" cy="40.854" r="33.092"/>
-	<rect x="1" y="31" fill="#FFFFFF" width="11" height="21"/>
-	<circle fill="#FF533F" cx="40.854" cy="40.854" r="8.171"/>
-	<circle fill="#FFFFFF" cx="40.854" cy="40.854" r="3.26"/>
+	<circle fill="none" stroke="#FFFFFF" stroke-width="3" stroke-miterlimit="10" cx="40.605" cy="41.104" r="39.249"/>
+	<circle fill="#FFFFFF" cx="40.605" cy="41.104" r="31.792"/>
+	<rect x="2.316" y="31.637" fill="#FFFFFF" width="10.568" height="20.175"/>
+	<circle fill="#FF533F" cx="40.605" cy="41.104" r="7.85"/>
+	<circle fill="#FFFFFF" cx="40.605" cy="41.104" r="3.132"/>
 	<g>
-		<path fill="none" stroke="#FF533F" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M47.437,15.292
-			c11.139-0.002,20.172,9.111,20.171,20.351"/>
-		<path fill="none" stroke="#FF533F" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M46.426,20.385
-			c8.912,0,16.137,7.289,16.138,16.281"/>
-		<path fill="none" stroke="#FF533F" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M44.929,25.154
-			c7.132-0.001,12.911,5.83,12.91,13.027"/>
-		<path fill="none" stroke="#FF533F" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M43.046,29.664
-			c5.702,0.003,10.325,4.667,10.325,10.421"/>
+		<path fill="none" stroke="#FF533F" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M46.929,16.546
+			c10.703-0.002,19.38,8.753,19.38,19.552"/>
+		<path fill="none" stroke="#FF533F" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M45.958,21.438
+			c8.562,0,15.504,7.003,15.504,15.642"/>
+		<path fill="none" stroke="#FF533F" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M44.52,26.021
+			c6.853-0.001,12.404,5.601,12.403,12.516"/>
+		<path fill="none" stroke="#FF533F" stroke-width="4" stroke-linecap="round" stroke-miterlimit="10" d="M42.711,30.354
+			c5.479,0.003,9.92,4.483,9.92,10.012"/>
 	</g>
 </g>
 </svg>

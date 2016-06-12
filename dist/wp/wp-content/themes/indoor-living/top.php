@@ -151,6 +151,8 @@ if( $type == 'index' ){
   <body>
   <?php endif; ?>
 
+  <div id="Wrapper">
+
   <div id="MdLoading">
     <div>
       <ul>
@@ -591,10 +593,15 @@ if( $type == 'index' ){
 
   </div>
 
-  <div class="LyFtr" style="position: static; bottom: 0px; opacity: 1;">
+  <div class="LyFtr">
+    <p id="FncPlayerOpen" class="mdPlayerOpen"><a href="#"><img src="/assets/svg/player.svg" alt="Music Player"></a></p>
     <footer class="MdFtr">
       <p class="mdFtrCopyright">Copyright © 2016 Indoor Living All right reserved.</p>
     </footer>
+  </div>
+
+  <div id="Music"></div>
+
   </div>
 
   <script src="/assets/js/lib.js"></script>

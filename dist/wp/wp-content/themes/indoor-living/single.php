@@ -72,6 +72,7 @@ for ($i=0; $i < count($match[1]); $i++) {
   "catName": "<?php echo $catName; ?>",
   "catSlug": "<?php echo $catSlug; ?>",
   "visual": "<?php echo $imgPath; ?>",
+  "visualSP": "<?php echo get_field('visualSP'); ?>",
   "contents": <?php echo json_encode( get_the_content() ) ; ?>,
   "hdg2": [<?php echo $hdg2; ?>],
   "related": [

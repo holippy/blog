@@ -109,6 +109,12 @@ var Mainvisual = React.createClass({
         slidesToShow: 1,
         slidesToScroll: 1
       });
+
+      $('.slick-slide').each((i, elm)=>{
+        $(elm).find('a').eq(0).on('click', (e)=>{
+          e.preventDefault();
+        });
+      });
     }
   },
   componentWillUnmount(){
@@ -126,24 +132,7 @@ var Mainvisual = React.createClass({
   },
   componentDidMount(){
 
-    if( Store.Layout == 'PC' ){
-      console.log('MVcomponentDidMount');
-      console.log('MVcomponentDidUpdate');
-      Slider.unmount();
-      Slider.init();
-      $('.mdSlideListImg li').each((i, elm)=>{
-        $(elm).find('a').eq(0).on('click', (e)=>{
-          e.preventDefault();
-        });
-      });
-    }
-    if( Store.Layout == 'SP' ){
-      $('.mdSlideListImg li').each((i, elm)=>{
-        $(elm).find('a').eq(0).on('click', (e)=>{
-          e.preventDefault();
-        });
-      });
-    }
+
   },
   thumbClick( ID ){
     console.log(ID);
@@ -154,9 +143,6 @@ var Mainvisual = React.createClass({
     if(this.state.mainvisual.length === 0){
       return false;
     }else{
-
-
-
       if( Store.Layout == 'PC' ){
         Slider.unmount();
 

@@ -159,8 +159,9 @@ LyFtr
 ===========================*/
 
 .LyFtr{
-  margin-top: 20px;
-  padding: 50px 0 80px 0;
+  margin-top: 80px;
+  padding: 50px 0;
+  position: relative;
   width: 100%;
   background: $color-main;
   box-sizing: border-box;

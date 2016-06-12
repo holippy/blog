@@ -26,21 +26,29 @@ html(lang="ja")
       ga('create', 'UA-77747096-1', 'auto');
       ga('send', 'pageview');
 
-  body
+  body.LySP
 
-    #Main
+    #Wrapper
 
-    .LyFtr
-      footer.MdFtr
-        p.mdFtrCopyright Copyright &copy; 2016 Indoor Living All right reserved.
+      #Main
 
-    #MdLoading
-      div
-        ul
-          li
-          li
-          li
+      .LyFtr
+        p#FncPlayerOpen.mdPlayerOpen
+          a(href="#")
+            img(src="/assets/svg/player.svg" alt="Music Player")
+        footer.MdFtr
+          p.mdFtrCopyright Copyright &copy; 2016 Indoor Living All right reserved.
+
+      #Music
+
+      #MdLoading
+        div
+          ul
+            li
+            li
+            li
 
 
     script(src="/assets/js/lib.js")
+    script(src="/assets/js/slick.js")
     script(src="/assets/js/app.js")

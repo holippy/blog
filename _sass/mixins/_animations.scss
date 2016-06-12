@@ -55,6 +55,60 @@ animation
   }
 }
 
+@include keyframes(bg03) {
+  from {
+    background: $color-main;
+    border-color: #FFF;
+    color: #FFF;
+  }
+  to {
+    background: #FFF;
+    border-color: $color-main;
+    color: $color-main;
+  }
+}
+
+@include keyframes(bg04) {
+  from {
+    background: #FFF;
+    border-color: $color-main;
+    color: $color-main;
+  }
+  to {
+    background: $color-main;
+    border-color: #FFF;
+    color: #FFF;
+  }
+}
+
+@include keyframes(opac01) {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@include keyframes(rotate01) {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+@include keyframes(rotate02) {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(180deg);
+  }
+}
+
 /*===========================
 
   logo

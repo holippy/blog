@@ -15,6 +15,7 @@ filter = require 'gulp-filter'
 babelify = require("babelify")
 source = require 'vinyl-source-stream'
 reactify = require 'reactify'
+buffer = require('vinyl-buffer')
 
 ###
 gulp.js用
@@ -50,6 +51,23 @@ gulp.task 'babelify', ()->
 			this.emit("end");
 		)
 		.pipe(source("app.js"))
+		.pipe(gulp.dest("./dist/assets/js/"));
+
+gulp.task 'jsProduction', ()->
+	browserify(
+			entries: "_js/app.js"
+			extensions: [".js"]
+		)
+		.transform(babelify)
+		.bundle()
+		.on("error", (err)->
+			console.log("Error : " + err.message);
+			this.emit("end");
+		)
+		.pipe(source("app.js"))
+		.pipe(buffer())
+		.pipe(rename('app.js'))
+		.pipe(uglify())
 		.pipe(gulp.dest("./dist/assets/js/"));
 
 ###

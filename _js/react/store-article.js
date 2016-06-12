@@ -69,10 +69,10 @@ Store.LoadControl = {
       }
     );
 
-    $('.LyFtr').css({
-      position: 'fixed',
-      bottom: 0
-    });
+    // $('.LyFtr').css({
+    //   position: 'fixed',
+    //   bottom: 0
+    // });
     
     TweenMax.to($('.LyFtr'), 1, 
       {
@@ -91,10 +91,10 @@ Store.LoadControl = {
       }
     );
 
-    $('.LyFtr').css({
-      position: 'static',
-      bottom: 0
-    });
+    // $('.LyFtr').css({
+    //   position: 'relative',
+    //   bottom: 0
+    // });
 
     TweenMax.to($('.LyFtr'), 1, 
       {

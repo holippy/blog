@@ -90,3 +90,16 @@ $path-svg:"/assets/svg/";
 .LySP{
   @import "mixins/_catList_sp";
 }
+
+/*=====================================
+
+Music Player
+
+=====================================*/
+
+@import "mixins/_music";
+
+.LySP{
+  @import "mixins/_music_sp";
+}
+

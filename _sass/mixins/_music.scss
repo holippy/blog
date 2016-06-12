@@ -1,0 +1,169 @@
+/*=====================================
+
+music Player
+
+=====================================*/
+.mdPlayerOpen{
+  @include position(fixed, null null -10px 50%);
+  margin-left: -35px;
+  z-index: 100;
+
+  a{
+    border-radius: 5px;
+    display: block;
+    padding: 10px 10px 20px 10px;
+    width: 50px;
+    height: 50px;
+    background: $color-main;
+  }
+
+  img{
+    width: 50px;
+    height: 50px;
+  }
+
+  &.FncHover{
+    img{
+      @include animation-name(rotate01);
+      @include animation-duration(0.5s);
+      @include animation-timing-function(linear);
+      @include animation-iteration-count(infinite);
+      @include animation-fill-mode(forwards);
+    }
+  }
+}
+
+.LyPlayer{
+  @include position(fixed, 0 0 null null);
+  background: rgba(255,255,255,0.8);
+  width: 100%;
+  height: 100%;
+  z-index: 200;
+  display: none;
+}
+
+.MdPlayer{
+  margin: 0 auto;
+  padding: 40px 20px 0 20px;
+  width: 600px;
+  height: 100%;
+  opacity: 0;
+
+  overflow-y: scroll;
+  background: #FFF;
+  box-sizing: border-box;
+
+  &.FncView{
+    opacity: 1;
+  }
+
+  .mdPlayerTtlInner{
+    @include position(fixed, 0 null null null);
+    width: 550px;
+    padding-top: 40px;
+    background: rgba(255,255,255,0.9);
+  }
+
+  .mdPlayerInner{
+    padding: 180px 0 40px 0;
+  }
+
+  .MdHdgCmn01{
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+
+  .mdPlayerItem{
+    margin-bottom: 30px;
+  }
+
+  .mdPlayerIcon{
+    text-align: center;
+    span{
+      @include hide-text;
+      border-radius: 5px;
+      padding: 5px;
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      background: $color-main;
+
+      img{
+        display: block;
+        width: 50px;
+      }
+    }
+  }
+
+  .mdPlayerIframe{
+    width: 550px;
+    height: auto;
+    line-height: 0;
+    background: url(/assets/svg/play.svg) center center no-repeat $color-main;
+  }
+
+  .mdPlayerName{
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .mdPlayerMore{
+    text-align: center;
+      @include animation-name(opac01);
+      @include animation-duration(0.2s);
+      @include animation-timing-function(ease);
+      @include animation-iteration-count(1);
+      @include animation-fill-mode(forwards);
+
+    a{
+      border-radius: 20px;
+      border-width: 2px;
+      border-style: solid;
+      border-color: #FFF;
+      padding: 5px 50px;
+      display: inline-block;
+      background: $color-main;
+      color: #FFF;
+      font-size: 14px;
+
+      @include animation-name(bg04);
+      @include animation-duration(0.2s);
+      @include animation-timing-function(ease);
+      @include animation-iteration-count(1);
+      @include animation-fill-mode(forwards);
+
+      &:hover{
+        text-decoration: none;
+        @include animation-name(bg03);
+        @include animation-duration(0.2s);
+        @include animation-timing-function(ease);
+        @include animation-iteration-count(1);
+        @include animation-fill-mode(forwards);
+      }
+    }
+  }
+}
+
+  .mdPlayerClose{
+    @include position(absolute, 40px 30px null null);
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    a{
+      @include hide-text;
+      display: inline-block;
+      width: 25px;
+      height: 25px;
+      background: url(/assets/svg/icon_menu_close.svg) no-repeat;
+      background-size: 100%;
+
+      &:hover{
+        @include animation-name(rotate02);
+        @include animation-duration(0.5s);
+        @include animation-timing-function(ease);
+        @include animation-iteration-count(1);
+        @include animation-fill-mode(forwards);
+      }
+    }
+  }
